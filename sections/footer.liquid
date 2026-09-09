@@ -1,8 +1,8 @@
-  {% style %}
+{% style %}
     #shopify-section-{{ section.id }} .page-footer__inner {
       background-color: {{ section.settings.background }};
     }
-    #shopify-section-{{ section.id }} .page-footer__inner,
+	#shopify-section-{{ section.id }} .page-footer__inner,
 	#shopify-section-{{ section.id }} .footer-block__heading,
 	#shopify-section-{{ section.id }} .footer-block .nav__link,
 	#shopify-section-{{ section.id }} .copyright-text a	{
@@ -11,187 +11,419 @@
 	#shopify-section-{{ section.id }} .page-footer__blocks .icon{
 	fill: {{ section.settings.foreground }};
 	}
-  {% endstyle %}
+
+	/* --- Rebecca Minkoff style layout --- */
+	#shopify-section-{{ section.id }} .page-footer__top {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 40px;
+		align-items: flex-start;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col {
+		flex: 1 1 0;
+		min-width: 200px;
+		max-width: 100%;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-name {
+		font-weight: 700;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		font-size: 1.1em;
+		margin: 0 0 20px;
+		display: inline-block;
+		color: inherit;
+		text-decoration: none;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form {
+		margin: 0 0 20px;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__heading,
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__text {
+		display: none;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form form {
+		display: block !important;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form .h-captcha {
+		display: block !important;
+		width: 0 !important;
+		height: 0 !important;
+		overflow: hidden !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__inputs {
+		display: flex;
+		align-items: center;
+		border-bottom: 1px solid currentColor;
+		width: 100%;
+		max-width: none !important;
+		box-sizing: border-box;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__inputs > *:first-child {
+		flex: 0 0 75% !important;
+		max-width: 75% !important;
+		box-sizing: border-box;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__inputs > *:last-child {
+		flex: 0 0 25% !important;
+		max-width: 25% !important;
+		box-sizing: border-box;
+		text-align: right;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__email {
+		width: 100%;
+		border: none !important;
+		background: transparent !important;
+		padding: 8px 0;
+		font-size: 0.9em;
+		color: inherit;
+		box-sizing: border-box;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__email::placeholder {
+		color: inherit;
+		opacity: 0.6;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col form .subscribe-form__inputs button[type="submit"].subscribe-form__submit {
+		appearance: none !important;
+		-webkit-appearance: none !important;
+		-moz-appearance: none !important;
+		background: none !important;
+		background-color: transparent !important;
+		background-image: none !important;
+		border: none !important;
+		border-radius: 0 !important;
+		box-shadow: none !important;
+		outline: none !important;
+		padding: 4px 6px !important;
+		margin: 0 !important;
+		min-width: 0 !important;
+		width: auto !important;
+		height: auto !important;
+		max-width: none !important;
+		font-size: 1.2em !important;
+		line-height: 1 !important;
+		cursor: pointer;
+		color: inherit !important;
+		flex: 0 0 25%;
+		max-width: 25%;
+		box-sizing: border-box;
+		display: inline-flex !important;
+		align-items: center;
+		justify-content: flex-end;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__submit svg {
+		display: block;
+		width: 20px;
+		height: auto;
+		color: inherit;
+	}
+		text-align: right;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .social-links__list {
+		display: flex;
+		gap: 14px;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .social-links__list svg {
+		width: 18px;
+		height: 18px;
+	}
+	#shopify-section-{{ section.id }} .page-footer__blocks {
+		display: contents;
+	}
+	#shopify-section-{{ section.id }} .footer-block {
+		flex: 1 1 0;
+		min-width: 160px;
+	}
+	#shopify-section-{{ section.id }} .footer-block__heading {
+		font-size: 0.8em;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		margin-bottom: 16px;
+	}
+	#shopify-section-{{ section.id }} .footer-block .nav {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	#shopify-section-{{ section.id }} .footer-block .nav__item {
+		margin-bottom: 10px;
+	}
+
+	/* Accordion heading resets shared by both breakpoints */
+	#shopify-section-{{ section.id }} .footer-block__heading {
+		list-style: none;
+		cursor: default;
+	}
+	#shopify-section-{{ section.id }} .footer-block__heading::-webkit-details-marker {
+		display: none;
+	}
+	#shopify-section-{{ section.id }} .footer-block__heading::marker {
+		content: '';
+	}
+
+	/* Desktop / tablet: always show content, no toggle interaction */
+	@media (min-width: 768px) {
+		#shopify-section-{{ section.id }} .footer-block__details > *:not(summary) {
+			display: block !important;
+		}
+	}
+
+	/* Mobile: stack everything full-width and turn each block into a real accordion */
+	@media (max-width: 767px) {
+		#shopify-section-{{ section.id }} .page-footer__top {
+			flex-direction: column;
+			gap: 0;
+		}
+		#shopify-section-{{ section.id }} .page-footer__brand-col {
+			flex-basis: 100%;
+			width: 100%;
+		}
+    #shopify-section-{{ section.id }} .page-footer__brand-col {
+      margin-bottom:0;
+    }
+		#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__inputs {
+			max-width: 100%;
+		}
+
+    #shopify-section-footer .page-footer__brand-col .subscribe-form {
+      margin-bottom:0;
+    }
+
+
+		#shopify-section-{{ section.id }} .page-footer__brand-col .social-links {
+			padding: 0 0 18px 0;
+			border-bottom: inherit;
+			margin-bottom: 0;
+		}
+
+    #shopify-section-{{ section.id }} .page-footer__brand-col .social-links .social-links__list {
+      justify-content:left;
+    } 
+		#shopify-section-{{ section.id }} .footer-block {
+			flex-basis: 100%;
+			width: 100%;
+		}
+		#shopify-section-{{ section.id }} .footer-block__details {
+			border-bottom: 1px solid currentColor;
+		}
+		#shopify-section-{{ section.id }} .footer-block__heading {
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 16px 0;
+			margin-bottom: 0;
+		}
+		#shopify-section-{{ section.id }} .footer-block__heading::after {
+			content: '\25BE';
+			font-size: 1em;
+			transition: transform 0.2s ease;
+			margin-left: 10px;
+		}
+		#shopify-section-{{ section.id }} .footer-block__details[open] > .footer-block__heading::after {
+			transform: rotate(180deg);
+		}
+		#shopify-section-{{ section.id }} .footer-block__details .nav,
+		#shopify-section-{{ section.id }} .footer-block__details .rte {
+			padding-bottom: 16px;
+		}
+	}
+{% endstyle %}
 
 <footer class="page-footer {% if section.settings.sticky_footer %}page-footer--with-sticky-footer{% endif %}" data-section-id="{{ section.id }}" data-section-type="footer">
   <div class="page-footer__inner {% if section.settings.sticky_footer %}sticky-footer{% endif %}">
     <div class="container large-row">
-      <div class="full-width subscribe-row">
-        {%- if section.settings.show_subscribe_form -%}
-          <div class="page-footer__subscribe subscribe-form">
-            <h2 class="visually-hidden">{{ 'layout.footer.subscribe_heading' | t }}</h2>
-            <div class="subscribe-form__heading">
-              {{- section.settings.subscribe_title -}}
-            </div>
+      <h2 class="visually-hidden">{{ 'layout.footer.heading' | t }}</h2>
 
-            {%- if section.settings.subscribe_description != blank -%}
-              <div class="subscribe-form__text rte small-text">
-                {{- section.settings.subscribe_description -}}
-              </div>
-            {%- endif -%}
+      <div class="page-width">
 
-            {%- form 'customer' -%}
-              {%- if form.posted_successfully? -%}
-                <div class="subscribe-form__response footer-subscribe-form__response--success">
-                  <h3>{{ 'layout.footer.subscribe_success' | t }}</h3>
+        {%- liquid
+          assign social_block = nil
+          assign non_social_count = 0
+          for block in section.blocks
+            if block.type == 'social'
+              assign social_block = block
+            else
+              assign non_social_count = non_social_count | plus: 1
+            endif
+          endfor
+        -%}
+
+        <div class="page-footer__top">
+
+          <div class="page-footer__brand-col">
+            <a href="{{ routes.root_url }}" class="page-footer__brand-name"><img src="https://us.blochworld.com/cdn/shop/files/Bloch_logo_5950875b-233b-4c79-b849-66b560ef6d91_80x.png?v=1737021674" alt="footer bloch logo"></a>
+
+            {%- if section.settings.show_subscribe_form -%}
+              <div class="subscribe-form">
+                <h2 class="visually-hidden">{{ 'layout.footer.subscribe_heading' | t }}</h2>
+                <div class="subscribe-form__heading">
+                  {{- section.settings.subscribe_title -}}
                 </div>
-              {%- else -%}
-                {%- if form.errors -%}
-                  <div class="subscribe-form__response">
-                    {%- for field in form.errors -%}
-                      <p class="error-message">{{ field | capitalize }} - {{ form.errors.messages[field] }}</p>
-                    {%- endfor -%}
+
+                {%- if section.settings.subscribe_description != blank -%}
+                  <div class="subscribe-form__text rte small-text">
+                    {{- section.settings.subscribe_description -}}
                   </div>
                 {%- endif -%}
 
-                <input type="hidden" id="contact_tags" name="contact[tags]" value="prospect,newsletter">
-                <div class="subscribe-form__inputs">
-                  <div class="input-wrapper">
-                    <label class="subscribe-form__label" for="footer_mailinglist_email">
-                      {{- section.settings.subscribe_label -}}
-                    </label>
-                    <input type="email" required class="subscribe-form__email required" value="" id="footer_mailinglist_email" name="contact[email]">
-                  </div>
-                  <button class="btn btn--secondary subscribe-form__submit" type="submit">
-                    {{- section.settings.subscribe_button -}}
-                  </button>
-                </div>
-              {%- endif -%}
-            {%- endform -%}
-          </div>
-          <hr class="page-footer__hr">
-        {%- endif -%}
-      </div>
-<h2 class="visually-hidden">{{ 'layout.footer.heading' | t }}</h2>
-<div class="page-width">        
-        {%- liquid
-          if section.blocks.size == 2
-            assign col_class = 'one-half'
-          elsif section.blocks.size == 3
-            assign col_class = 'one-third'
-          else
-            assign col_class = 'one-quarter'
-          endif
-        -%}
-
-        {%- if section.blocks.size > 0 -%}
-          <div class="page-footer__blocks grid">
-            {%- for block in section.blocks -%}
-              <div class="footer-block grid__item small-down--one-whole {{ col_class }}" {{ block.shopify_attributes }}>
-                {%- case block.type -%}
-                  {%- when 'link_list' -%}
-                    <h3 class="footer-block__heading">{{ block.settings.heading | escape }}</h3>
-                    <ul class="nav">
-                      {%- for link in block.settings.menu.links -%}
-                        <li class="nav__item">
-                          <a href="{{ link.url }}" class="nav__link">{{ link.title }}</a>
-                        </li>
-                      {%- endfor -%}
-                    </ul>
-
-                  {%- when 'social' -%}
-                    <h3 class="footer-block__heading md-down-hidden">{{ block.settings.heading | escape }}</h3>
-                    {% if social_icon_html_dance contains '<li>' %}{{ social_icon_html_dance }}{% endif %}
-      
-       
-
-
-                
-<!-- CUSTOM SOCIAL LINKS -->                
-  <div class="social-links {{ container_class }}">
-    <ul class="social-links__list">
-      {% if block.settings.social_twitter_url != blank %}
-        <li>
-          <a class="twitter" target="_blank" rel="noopener" href="{{ block.settings.social_twitter_url }}" 
-            title="{{ 'general.accessibility.opens_new_tab' | t }}">
-            {% render 'svg-twitter' %}
-            <span class="visually-hidden">X (formelly Twitter)</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if block.settings.social_facebook_url != blank %}
-        <li>
-          <a class="facebook" target="_blank" rel="noopener" href="{{ block.settings.social_facebook_url }}" 
-            title="{{ 'general.accessibility.opens_new_tab' | t }}">
-            {% render 'svg-facebook' %}
-            <span class="visually-hidden">Facebook</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if block.settings.social_youtube_url != blank %}
-        <li>
-          <a class="youtube" target="_blank" rel="noopener" href="{{ block.settings.social_youtube_url }}" 
-            title="{{ 'general.accessibility.opens_new_tab' | t }}">
-            {% render 'svg-youtube' %}
-            <span class="visually-hidden">Youtube</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if block.settings.social_vimeo_url != blank %}
-        <li>
-          <a class="vimeo" target="_blank" rel="noopener" href="{{ block.settings.social_vimeo_url }}" 
-            title="{{ 'general.accessibility.opens_new_tab' | t }}">
-            {% render 'svg-vimeo' %}
-            <span class="visually-hidden">Vimeo</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if block.settings.social_instagram_url != blank %}
-        <li>
-          <a class="instagram" target="_blank" rel="noopener" href="{{ block.settings.social_instagram_url }}" 
-            title="{{ 'general.accessibility.opens_new_tab' | t }}">
-            {% render 'svg-instagram' %}
-            <span class="visually-hidden">Instagram</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if block.settings.social_pinterest_url != blank %}
-        <li>
-          <a class="pinterest" target="_blank" rel="noopener" href="{{ block.settings.social_pinterest_url }}" 
-            title="{{ 'general.accessibility.opens_new_tab' | t }}">
-            {% render 'svg-pinterest' %}
-            <span class="visually-hidden">Pinterest</span>
-          </a>
-        </li>
-      {% endif %}
-      {% if block.settings.social_tiktok_url != blank %}
-        <li>
-          <a class="tiktok" target="_blank" rel="noopener" href="{{ block.settings.social_tiktok_url }}" 
-            title="{{ 'general.accessibility.opens_new_tab' | t }}">
-            {% render 'svg-tiktok' %}
-            <span class="visually-hidden">Tiktok</span>
-          </a>
-        </li>
-      {% endif %}
-
-      {% if block.settings.social_custom_url != blank %}
-        <li>
-          <a class="social-custom" target="_blank" rel="noopener" href="{{ block.settings.social_custom_url }}" 
-            title="{{ 'general.accessibility.opens_new_tab' | t }}">
-            <img src="{{ icon_setting | img_url: icon_size }}" alt="{{ icon_setting.alt }}" width="{{ icon_setting.width }}" height="{{ icon_setting.height }}"/>
-          </a>
-        </li>
-      {% endif %}
-    </ul>
-  </div>
-<!-- CUSTOM SOCIAL LINKS - end -->                
-                
-                
-                
-                
-
-                  {%- when 'text' -%}
-                    <h3 class="footer-block__heading">{{ block.settings.heading | escape }}</h3>
-                    <div class="rte">
-                      {{ block.settings.text }}
+                {%- form 'customer' -%}
+                  {%- if form.posted_successfully? -%}
+                    <div class="subscribe-form__response footer-subscribe-form__response--success">
+                      <h3>{{ 'layout.footer.subscribe_success' | t }}</h3>
                     </div>
+                  {%- else -%}
+                    {%- if form.errors -%}
+                      <div class="subscribe-form__response">
+                        {%- for field in form.errors -%}
+                          <p class="error-message">{{ field | capitalize }} - {{ form.errors.messages[field] }}</p>
+                        {%- endfor -%}
+                      </div>
+                    {%- endif -%}
 
-                {%- endcase -%}
+                    <input type="hidden" id="contact_tags" name="contact[tags]" value="prospect,newsletter">
+                    <div class="subscribe-form__inputs">
+                      <div class="input-wrapper">
+                        <label class="visually-hidden" for="footer_mailinglist_email">
+                          {{- section.settings.subscribe_label -}}
+                        </label>
+                        <input type="email" required class="subscribe-form__email required" value="" id="footer_mailinglist_email" name="contact[email]" placeholder="{{ section.settings.subscribe_label }}">
+                      </div>
+                      <button class="subscribe-form__submit" type="submit" aria-label="{{ section.settings.subscribe_button }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false">
+                          <path d="M0.5 7H19M19 7L13 1M19 7L13 13" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  {%- endif -%}
+                {%- endform -%}
               </div>
-            {%- endfor -%}
+            {%- endif -%}
+
+            {%- if social_block -%}
+              {%- assign block = social_block -%}
+              {% if social_icon_html_dance contains '<li>' %}{{ social_icon_html_dance }}{% endif %}
+
+              <div class="social-links {{ container_class }}">
+                <ul class="social-links__list">
+                  {% if block.settings.social_instagram_url != blank %}
+                    <li>
+                      <a class="instagram" target="_blank" rel="noopener" href="{{ block.settings.social_instagram_url }}"
+                        title="{{ 'general.accessibility.opens_new_tab' | t }}">
+                        {% render 'svg-instagram' %}
+                        <span class="visually-hidden">Instagram</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                  {% if block.settings.social_tiktok_url != blank %}
+                    <li>
+                      <a class="tiktok" target="_blank" rel="noopener" href="{{ block.settings.social_tiktok_url }}"
+                        title="{{ 'general.accessibility.opens_new_tab' | t }}">
+                        {% render 'svg-tiktok' %}
+                        <span class="visually-hidden">Tiktok</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                  {% if block.settings.social_youtube_url != blank %}
+                    <li>
+                      <a class="youtube" target="_blank" rel="noopener" href="{{ block.settings.social_youtube_url }}"
+                        title="{{ 'general.accessibility.opens_new_tab' | t }}">
+                        {% render 'svg-youtube' %}
+                        <span class="visually-hidden">Youtube</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                  {% if block.settings.social_facebook_url != blank %}
+                    <li>
+                      <a class="facebook" target="_blank" rel="noopener" href="{{ block.settings.social_facebook_url }}"
+                        title="{{ 'general.accessibility.opens_new_tab' | t }}">
+                        {% render 'svg-facebook' %}
+                        <span class="visually-hidden">Facebook</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                  {% if block.settings.social_twitter_url != blank %}
+                    <li>
+                      <a class="twitter" target="_blank" rel="noopener" href="{{ block.settings.social_twitter_url }}"
+                        title="{{ 'general.accessibility.opens_new_tab' | t }}">
+                        {% render 'svg-twitter' %}
+                        <span class="visually-hidden">X (formelly Twitter)</span>
+                      </a>
+                    </li>
+                  {% endif %}                
+                  
+                  {% if block.settings.social_vimeo_url != blank %}
+                    <li>
+                      <a class="vimeo" target="_blank" rel="noopener" href="{{ block.settings.social_vimeo_url }}"
+                        title="{{ 'general.accessibility.opens_new_tab' | t }}">
+                        {% render 'svg-vimeo' %}
+                        <span class="visually-hidden">Vimeo</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                  
+                  {% if block.settings.social_pinterest_url != blank %}
+                    <li>
+                      <a class="pinterest" target="_blank" rel="noopener" href="{{ block.settings.social_pinterest_url }}"
+                        title="{{ 'general.accessibility.opens_new_tab' | t }}">
+                        {% render 'svg-pinterest' %}
+                        <span class="visually-hidden">Pinterest</span>
+                      </a>
+                    </li>
+                  {% endif %}                  
+                  {% if block.settings.social_custom_url != blank %}
+                    <li>
+                      <a class="social-custom" target="_blank" rel="noopener" href="{{ block.settings.social_custom_url }}"
+                        title="{{ 'general.accessibility.opens_new_tab' | t }}">
+                        <img src="{{ icon_setting | img_url: icon_size }}" alt="{{ icon_setting.alt }}" width="{{ icon_setting.width }}" height="{{ icon_setting.height }}"/>
+                      </a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            {%- endif -%}
           </div>
-        {%- endif -%}
-        
+
+          {%- if non_social_count > 0 -%}
+            <div class="page-footer__blocks grid">
+              {%- for block in section.blocks -%}
+                {%- unless block.type == 'social' -%}
+                  <div class="footer-block" {{ block.shopify_attributes }}>
+                    {%- case block.type -%}
+                      {%- when 'link_list' -%}
+                        <details class="footer-block__details" open>
+                          <summary class="footer-block__heading">{{ block.settings.heading | escape }}</summary>
+                          <ul class="nav">
+                            {%- for link in block.settings.menu.links -%}
+                              <li class="nav__item">
+                                <a href="{{ link.url }}" class="nav__link">{{ link.title }}</a>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        </details>
+
+                      {%- when 'text' -%}
+                        <details class="footer-block__details" open>
+                          <summary class="footer-block__heading">{{ block.settings.heading | escape }}</summary>
+                          <div class="rte">
+                            {{ block.settings.text }}
+                          </div>
+                        </details>
+                    {%- endcase -%}
+                  </div>
+                {%- endunless -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+
+        <hr class="page-footer__hr">
+
         <div class="page-footer__end">
           <div>
             {%- assign small_linklist = section.settings.small_linklist -%}
@@ -204,7 +436,7 @@
                 {%- endfor -%}
               </ul>
             {%- endif -%}
-            
+
             <small class="copyright-text">
               {{ 'layout.footer.copyright' | t }} &copy; {{ 'now' | date: "%Y" }} <a href="{{ routes.root_url }}">{{ shop.name }}</a>
             </small>
@@ -313,7 +545,7 @@
         "type": "text",
         "id": "subscribe_label",
         "label": "Label",
-        "default": "Email address"
+        "default": "Sign up and save 10% on your first order!"
       },
       {
         "type": "text",
