@@ -1,0 +1,29 @@
+{
+  "sections": {
+    "pf-4c98cc99": {
+      "type": "pf-4c98cc99",
+      "settings": {
+        "pf_c757e210_value": "<span style=\"font-weight: bold;\">What is B-Rewards?\n</span><br>B-Rewards is the BLOCH Loyalty program and is our way of showing you our appreciation. You’ll earn points for activities on and off our website, such as social likes and purchases. You can use them to earn discounts off purchases, so the more you collect the more you save.\n<br>\n<br><span style=\"font-weight: bold;\">Who can join?\n</span><br>Anyone with a BLOCH website account is automatically enrolled in the B-rewards loyalty program.\n<br>\n<br><span style=\"font-weight: bold;\">How do I earn points?\n<br></span>You can earn points for all sorts of activities including signing up for emails, liking BLOCH's social channels and making purchases. To see all the ways you can earn points click the Earn Points tab in the menu.\n<br>\n<br><span style=\"font-weight: bold;\">How do I view my point balance?</span>\n<br>Your point balance is on every page in the top bar.\n<br>\n<br><span style=\"font-weight: bold;\">How do I redeem my points?</span>\n<br>Select the tab called Redeem Points. Here you’ll see all the rewards we offer. If you have enough points, you can redeem them for a reward.\n<br>\n<br><span style=\"font-weight: bold;\">Is there a limit to the number of points I can earn?\n</span><br>No. Go ahead and earn as many as you can!\n<br>\n<br><span style=\"font-weight: bold;\">How long will my points be valid for?</span>\n<br>All points will be valid for 12 months from the date they are added to your account\n<br>\n<br><span style=\"font-weight: bold;\">What do the 'approved', 'pending' and 'cancelled' statuses mean?\n</span><br>Approved: These points can be redeemed on rewards immediately\n<br>Pending: These points need to be verified before you can redeem them. All purchases will be pending for 30 days after purchase to account for any items you may want to return. You can only earn points on purchases you that aren't returned.\n<br>Cancelled: These points will not be added to your account. For example, this will happen if you cancel or return a purchase (the points will change from pending to cancelled)\n<br>Why did my account balance go down?\n<br>You may have cancelled or returned a purchase.\n<br>\n<br><span style=\"font-weight: bold;\">I completed an activity but didn't earn points!\n</span><br>It can sometimes take a few minutes for us to process your activity and provide your points.\n<br>\n<br><span style=\"font-weight: bold;\">Can I use my points during checkout?\n<br></span>Not directly - please redeem your points for a voucher which can then be applied during checkout.\n<br>\n<br><span style=\"font-weight: bold;\">How do I leave the program?\n</span><br>If you no longer wish to earn points, please contact us on uk@blochworld.com and ask to be unenrolled in the B-Rewards Loyalty Program. We'll unenroll you and you will lose any points you have accrued.\n<br>\n<br><span style=\"font-weight: bold;\">What happens if I leave and decide to join again?</span>\n<br>Just contact us on us@blochworld.com and we'll re-enroll you. However, your point total will begin from zero.\n<br>\n<br><span style=\"font-weight: bold;\">Where can I report a problem or give feedback?\n</span><br>Please contact us on us@blochworld.com<br>",
+        "pf_337aec15_value": "- Once you reach 5,000 points, for every 250 points you earn you will get a $20 gift voucher\n<br>\n<br>- Double point days\n<br>\n<br>- Exclusive competitions and offers throughout the year\n<br>\n<br>- Free delivery days\n<br>\n<br>- Early access to sales and promotions\n<br><br>- Early access to new product launches\n<br>\n<br>- Exclusive invites to BLOCH events\n<br>\n<br>- Buy BLOCH products with your reward points\n<br>  \n<br>\n<br>",
+        "pf_740e2ee7_value": "- Once you reach 2,500 points, for every 500 points you earn will get a $10 gift voucher\n<br>\n<br>- Double point days\n<br>\n<br>- Exclusive competitions and offers throughout the year\n<br>\n<br>- Free delivery days\n<br>\n<br>- Early access to sales and promotions\n<br><br>- Early access to new product launches<br>\n<br>- Buy BLOCH products with your reward points\n<br><br>",
+        "pf_52c71d0b_value": "- Once you reach 1000 points, for every 500 points you earn, you will receive a 15% off discount code\n<br>\n<br>- Double point days\n<br>\n<br>- Exclusive competitions and offers throughout the year\n<br>\n<br>- Buy BLOCH Products with your points&nbsp;&nbsp;<br>",
+        "pf_3039be0f_value": "&nbsp;- For every 500 points you earn, you will receive a 15% off discount code\n<br>\n<br>- Double point days\n<br>\n<br>- Exclusive competitions and offers throughout the year&nbsp;<br> ",
+        "pf_33ef8918_value": "Create my B-Rewards Account&nbsp;",
+        "pf_42a92f6c_value": "Login - I already have an account",
+        "pf_65fa49d1_value": "Create my B-Rewards Account&nbsp;",
+        "pf_ffda18fa_value": "Login - I already have an account",
+        "pf_e680dbd7_label": "B-REWARDS - FAQ",
+        "pf_7beae395_alt": "Founder image",
+        "pf_e532b195_alt": "Product image",
+        "pf_f54c2360_value": "B-Rewards<br>",
+        "pf_5b586bf1_value": "Tier 2",
+        "pf_89b1b457_value": "Tier 4",
+        "pf_a9223046_value": "Tier 3",
+        "pf_bd166295_value": "Tier 1"
+      }
+    }
+  },
+  "order": [
+    "pf-4c98cc99"
+  ]
+}

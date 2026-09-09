@@ -1,0 +1,76 @@
+{%- comment -%}
+  Cart drawer: overlay + slide-out panel. Contents populated by JS via /cart.js.
+  Variant inventory (for low-stock messaging) is output below for items currently in cart.
+  recommendations_collection: collection to show as "Recommended for you".
+  recommendations_heading: optional heading text.
+  recommendations_limit: max number of products (1–12), from theme setting.
+{%- endcomment -%}
+{%- liquid
+  assign rec_collection = recommendations_collection | default: nil
+  assign rec_heading = recommendations_heading
+  if rec_heading == blank
+    assign rec_heading = 'cart.general.recommendations_heading' | t
+  endif
+  assign rec_limit = recommendations_limit | default: 6
+  if rec_limit < 1
+    assign rec_limit = 1
+  endif
+  if rec_limit > 12
+    assign rec_limit = 12
+  endif
+-%}
+<script>
+  theme.cartVariantInventory = theme.cartVariantInventory || {};
+  {% for item in cart.items %}
+  {% if item.variant.inventory_management != blank %}
+  theme.cartVariantInventory["{{ item.variant.id }}"] = {{ item.variant.inventory_quantity | default: 0 }};
+  {% endif %}
+  {% endfor %}
+  theme.lowStockThreshold = {{ settings.low_stock_display_threshold | default: 5 }};
+</script>
+<div class="cart-drawer-overlay" hidden aria-hidden="true"></div>
+<aside id="cart-drawer" class="cart-drawer" aria-hidden="true">
+  <header class="cart-drawer__header">
+    <h2 class="cart-drawer__title" data-cart-drawer-title>{{ 'layout.cart.title' | t }} ({{ cart.item_count }})</h2>
+    <button type="button" class="cart-drawer__close" aria-label="{{ 'general.accessibility_labels.close' | t }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </header>
+  {%- comment -%} Free shipping threshold message: content and visibility set by JS in theme.CartDrawer.renderCart() from cart.total_price. Updates whenever the drawer re-renders (open, add, change qty, remove). {%- endcomment -%}
+  <div class="cart-drawer__shipping-message" data-cart-drawer-shipping-message aria-live="polite" style="display: none;"></div>
+  <div class="cart-drawer__body-wrapper">
+    <div class="cart-drawer__body" data-cart-drawer-body>
+      {%- comment -%} Line items rendered by JS from /cart.js {%- endcomment -%}
+      <div data-cart-drawer-items></div>
+      {%- if rec_collection != blank and rec_collection.products_count > 0 -%}
+        {% render 'cart-drawer-recommendations', collection: rec_collection, heading: rec_heading, limit: rec_limit %}
+      {%- endif -%}
+    </div>
+    <div class="cart-drawer__loading" aria-hidden="true" aria-live="polite">
+      <span class="cart-drawer__spinner"></span>
+    </div>
+  </div>
+  <footer class="cart-drawer__footer" data-cart-drawer-footer style="display: none;">
+    {%- if shop.metafields.loyaltylion.token != nil -%}
+      <div class="cart-drawer__rewards" data-cart-drawer-rewards>
+        {%- if customer -%}
+          {{ 'cart.general.rewards_earning_signed_in' | t }} <span data-lion-points-for="{{ cart.total_price }}" data-cart-drawer-lion-points></span> {{ 'cart.general.rewards_points_suffix' | t }}
+        {%- else -%}
+          {{ 'cart.general.rewards_earning_guest' | t }} <span data-lion-points-for="{{ cart.total_price }}" data-cart-drawer-lion-points></span> {{ 'cart.general.rewards_points_suffix' | t }}
+          <span class="cart-drawer__rewards-links">
+            <a href="{{ routes.account_register_url }}" class="cart-drawer__rewards-link">{{ 'cart.general.rewards_join' | t }}</a>
+            <a href="{{ routes.account_login_url }}" class="cart-drawer__rewards-link">{{ 'cart.general.rewards_sign_in' | t }}</a>
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="cart-drawer__subtotal">
+      <span>{{ 'layout.cart.subtotal' | t }}</span>
+      <span class="cart-drawer__subtotal-price theme-money" data-cart-drawer-subtotal></span>
+    </div>
+    <a href="/checkout" class="btn btn--primary btn--fullwidth cart-drawer__checkout">{{ 'cart.general.checkout' | t }}</a>
+  </footer>
+  <div class="cart-drawer__empty" data-cart-drawer-empty style="display: none;">
+    <p>{{ 'cart.general.empty' | t }}</p>
+  </div>
+</aside>

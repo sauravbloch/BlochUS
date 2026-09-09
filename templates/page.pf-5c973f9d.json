@@ -1,0 +1,29 @@
+{
+  "sections": {
+    "pf-5c973f9d": {
+      "type": "pf-5c973f9d",
+      "settings": {
+        "pf_1bc6b2b5_value": "Would you like to try a new pointe shoe, a new size, a new style or would just like more information about our pointe shoes?&nbsp; <br><br>Simply send us your question using the form below and one of our Pointe Shoe Specialists will get in touch to help.",
+        "pf_d1d46639_placeholder": "Please provide as much information as possible.  If you have chosen a non-Bloch brand please specify the shoe style name & size.",
+        "pf_d1d46639_label_text": "Please tell us about any specific issues you would like to cover with our pointe shoe specialist",
+        "pf_bb23cd4d_checkboxLabel": "I would like to sign up to the BLOCH Email Newsletter and receive 10% off my first order",
+        "pf_80968ffd_value": "Do you have a question about our pointe shoes?",
+        "pf_44a4c834_label_text": "Current BLOCH Pointe Shoe Style",
+        "pf_a4c8343f_label_text": "Other Point Shoe Brand",
+        "pf_b04410a1_placeholder": "Enter your first name",
+        "pf_10a157f9_placeholder": "Enter your last name",
+        "pf_bb23cd4d_label_text": "Newsletter Signup",
+        "pf_57f93e49_placeholder": "Enter Your Mail",
+        "pf_184c13d8_text": "Send Question",
+        "pf_3e49d1d4_label_text": "Question Type",
+        "pf_66a1ab5b_label_text": "Date of Birth",
+        "pf_b04410a1_label_text": "First Name",
+        "pf_10a157f9_label_text": "Last Name",
+        "pf_57f93e49_label_text": "Email"
+      }
+    }
+  },
+  "order": [
+    "pf-5c973f9d"
+  ]
+}

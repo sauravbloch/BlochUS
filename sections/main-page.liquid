@@ -1,0 +1,42 @@
+<div class="container row large-row-under">
+  <div class="{% if section.settings.full_width_page == true %}full-width{% else %}reading-width{% endif %}">
+    {% if section.settings.show_title == true %}
+    <h1 class="giant-title">{{ page.title }}</h1>
+    {% else %}{% endif %}
+
+    <div class="rte rte--expanded-images clearfix row">
+      {{ page.content }}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Page",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_title",
+        "label": "Show page title",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "full_width_page",
+        "label": "Full Width Page",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "title_alignment",
+        "label": "Title alignment",
+        "default": "left",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "center", "label": "Center" },
+          { "value": "right", "label": "Right" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,33 @@
+<div class="utils__item country-selector desktop hide-for-search">
+  <form name="countryselect" class="countrySelect">
+    <label for="countrySelectMenu" class="label-hidden">
+      {{ 'general.country.dropdown_label' | t }}
+    </label>
+    <span id="countrySelectHelper" class="visually-hidden">
+      {{ 'general.country.refresh_warning' | t }}
+    </span>
+    <select id="countrySelectMenu" 
+      name="menu" 
+      onChange="window.document.location.href=this.options[this.selectedIndex].value;" 
+      value="GO"
+      aria-describedby="countrySelectHelper">
+
+      <option selected="selected" value="{{ section.settings.country_link1 }}" aria-label="{{ section.settings.country_name1 }}">{{ section.settings.country_abbr1 }}</option>
+
+      <option value="{{ section.settings.country_link2 }}" aria-label="{{ section.settings.country_name2 }}">{{ section.settings.country_abbr2 }}</option>
+
+      {%- if section.settings.country_abbr3 != blank -%}
+      <option value="{{ section.settings.country_link3 }}" aria-label="{{ section.settings.country_name3 }}">{{ section.settings.country_abbr3 }}</option>
+      {%- endif -%}
+
+      {%- if section.settings.country_abbr4 != blank -%}
+      <option value="{{ section.settings.country_link4 }}" aria-label="{{ section.settings.country_name4 }}">{{ section.settings.country_abbr4 }}</option>
+      {%- endif -%}
+
+      {%- if section.settings.country_abbr5 != blank -%}
+      <option value="{{ section.settings.country_link5 }}" aria-label="{{ section.settings.country_name5 }}">{{ section.settings.country_abbr5 }}</option>
+      {%- endif -%}
+
+    </select>
+  </form>
+</div>

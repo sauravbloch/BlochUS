@@ -1,0 +1,240 @@
+<div
+  class="b-rewards b-rewards__section b-rewards__tiers-section"
+  style="background: {{ section.settings.bg }};"
+>
+  <div class="page-width">
+
+    <div class="b-rewards__center b-rewards__tiers-header">
+      {% if section.settings.eyebrow != blank %}
+        <p class="b-rewards__eyebrow b-rewards__tiers-eyebrow">
+          {{ section.settings.eyebrow | escape }}
+        </p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="large-title b-rewards__title b-rewards__tiers-heading">
+          {{ section.settings.heading | escape }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="rte b-rewards__intro b-rewards__tiers-intro">
+          {{ section.settings.text }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div
+      class="b-rewards__tiers"
+      style="--br-cols: {{ section.blocks.size }};"
+    >
+      {% for block in section.blocks %}
+        <article
+          class="b-rewards__tier"
+          {{ block.shopify_attributes }}
+        >
+          <div class="b-rewards__tier-top">
+
+            <p class="b-rewards__tier-label">
+              Tier {{ forloop.index }}
+            </p>
+
+            <div
+              class="b-rewards__tier-dots"
+              aria-hidden="true"
+            >
+              {% for dot in (1..forloop.index) %}
+                <span></span>
+              {% endfor %}
+            </div>
+
+            {% if block.settings.name != blank %}
+              <h3 class="b-rewards__tier-name">
+                {{ block.settings.name | escape }}
+              </h3>
+            {% endif %}
+
+            <span class="b-rewards__tier-accent" aria-hidden="true"></span>
+
+            {% if block.settings.threshold != blank %}
+              <p class="b-rewards__tier-threshold">
+                {{ block.settings.threshold | escape }}
+              </p>
+            {% endif %}
+
+            <div class="b-rewards__rate">
+              <span class="b-rewards__rate-number">
+                {{ block.settings.rate_number | escape }}
+              </span>
+
+              <span class="b-rewards__rate-copy">
+                <strong>{{ block.settings.rate_label | escape }}</strong>
+                <small>{{ block.settings.rate_unit | escape }}</small>
+              </span>
+            </div>
+
+            {% if block.settings.intro != blank %}
+              <div class="rte b-rewards__tier-intro">
+                {{ block.settings.intro }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% assign benefits = block.settings.benefits
+            | newline_to_br
+            | split: '<br />'
+          %}
+
+          {% if benefits.size > 0 %}
+            <ul class="b-rewards__benefits">
+              {% for benefit in benefits %}
+                {% assign clean = benefit | strip %}
+
+                {% if clean != blank %}
+                  <li>
+                    <span
+                      class="b-rewards__benefit-check"
+                      aria-hidden="true"
+                    >
+                      ✓
+                    </span>
+
+                    <span>{{ clean }}</span>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "B-Rewards tiers",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "MEMBERSHIP TIERS"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Your loyalty takes center stage"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Intro",
+      "default": "<p>Move through each tier as you shop and unlock more benefits along the way.</p>"
+    },
+    {
+      "type": "color",
+      "id": "bg",
+      "label": "Background",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Tier",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Tier name",
+          "default": "Move"
+        },
+        {
+          "type": "text",
+          "id": "threshold",
+          "label": "Spend threshold",
+          "default": "Up to $199 annual spend"
+        },
+        {
+          "type": "text",
+          "id": "rate_number",
+          "label": "Points number",
+          "default": "1"
+        },
+        {
+          "type": "text",
+          "id": "rate_label",
+          "label": "Points label",
+          "default": "POINT"
+        },
+        {
+          "type": "text",
+          "id": "rate_unit",
+          "label": "Points unit",
+          "default": "PER $1"
+        },
+        {
+          "type": "richtext",
+          "id": "intro",
+          "label": "Description",
+          "default": "<p>Your starting point for member rewards.</p>"
+        },
+        {
+          "type": "textarea",
+          "id": "benefits",
+          "label": "Benefits, one per line",
+          "default": "Birthday gift\nMember-only offers\nSurprise-point perks"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "B-Rewards tiers",
+      "blocks": [
+        {
+          "type": "tier",
+          "settings": {
+            "name": "Move",
+            "threshold": "Up to $199 annual spend",
+            "rate_number": "1",
+            "rate_label": "POINT",
+            "rate_unit": "PER $1",
+            "intro": "<p>Your starting point for member rewards.</p>",
+            "benefits": "Birthday gift\nMember-only offers\nSurprise-point perks"
+          }
+        },
+        {
+          "type": "tier",
+          "settings": {
+            "name": "Perform",
+            "threshold": "$200–$399 annual spend",
+            "rate_number": "1",
+            "rate_label": "POINT",
+            "rate_unit": "PER $1",
+            "intro": "<p>More benefits as your loyalty grows.</p>",
+            "benefits": "All Tier One benefits\nPerform member annual gift\nBuy 3, get 1 free on tights"
+          }
+        },
+        {
+          "type": "tier",
+          "settings": {
+            "name": "Inspire",
+            "threshold": "$400+ annual spend",
+            "rate_number": "1",
+            "rate_label": "POINT",
+            "rate_unit": "PER $1",
+            "intro": "<p>Our highest level of B-Rewards benefits.</p>",
+            "benefits": "All Tier Two benefits\nInspire member annual gift\nFree standard shipping everyday"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

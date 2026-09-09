@@ -1,0 +1,55 @@
+<div class="relative container" style="padding-top: {{ section.settings.padding-top }}px; padding-bottom: {{ section.settings.padding-bottom }}px;">
+  <div class="{{ section.settings.layout-width }}">
+    {{ section.settings.custom_liquid }}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Custom Liquid/HTML",
+    "tag": "section",
+    "settings": [
+      {
+        "type": "liquid",
+        "id": "custom_liquid",
+        "label": "Custom Liquid",
+        "default": "Add Liquid code or HTML to create advanced customizations."
+      }, {
+        "type": "range",
+        "id": "padding-top",
+        "label": "Padding Top",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "default": 0
+      }, {
+        "type": "range",
+        "id": "padding-bottom",
+        "label": "Padding Bottom",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "default": 0
+      }, {
+        "type": "select",
+        "id": "layout-width",
+        "label": "Layout",
+        "options": [
+          {
+            "value": "page-width",
+            "label": "Page Width"
+          }, {
+            "value": "full-width",
+            "label": "Full Width"
+          }
+        ],
+        "default": "page-width"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom Liquid/HTML"
+      }
+    ]
+  }
+{% endschema %}

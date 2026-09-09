@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "pf-d9e18676": {
+      "type": "pf-d9e18676",
+      "settings": {
+        "pf_8676044c_code": "<script>(function(t,e,s,n){var o,a,c;t.SMCX=t.SMCX||[],e.getElementById(n)||(o=e.getElementsByTagName(s),a=o[o.length-1],c=e.createElement(s),c.type=\"text/javascript\",c.async=!0,c.id=n,c.src=\"https://widget.surveymonkey.com/collect/website/js/tRaiETqnLgj758hTBazgd2_2BipH34cAC_2FHd9y_2FuveOS3eHWunnd5UyrqbYZLzgHRH.js\",a.parentNode.insertBefore(c,a))})(window,document,\"script\",\"smcx-sdk\");</script><a style=\"font: 12px Helvetica, sans-serif; color: #999; text-decoration: none;\" href=www.surveymonkey.com> Create your own user feedback survey </a>",
+        "pf_7bc5fe77_value": "We hope you're enjoying your ETU pointe shoe. We'd love to hear what you think and gain your valuable feedback on our latest Pointe shoe innovation. Thank you.",
+        "pf_bf732f28_value": "ETU Pointe Shoe Feedback"
+      }
+    }
+  },
+  "order": [
+    "pf-d9e18676"
+  ]
+}

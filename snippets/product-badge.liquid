@@ -1,0 +1,105 @@
+{%- liquid
+  assign grouped_plp_low_stock = false
+
+  if grouped_plp_low_stock
+    assign low_stock_label = 'products.product.low_stock' | t
+    if low_stock_label contains 'Translation missing' or low_stock_label == 'products.product.low_stock' or low_stock_label == blank
+      assign low_stock_label = 'Low stock'
+    endif
+  endif
+
+  comment
+    Renders up to 2 product badges as a stacked list.
+    Priority order (highest first):
+      badge_coming_soon → badge_new_arrival → badge_new_color →
+      badge_limited_edition → badge_exclusive → badge_best_seller → badge_styled_with →
+      badge_selling_fast → badge_almost_gone → badge_back_in_stock →
+      badge_sale → badge_flash_sale → badge_bundle_and_save →
+      badge_spend_and_save → badge_gift_with_purchase
+    Requirements: product must have the tag AND the badge type must be enabled in theme settings.
+    Display text comes from the theme setting; falls back to the locale translation if blank.
+  endcomment
+
+  assign badge_count = 0
+  assign badge_max = 2
+
+  assign badge_keys = 'badge_coming_soon,badge_new_arrival,badge_new_color,badge_limited_edition,badge_exclusive,badge_best_seller,badge_styled_with,badge_selling_fast,badge_almost_gone,badge_back_in_stock,badge_sale,badge_flash_sale,badge_bundle_and_save,badge_spend_and_save,badge_gift_with_purchase' | split: ','
+
+  assign matched_tags = ''
+  assign matched_colors = ''
+  assign matched_text_colors = ''
+  assign matched_labels = ''
+
+  for key in badge_keys
+    if badge_count >= badge_max
+      break
+    endif
+
+    assign enabled_setting = key | append: '_label_enabled'
+    assign color_setting = key | append: '_label_color'
+    assign text_color_setting = key | append: '_label_text_color'
+    assign text_setting = key | append: '_label_text'
+    assign key_norm = key | downcase | strip
+    assign has_badge_tag = false
+    for raw_tag in product.tags
+      assign tag_norm = raw_tag | downcase | strip
+      if tag_norm == key_norm
+        assign has_badge_tag = true
+        break
+      endif
+    endfor
+
+    if has_badge_tag and settings[enabled_setting]
+      assign badge_count = badge_count | plus: 1
+
+      if matched_tags == ''
+        assign matched_tags = key
+        assign matched_colors = settings[color_setting]
+        assign matched_text_colors = settings[text_color_setting]
+      else
+        assign matched_tags = matched_tags | append: '||' | append: key
+        assign matched_colors = matched_colors | append: '||' | append: settings[color_setting]
+        assign matched_text_colors = matched_text_colors | append: '||' | append: settings[text_color_setting]
+      endif
+
+      assign custom_text = settings[text_setting]
+      assign locale_key = 'products.product.' | append: key
+      assign locale_text = locale_key | t
+
+      if custom_text != blank
+        assign label_text = custom_text
+      elsif locale_text != locale_key
+        assign label_text = locale_text
+      else
+        assign label_text = key | replace: 'badge_', '' | replace: '_', ' ' | capitalize
+      endif
+
+      if matched_labels == ''
+        assign matched_labels = label_text
+      else
+        assign matched_labels = matched_labels | append: '||' | append: label_text
+      endif
+    endif
+  endfor
+-%}
+{%- if grouped_plp_low_stock -%}
+  {%- assign low_stock_bg = settings.badge_almost_gone_label_color | default: '#000000' -%}
+  {%- assign low_stock_fg = settings.badge_almost_gone_label_text_color | default: '#ffffff' -%}
+  <ul class="product-badges" aria-label="Product badges">
+    <li class="product-badges__item" data-badge="badge_low_stock" style="background-color: {{ low_stock_bg }}; color: {{ low_stock_fg }};">
+      {{- low_stock_label -}}
+    </li>
+  </ul>
+{%- elsif badge_count > 0 -%}
+  {%- assign tag_arr = matched_tags | split: '||' -%}
+  {%- assign color_arr = matched_colors | split: '||' -%}
+  {%- assign text_color_arr = matched_text_colors | split: '||' -%}
+  {%- assign label_arr = matched_labels | split: '||' -%}
+  <ul class="product-badges" aria-label="Product badges">
+    {%- for tag in tag_arr -%}
+      <li class="product-badges__item" data-badge="{{ tag }}" style="background-color: {{ color_arr[forloop.index0] }}; color: {{ text_color_arr[forloop.index0] }};">
+        {{- label_arr[forloop.index0] -}}
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}

@@ -1,0 +1,17 @@
+<div class="b-rewards b-rewards__section" style="background:{{ section.settings.bg }};">
+  <div class="page-width">
+    <div class="b-rewards__center"><p class="b-rewards__eyebrow">{{ section.settings.eyebrow | escape }}</p><h2 class="large-title b-rewards__title">{{ section.settings.heading | escape }}</h2>{% if section.settings.text != blank %}<div class="rte b-rewards__intro">{{ section.settings.text }}</div>{% endif %}</div>
+    <div class="b-rewards__grid b-rewards__grid--4">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'earn' %}<div class="b-rewards__card b-rewards__center" {{ block.shopify_attributes }}>{% if block.settings.icon != blank %}{{ block.settings.icon | image_url: width: 120 | image_tag: class: 'b-rewards__earn-icon', loading: 'lazy' }}{% endif %}<h3>{{ block.settings.heading | escape }}</h3><div class="rte">{{ block.settings.text }}</div><div class="b-rewards__points">{{ block.settings.points | escape }}</div></div>
+          {% when '@app' %}<div class="b-rewards__app" {{ block.shopify_attributes }}>{% render block %}</div>
+        {% endcase %}
+      {% endfor %}
+    </div>
+    {% if section.settings.note != blank %}<p class="b-rewards__note b-rewards__center">{{ section.settings.note | escape }}</p>{% endif %}
+  </div>
+</div>
+{% schema %}
+{"name":"B-Rewards earn","tag":"section","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"WAYS TO EARN"},{"type":"text","id":"heading","label":"Heading","default":"Every move earns more"},{"type":"richtext","id":"text","label":"Intro","default":"<p>Use these placeholders until the final earning rules are approved.</p>"},{"type":"text","id":"note","label":"Footnote","default":"Point values shown are placeholders and subject to change."},{"type":"color","id":"bg","label":"Background","default":"#f7f4f4"}],"blocks":[{"type":"earn","name":"Earning action","settings":[{"type":"image_picker","id":"icon","label":"Optional icon"},{"type":"text","id":"heading","label":"Heading","default":"Shop online"},{"type":"richtext","id":"text","label":"Text","default":"<p>Earn points with every eligible purchase.</p>"},{"type":"text","id":"points","label":"Points","default":"1 point per $1"}]},{"type":"@app"}],"presets":[{"name":"B-Rewards earn","blocks":[{"type":"earn"},{"type":"earn"},{"type":"earn"},{"type":"earn"}]}]}
+{% endschema %}

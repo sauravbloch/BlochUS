@@ -1,0 +1,164 @@
+{% if section.settings.show_nav == true %}
+<div class="page-width">   
+      {% if section.settings.home_only_nav == false or template == 'index' %}
+        <section class="store-nav-bar container-full">
+          <div class="page-width-full store-nav-wrap">
+
+                   <div class="global-header-announcement">
+                    {% if section.settings.nav_1_url %}
+                      <a class="store-nav-link" href="{{ section.settings.nav_1_url }}">
+                        {{ section.settings.nav_1_text }} {%  render 'svg-chevron-right-header' %}
+                      </a>
+                    {% endif %}
+
+                   
+                    {% if section.settings.nav_2_url %}
+                      <a class="store-nav-link" href="{{ section.settings.nav_2_url }}">
+                        {{ section.settings.nav_2_text }} {%  render 'svg-chevron-right-header' %}
+                      </a>                      
+                    {% endif %}
+                  </div>            
+            
+                   <div class="global-header-announcement right">
+                    {% if section.settings.nav_3_url %}
+                      <a class="store-nav-link" href="{{ section.settings.nav_3_url }}">
+                        {%  render 'svg-store-marker' %} <span class="hide-mobile">{{ section.settings.nav_3_text }}</span>
+                    {% endif %}
+                      </a>
+                  </div>
+            
+            </div>
+        </section>
+    {% endif %}
+</div>  
+<div style="clear: both;"></div>
+{% endif %}  
+{% schema %}
+  {
+    "name": "Global Header",
+        "settings": [
+      {
+        "type": "header",
+        "content": "Navigation"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_nav",
+        "label": "Show global nav",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "home_only_nav",
+        "label": "Show only on the home page",
+        "default": false
+      },
+      {
+        "type": "color",
+        "id": "nav_bar_color",
+        "label": "Nav bar color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color",
+        "default": "#ffffff"
+      },       
+      {
+        "type": "header",
+        "content": "1st Top Link"
+      },
+      {
+        "type": "text",
+        "id": "nav_1_text",
+        "label": "Nav 1 text"
+      },
+      {
+        "type": "url",
+        "id": "nav_1_url",
+        "label": "Nav 1 link"
+      },
+      {
+        "type": "header",
+        "content": "2nd Top Link"
+      },          
+      {
+        "type": "text",
+        "id": "nav_2_text",
+        "label": "Nav 2 text"
+      },
+      {
+        "type": "url",
+        "id": "nav_2_url",
+        "label": "Nav 2 link"
+      },
+      {
+        "type": "header",
+        "content": "Stores Link"
+      },          
+      {
+        "type": "text",
+        "id": "nav_3_text",
+        "label": "Stores Text"
+      },
+      {
+        "type": "url",
+        "id": "nav_3_url",
+        "label": "Stores Link"
+      }
+    ]
+  }
+{% endschema %}
+
+{% style %} 
+#shopify-section-global-header{
+	background-color: {{ section.settings.nav_bar_color }};
+	padding-left: 15px;
+    padding-right: 15px;
+}
+.global-header-announcement{
+	width: auto;
+	float: left;
+	color: #E7D1CC;
+	padding: 10px 0;
+	text-align:left;
+}
+.global-header-announcement.right{
+  float: right;
+  margin-top: -3px;
+}
+.store-nav{
+  	padding: 6px 0;
+	float: right;
+	text-align: left;
+	background-color: {{ section.settings.tab_color_2 }};
+  }
+.store-nav a{
+  	padding: 10px 0;
+  }
+.store-nav-wrap a{
+	text-decoration: none;
+  }
+.store-nav-wrap a{
+	color: {{ section.settings.text_color }}
+  }
+
+.store-nav-bar a:hover svg {opacity:1 !important;}
+
+/* RESPONSIVE 
+@media only screen and (max-width: 768px) {
+  #shopify-section-global-header{
+      padding-left: 0px;
+      padding-right: 0px;
+  }
+	.global-header-announcement{ 
+  		float: none;
+		text-align: center;
+  }
+  .store-nav{
+      width: calc( 100%/{{ nav_count }} );
+      float: left;
+  }
+}*/
+{% endstyle %}

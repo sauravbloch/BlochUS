@@ -1,0 +1,420 @@
+{% doc %}
+  @prompt
+    create a multi column section with 10 padding at top and bottom, add a heading with option to change alignment, create 4 wide
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-multi-column-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-multi-column-container-{{ ai_gen_id }} {
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-multi-column-heading-{{ ai_gen_id }} {
+    margin: 0 0 30px;
+    text-align: {{ block.settings.heading_alignment }};
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+  }
+
+  .ai-multi-column-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: {{ block.settings.column_gap }}px;
+  }
+
+  .ai-multi-column-item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: {{ block.settings.content_alignment }};
+    text-align: {{ block.settings.content_alignment }};
+  }
+
+  .ai-multi-column-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .ai-multi-column-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-multi-column-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-multi-column-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  .ai-multi-column-item-heading-{{ ai_gen_id }} {
+    margin: 0 0 10px;
+    color: {{ block.settings.item_heading_color }};
+    font-size: {{ block.settings.item_heading_size }}px;
+  }
+
+  .ai-multi-column-item-text-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ block.settings.item_text_color }};
+    font-size: {{ block.settings.item_text_size }}px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-multi-column-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-multi-column-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+    }
+  }
+{% endstyle %}
+
+<multi-column-{{ ai_gen_id }} class="ai-multi-column-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-multi-column-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-multi-column-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-multi-column-grid-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% liquid
+          assign image_key = 'column_' | append: i | append: '_image'
+          assign heading_key = 'column_' | append: i | append: '_heading'
+          assign text_key = 'column_' | append: i | append: '_text'
+          
+          assign column_image = block.settings[image_key]
+          assign column_heading = block.settings[heading_key]
+          assign column_text = block.settings[text_key]
+        %}
+
+        <div class="ai-multi-column-item-{{ ai_gen_id }}">
+          <div class="ai-multi-column-image-wrapper-{{ ai_gen_id }}">
+            {% if column_image %}
+              <img
+                src="{{ column_image | image_url: width: 600 }}"
+                alt="{{ column_image.alt | escape }}"
+                loading="lazy"
+                width="{{ column_image.width }}"
+                height="{{ column_image.height }}"
+                class="ai-multi-column-image-{{ ai_gen_id }}"
+              >
+            {% else %}
+              <div class="ai-multi-column-image-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if column_heading != blank %}
+            <h3 class="ai-multi-column-item-heading-{{ ai_gen_id }}">{{ column_heading }}</h3>
+          {% endif %}
+
+          {% if column_text != blank %}
+            <div class="ai-multi-column-item-text-{{ ai_gen_id }}">{{ column_text }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</multi-column-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class MultiColumn{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+    }
+    customElements.define('multi-column-{{ ai_gen_id }}', MultiColumn{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Multi column",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Multi column"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "header",
+      "content": "Column content"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "item_heading_size",
+      "label": "Item heading size",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "item_heading_color",
+      "label": "Item heading color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "range",
+      "id": "item_text_size",
+      "label": "Item text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "item_text_color",
+      "label": "Item text color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "header",
+      "content": "Column 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "column_1_heading",
+      "label": "Heading",
+      "default": "Column 1"
+    },
+    {
+      "type": "richtext",
+      "id": "column_1_text",
+      "label": "Text",
+      "default": "<p>Add details about your column here</p>"
+    },
+    {
+      "type": "header",
+      "content": "Column 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "column_2_heading",
+      "label": "Heading",
+      "default": "Column 2"
+    },
+    {
+      "type": "richtext",
+      "id": "column_2_text",
+      "label": "Text",
+      "default": "<p>Add details about your column here</p>"
+    },
+    {
+      "type": "header",
+      "content": "Column 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "column_3_heading",
+      "label": "Heading",
+      "default": "Column 3"
+    },
+    {
+      "type": "richtext",
+      "id": "column_3_text",
+      "label": "Text",
+      "default": "<p>Add details about your column here</p>"
+    },
+    {
+      "type": "header",
+      "content": "Column 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "column_4_heading",
+      "label": "Heading",
+      "default": "Column 4"
+    },
+    {
+      "type": "richtext",
+      "id": "column_4_text",
+      "label": "Text",
+      "default": "<p>Add details about your column here</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multi column"
+    }
+  ]
+}
+{% endschema %}

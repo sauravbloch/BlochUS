@@ -1,0 +1,851 @@
+{% doc %}
+  @prompt
+    create a split banner block with the able to change the overlay text position via toggle, allow left banner to be width 65 and right to be width 35, allow spacing between two banners, show heading, subheading and cta link text of the left banner underneath the image on mobile, make the CTA links instead of buttons, allow different text colours, fonts and sizes for the left and right banners
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-split-banner-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-split-banner-container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: {{ block.settings.left_width }}% {{ block.settings.right_width }}%;
+    gap: {{ block.settings.banner_spacing }}px;
+    min-height: {{ block.settings.banner_height }}px;
+    position: relative;
+  }
+
+  .ai-split-banner-side-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-split-banner-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-split-banner-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-split-banner-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-split-banner-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .ai-split-banner-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.overlay_color }};
+    opacity: {{ block.settings.overlay_opacity }};
+    pointer-events: none;
+  }
+
+  .ai-split-banner-content-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    padding: {{ block.settings.content_padding }}px;
+    z-index: 2;
+    {% if block.settings.text_position == 'top_left' %}
+      align-items: flex-start;
+      justify-content: flex-start;
+    {% elsif block.settings.text_position == 'top_center' %}
+      align-items: flex-start;
+      justify-content: center;
+    {% elsif block.settings.text_position == 'top_right' %}
+      align-items: flex-start;
+      justify-content: flex-end;
+    {% elsif block.settings.text_position == 'center_left' %}
+      align-items: center;
+      justify-content: flex-start;
+    {% elsif block.settings.text_position == 'center' %}
+      align-items: center;
+      justify-content: center;
+    {% elsif block.settings.text_position == 'center_right' %}
+      align-items: center;
+      justify-content: flex-end;
+    {% elsif block.settings.text_position == 'bottom_left' %}
+      align-items: flex-end;
+      justify-content: flex-start;
+    {% elsif block.settings.text_position == 'bottom_center' %}
+      align-items: flex-end;
+      justify-content: center;
+    {% elsif block.settings.text_position == 'bottom_right' %}
+      align-items: flex-end;
+      justify-content: flex-end;
+    {% endif %}
+  }
+
+  .ai-split-banner-text-wrapper-{{ ai_gen_id }} {
+    text-align: {% if block.settings.text_position contains 'left' %}left{% elsif block.settings.text_position contains 'right' %}right{% else %}center{% endif %};
+    max-width: {{ block.settings.text_max_width }}px;
+  }
+
+  .ai-split-banner-left-{{ ai_gen_id }} .ai-split-banner-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.left_heading_color }};
+    font-size: {{ block.settings.left_heading_size }}px;
+    font-family: {{ block.settings.left_heading_font.family }}, {{ block.settings.left_heading_font.fallback_families }};
+    font-weight: {{ block.settings.left_heading_font.weight }};
+    font-style: {{ block.settings.left_heading_font.style }};
+    margin: 0 0 {{ block.settings.heading_spacing }}px 0;
+    line-height: 1.2;
+  }
+
+  .ai-split-banner-left-{{ ai_gen_id }} .ai-split-banner-subheading-{{ ai_gen_id }} {
+    color: {{ block.settings.left_text_color }};
+    font-size: {{ block.settings.left_text_size }}px;
+    font-family: {{ block.settings.left_text_font.family }}, {{ block.settings.left_text_font.fallback_families }};
+    font-weight: {{ block.settings.left_text_font.weight }};
+    font-style: {{ block.settings.left_text_font.style }};
+    margin: 0 0 {{ block.settings.link_spacing }}px 0;
+    line-height: 1.5;
+  }
+
+  .ai-split-banner-left-{{ ai_gen_id }} .ai-split-banner-link-{{ ai_gen_id }} {
+    display: inline-block;
+    color: {{ block.settings.left_link_color }};
+    text-decoration: {{ block.settings.link_underline }};
+    font-size: {{ block.settings.left_link_size }}px;
+    font-family: {{ block.settings.left_link_font.family }}, {{ block.settings.left_link_font.fallback_families }};
+    font-weight: {{ block.settings.left_link_font.weight }};
+    font-style: {{ block.settings.left_link_font.style }};
+    transition: color 0.3s ease;
+  }
+
+  .ai-split-banner-left-{{ ai_gen_id }} .ai-split-banner-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.left_link_hover_color }};
+  }
+
+  .ai-split-banner-right-{{ ai_gen_id }} .ai-split-banner-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.right_heading_color }};
+    font-size: {{ block.settings.right_heading_size }}px;
+    font-family: {{ block.settings.right_heading_font.family }}, {{ block.settings.right_heading_font.fallback_families }};
+    font-weight: {{ block.settings.right_heading_font.weight }};
+    font-style: {{ block.settings.right_heading_font.style }};
+    margin: 0 0 {{ block.settings.heading_spacing }}px 0;
+    line-height: 1.2;
+  }
+
+  .ai-split-banner-right-{{ ai_gen_id }} .ai-split-banner-subheading-{{ ai_gen_id }} {
+    color: {{ block.settings.right_text_color }};
+    font-size: {{ block.settings.right_text_size }}px;
+    font-family: {{ block.settings.right_text_font.family }}, {{ block.settings.right_text_font.fallback_families }};
+    font-weight: {{ block.settings.right_text_font.weight }};
+    font-style: {{ block.settings.right_text_font.style }};
+    margin: 0 0 {{ block.settings.link_spacing }}px 0;
+    line-height: 1.5;
+  }
+
+  .ai-split-banner-right-{{ ai_gen_id }} .ai-split-banner-link-{{ ai_gen_id }} {
+    display: inline-block;
+    color: {{ block.settings.right_link_color }};
+    text-decoration: {{ block.settings.link_underline }};
+    font-size: {{ block.settings.right_link_size }}px;
+    font-family: {{ block.settings.right_link_font.family }}, {{ block.settings.right_link_font.fallback_families }};
+    font-weight: {{ block.settings.right_link_font.weight }};
+    font-style: {{ block.settings.right_link_font.style }};
+    transition: color 0.3s ease;
+  }
+
+  .ai-split-banner-right-{{ ai_gen_id }} .ai-split-banner-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.right_link_hover_color }};
+  }
+
+  .ai-split-banner-mobile-content-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-split-banner-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      gap: {{ block.settings.mobile_banner_spacing }}px;
+    }
+
+    .ai-split-banner-side-{{ ai_gen_id }} {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ai-split-banner-image-wrapper-{{ ai_gen_id }} {
+      min-height: {{ block.settings.mobile_banner_height }}px;
+    }
+
+    .ai-split-banner-left-{{ ai_gen_id }} .ai-split-banner-content-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .ai-split-banner-mobile-content-{{ ai_gen_id }} {
+      display: block;
+      padding: {{ block.settings.mobile_content_padding }}px;
+      background-color: {{ block.settings.mobile_content_background }};
+    }
+
+    .ai-split-banner-mobile-content-{{ ai_gen_id }} .ai-split-banner-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.left_heading_size | times: 0.7 }}px;
+      color: {{ block.settings.mobile_heading_color }};
+    }
+
+    .ai-split-banner-mobile-content-{{ ai_gen_id }} .ai-split-banner-subheading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.left_text_size | times: 0.9 }}px;
+      color: {{ block.settings.mobile_text_color }};
+    }
+
+    .ai-split-banner-mobile-content-{{ ai_gen_id }} .ai-split-banner-link-{{ ai_gen_id }} {
+      color: {{ block.settings.mobile_link_color }};
+      font-size: {{ block.settings.left_link_size | times: 0.9 }}px;
+    }
+
+    .ai-split-banner-mobile-content-{{ ai_gen_id }} .ai-split-banner-link-{{ ai_gen_id }}:hover {
+      color: {{ block.settings.mobile_link_hover_color }};
+    }
+
+    .ai-split-banner-right-{{ ai_gen_id }} .ai-split-banner-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.right_heading_size | times: 0.7 }}px;
+    }
+
+    .ai-split-banner-right-{{ ai_gen_id }} .ai-split-banner-subheading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.right_text_size | times: 0.9 }}px;
+    }
+
+    .ai-split-banner-right-{{ ai_gen_id }} .ai-split-banner-link-{{ ai_gen_id }} {
+      font-size: {{ block.settings.right_link_size | times: 0.9 }}px;
+    }
+
+    .ai-split-banner-right-{{ ai_gen_id }} .ai-split-banner-content-{{ ai_gen_id }} {
+      padding: {{ block.settings.content_padding | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-split-banner-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-split-banner-container-{{ ai_gen_id }}">
+    <div class="ai-split-banner-side-{{ ai_gen_id }} ai-split-banner-left-{{ ai_gen_id }}">
+      <div class="ai-split-banner-image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.left_image %}
+          <img
+            src="{{ block.settings.left_image | image_url: width: 1500 }}"
+            alt="{{ block.settings.left_image.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.left_image.width }}"
+            height="{{ block.settings.left_image.height }}"
+            class="ai-split-banner-image-{{ ai_gen_id }}"
+          >
+        {% else %}
+          <div class="ai-split-banner-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+
+        {% if block.settings.show_left_overlay %}
+          <div class="ai-split-banner-overlay-{{ ai_gen_id }}"></div>
+        {% endif %}
+
+        {% if block.settings.show_left_text %}
+          <div class="ai-split-banner-content-{{ ai_gen_id }}">
+            <div class="ai-split-banner-text-wrapper-{{ ai_gen_id }}">
+              {% if block.settings.left_heading != blank %}
+                <h2 class="ai-split-banner-heading-{{ ai_gen_id }}">{{ block.settings.left_heading }}</h2>
+              {% endif %}
+
+              {% if block.settings.left_subheading != blank %}
+                <div class="ai-split-banner-subheading-{{ ai_gen_id }}">{{ block.settings.left_subheading }}</div>
+              {% endif %}
+
+              {% if block.settings.left_link_text != blank and block.settings.left_link_url != blank %}
+                <a href="{{ block.settings.left_link_url }}" class="ai-split-banner-link-{{ ai_gen_id }}">
+                  {{ block.settings.left_link_text }}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if block.settings.show_left_text %}
+        <div class="ai-split-banner-mobile-content-{{ ai_gen_id }}">
+          {% if block.settings.left_heading != blank %}
+            <h2 class="ai-split-banner-heading-{{ ai_gen_id }}">{{ block.settings.left_heading }}</h2>
+          {% endif %}
+
+          {% if block.settings.left_subheading != blank %}
+            <div class="ai-split-banner-subheading-{{ ai_gen_id }}">{{ block.settings.left_subheading }}</div>
+          {% endif %}
+
+          {% if block.settings.left_link_text != blank and block.settings.left_link_url != blank %}
+            <a href="{{ block.settings.left_link_url }}" class="ai-split-banner-link-{{ ai_gen_id }}">
+              {{ block.settings.left_link_text }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-split-banner-side-{{ ai_gen_id }} ai-split-banner-right-{{ ai_gen_id }}">
+      <div class="ai-split-banner-image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.right_image %}
+          <img
+            src="{{ block.settings.right_image | image_url: width: 1500 }}"
+            alt="{{ block.settings.right_image.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.right_image.width }}"
+            height="{{ block.settings.right_image.height }}"
+            class="ai-split-banner-image-{{ ai_gen_id }}"
+          >
+        {% else %}
+          <div class="ai-split-banner-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+
+        {% if block.settings.show_right_overlay %}
+          <div class="ai-split-banner-overlay-{{ ai_gen_id }}"></div>
+        {% endif %}
+
+        {% if block.settings.show_right_text %}
+          <div class="ai-split-banner-content-{{ ai_gen_id }}">
+            <div class="ai-split-banner-text-wrapper-{{ ai_gen_id }}">
+              {% if block.settings.right_heading != blank %}
+                <h2 class="ai-split-banner-heading-{{ ai_gen_id }}">{{ block.settings.right_heading }}</h2>
+              {% endif %}
+
+              {% if block.settings.right_subheading != blank %}
+                <div class="ai-split-banner-subheading-{{ ai_gen_id }}">{{ block.settings.right_subheading }}</div>
+              {% endif %}
+
+              {% if block.settings.right_link_text != blank and block.settings.right_link_url != blank %}
+                <a href="{{ block.settings.right_link_url }}" class="ai-split-banner-link-{{ ai_gen_id }}">
+                  {{ block.settings.right_link_text }}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Split banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "left_width",
+      "label": "Left banner width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "default": 65
+    },
+    {
+      "type": "range",
+      "id": "right_width",
+      "label": "Right banner width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "banner_spacing",
+      "label": "Spacing between banners",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_banner_spacing",
+      "label": "Mobile spacing",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "label": "Desktop height",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "mobile_banner_height",
+      "label": "Mobile height",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Text position"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Position",
+      "options": [
+        {
+          "value": "top_left",
+          "label": "Top left"
+        },
+        {
+          "value": "top_center",
+          "label": "Top center"
+        },
+        {
+          "value": "top_right",
+          "label": "Top right"
+        },
+        {
+          "value": "center_left",
+          "label": "Center left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "center_right",
+          "label": "Center right"
+        },
+        {
+          "value": "bottom_left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom_center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom_right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Content padding",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "text_max_width",
+      "label": "Text max width",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "link_spacing",
+      "label": "Link spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "header",
+      "content": "Left banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_left_overlay",
+      "label": "Show overlay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_left_text",
+      "label": "Show text",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "left_heading",
+      "label": "Heading",
+      "default": "Left Banner"
+    },
+    {
+      "type": "textarea",
+      "id": "left_subheading",
+      "label": "Subheading",
+      "default": "Discover our latest collection"
+    },
+    {
+      "type": "text",
+      "id": "left_link_text",
+      "label": "Link text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "left_link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Left banner typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "left_heading_font",
+      "label": "Heading font",
+      "default": "sans-serif"
+    },
+    {
+      "type": "range",
+      "id": "left_heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "left_heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "font_picker",
+      "id": "left_text_font",
+      "label": "Text font",
+      "default": "sans-serif"
+    },
+    {
+      "type": "range",
+      "id": "left_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "left_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "font_picker",
+      "id": "left_link_font",
+      "label": "Link font",
+      "default": "sans-serif"
+    },
+    {
+      "type": "range",
+      "id": "left_link_size",
+      "label": "Link size",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "left_link_color",
+      "label": "Link color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "left_link_hover_color",
+      "label": "Link hover color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "header",
+      "content": "Right banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_right_overlay",
+      "label": "Show overlay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_right_text",
+      "label": "Show text",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "right_heading",
+      "label": "Heading",
+      "default": "Right Banner"
+    },
+    {
+      "type": "textarea",
+      "id": "right_subheading",
+      "label": "Subheading",
+      "default": "Explore new arrivals"
+    },
+    {
+      "type": "text",
+      "id": "right_link_text",
+      "label": "Link text",
+      "default": "Explore"
+    },
+    {
+      "type": "url",
+      "id": "right_link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Right banner typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "right_heading_font",
+      "label": "Heading font",
+      "default": "sans-serif"
+    },
+    {
+      "type": "range",
+      "id": "right_heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "right_heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "font_picker",
+      "id": "right_text_font",
+      "label": "Text font",
+      "default": "sans-serif"
+    },
+    {
+      "type": "range",
+      "id": "right_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "right_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "font_picker",
+      "id": "right_link_font",
+      "label": "Link font",
+      "default": "sans-serif"
+    },
+    {
+      "type": "range",
+      "id": "right_link_size",
+      "label": "Link size",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "right_link_color",
+      "label": "Link color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "right_link_hover_color",
+      "label": "Link hover color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "header",
+      "content": "Link style"
+    },
+    {
+      "type": "select",
+      "id": "link_underline",
+      "label": "Underline",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "underline",
+          "label": "Always"
+        }
+      ],
+      "default": "underline"
+    },
+    {
+      "type": "header",
+      "content": "Mobile content area"
+    },
+    {
+      "type": "range",
+      "id": "mobile_content_padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "mobile_content_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "mobile_heading_color",
+      "label": "Heading color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "color",
+      "id": "mobile_text_color",
+      "label": "Text color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "color",
+      "id": "mobile_link_color",
+      "label": "Link color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "color",
+      "id": "mobile_link_hover_color",
+      "label": "Link hover color",
+      "default": "#4c4545"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Split banner"
+    }
+  ]
+}
+{% endschema %}

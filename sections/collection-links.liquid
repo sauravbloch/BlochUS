@@ -1,0 +1,85 @@
+<style>
+  .collection-links__items li {
+    display: inline-flex;
+  }
+</style>
+<div class="relative large-row container" data-section-id="{{ section.id }}" data-section-type="collection-links">
+  <div class="page-width">
+    {% if section.settings.title != blank %}
+      <div class="large-row">
+        <h2 id="section-title-{{ section.id }}" class="h3 text-center {% if section.settings.enlarge_title %}giant-title{% else %}large-title{% endif%}">{{ section.settings.title | escape }}</h2>
+      </div>
+    {% endif %}
+
+    <div class="stacked_links">
+      <ul class="collection-links__items"
+        aria-labelledby="section-title-{{ section.id }}">
+      {% for block in section.blocks %}
+        {%- assign collection = collections[block.settings.collection] -%}
+        <li>
+          {% if collection != blank %}
+            <a class="pill-cat" href="{{ collection.url }}">{{ collection.title }}</a>
+          {% else %}
+            <a class="{{ grid_class_list }}">{{ 'homepage.onboarding.collection_title' | t }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Collection links",
+    "tag": "section",
+    "class": "section-collection-links",
+    "max_blocks": 30,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Collection links"
+      },
+      {
+        "type": "checkbox",
+        "id": "enlarge_title",
+        "label": "Enlarge heading",
+        "default": false
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Collection links",
+        "blocks": [
+          {
+            "type": "collection"
+          },
+          {
+            "type": "collection"
+          },
+          {
+            "type": "collection"
+          },
+          {
+            "type": "collection"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

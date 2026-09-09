@@ -1,0 +1,373 @@
+{%- liquid
+  assign group_count = 0
+  for grouped_handle in group_handles
+    assign grouped_handle = grouped_handle | strip
+    if grouped_handle != blank
+      assign group_count = group_count | plus: 1
+    endif
+  endfor
+
+  assign row_active_handle = active_handle | default: '' | strip
+  if row_active_handle == blank and product != blank
+    assign row_active_handle = product.handle | strip
+  endif
+  assign active_norm = row_active_handle | downcase
+
+  assign initial_product = product
+  assign effective_active_handle = ''
+  assign group_products_count = 0
+
+  if group_products != blank
+    assign gp_first = blank
+    assign gp_first_handle = blank
+    for gp in group_products
+      if gp != blank and gp.handle != blank
+        assign group_products_count = group_products_count | plus: 1
+        assign gph = gp.handle | strip
+        if gp_first == blank
+          assign gp_first = gp
+          assign gp_first_handle = gph
+        endif
+        if group_count > 1 and row_active_handle != blank and effective_active_handle == blank
+          assign gphn = gph | downcase
+          if gphn == active_norm
+            assign effective_active_handle = gph
+            assign initial_product = gp
+          endif
+        endif
+      endif
+    endfor
+    if effective_active_handle == blank and group_count > 1 and gp_first != blank
+      assign effective_active_handle = gp_first_handle
+      assign initial_product = gp_first
+    endif
+  endif
+
+  if effective_active_handle == blank and group_count > 1 and row_active_handle != blank
+    for grouped_handle in group_handles
+      assign grouped_handle = grouped_handle | strip
+      if grouped_handle != blank
+        assign gh_norm = grouped_handle | downcase
+        if gh_norm == active_norm
+          assign lookup_product = blank
+          if product != blank and product.handle == grouped_handle
+            assign lookup_product = product
+          endif
+          if lookup_product == blank and collection != blank and collection.products != blank
+            for collection_product in collection.products
+              if collection_product.handle == grouped_handle
+                assign lookup_product = collection_product
+                break
+              endif
+            endfor
+          endif
+          if lookup_product == blank
+            assign lookup_product = all_products[grouped_handle]
+          endif
+          if lookup_product != blank
+            assign effective_active_handle = grouped_handle
+            assign initial_product = lookup_product
+          endif
+          break
+        endif
+      endif
+    endfor
+  endif
+
+  if effective_active_handle == blank and group_count > 1
+    for grouped_handle in group_handles
+      assign grouped_handle = grouped_handle | strip
+      if grouped_handle != blank
+        assign lookup_product = blank
+        if product != blank and product.handle == grouped_handle
+          assign lookup_product = product
+        endif
+        if lookup_product == blank and collection != blank and collection.products != blank
+          for collection_product in collection.products
+            if collection_product.handle == grouped_handle
+              assign lookup_product = collection_product
+              break
+            endif
+          endfor
+        endif
+        if lookup_product == blank
+          assign lookup_product = all_products[grouped_handle]
+        endif
+        if lookup_product != blank
+          assign effective_active_handle = grouped_handle
+          assign initial_product = lookup_product
+        endif
+        break
+      endif
+    endfor
+  endif
+
+  if effective_active_handle == blank and initial_product != blank
+    assign effective_active_handle = initial_product.handle | strip
+  endif
+
+  assign has_metaobject_group = false
+  if group_products != blank
+    assign has_metaobject_group = true
+  endif
+
+  assign use_group_products_for_swatches = false
+  if group_products_count > 1
+    assign use_group_products_for_swatches = true
+  endif
+
+  assign grouped_base_title = initial_product.title | default: product.title
+  assign grouped_base_handle = grouped_base_title | handleize
+-%}
+<div class="{{ grid_class }} product-block-group" data-product-block-group data-card-active-handle="{{ effective_active_handle }}"{% if has_metaobject_group %} data-group-source="metaobject"{% endif %}>
+  {%- if initial_product != blank -%}
+    <div class="product-block-group__state"
+         data-group-handle="{{ effective_active_handle }}">
+      {% render 'product-block',
+        quickbuy: quickbuy,
+        product: initial_product,
+        grouped_plp: true,
+        group_handles: group_handles,
+        group_products: group_products,
+        active_handle: effective_active_handle,
+        grid_class: 'product-block-group__item',
+        show_vendor: show_vendor,
+        show_swatches: show_swatches %}
+
+      {%- if group_count > 0 -%}
+        {%- unless show_swatches == false -%}
+        <div class="product-block-group__swatches" role="tablist" aria-label="{{ 'products.product.color' | t | default: 'Color' }}">
+          {%- if use_group_products_for_swatches -%}
+            {%- for gp in group_products -%}
+              {%- assign swatch_handle = gp.handle | strip -%}
+              {%- if swatch_handle != blank -%}
+                {%- assign swatch_url = gp.url -%}
+                {%- assign color_name = '' -%}
+                {%- for option in gp.options_with_values -%}
+                  {%- assign option_name = option.name | downcase -%}
+                  {%- if option_name == 'color' or option_name == 'colour' -%}
+                    {%- assign color_name = option.values | first -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if color_name == blank -%}
+                  {%- assign base_prefix = grouped_base_handle | append: '-' -%}
+                  {%- if grouped_base_handle != blank and swatch_handle contains base_prefix -%}
+                    {%- assign color_name = swatch_handle | remove_first: base_prefix | replace: '-', ' ' -%}
+                  {%- else -%}
+                    {%- assign color_name = swatch_handle | split: '-' | last | replace: '-', ' ' -%}
+                  {%- endif -%}
+                {%- endif -%}
+                {%- assign swatch_token = color_name | downcase | replace: '"', '' | handleize -%}
+                {%- assign swatch_raw = color_name | downcase | replace: '"', '' -%}
+                {%- assign swatch_style = '' -%}
+                {%- assign swatch_file = blank -%}
+                {%- assign swatch_file_url = blank -%}
+                {%- assign swatch_hex_mf = gp.metafields.custom.swatch_hex.value | default: gp.metafields.custom.swatch_hex -%}
+                {%- assign swatch_file_mf = gp.metafields.custom.swatch_file.value | default: gp.metafields.custom.swatch_file -%}
+                {%- assign gp_mf_fallback = blank -%}
+                {%- if swatch_file_mf == blank or swatch_hex_mf == blank -%}
+                  {%- if product != blank and product.handle == swatch_handle -%}
+                    {%- assign gp_mf_fallback = product -%}
+                  {%- endif -%}
+                  {%- if gp_mf_fallback == blank and collection != blank and collection.products != blank -%}
+                    {%- for collection_product in collection.products -%}
+                      {%- if collection_product.handle == swatch_handle -%}
+                        {%- assign gp_mf_fallback = collection_product -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                  {%- if gp_mf_fallback == blank -%}
+                    {%- assign gp_mf_fallback = all_products[swatch_handle] -%}
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if gp_mf_fallback != blank -%}
+                  {%- if swatch_file_mf == blank -%}
+                    {%- assign swatch_file_mf = gp_mf_fallback.metafields.custom.swatch_file.value | default: gp_mf_fallback.metafields.custom.swatch_file -%}
+                  {%- endif -%}
+                  {%- if swatch_hex_mf == blank -%}
+                    {%- assign swatch_hex_mf = gp_mf_fallback.metafields.custom.swatch_hex.value | default: gp_mf_fallback.metafields.custom.swatch_hex -%}
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if swatch_file_mf != blank -%}
+                  {%- assign swatch_file_url = swatch_file_mf | image_url: width: 128 -%}
+                  {%- if swatch_file_url == blank -%}
+                    {%- assign swatch_file_url = swatch_file_mf | file_url -%}
+                  {%- endif -%}
+                  {%- if swatch_file_url != blank -%}
+                    {%- assign swatch_style = '--grouped-swatch-image:url(' | append: swatch_file_url | append: ')' -%}
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if swatch_style == blank and swatch_hex_mf != blank -%}
+                  {%- assign swatch_style = '--grouped-swatch-color:' | append: swatch_hex_mf -%}
+                {%- endif -%}
+                {%- comment -%}
+                  Do not force token-based fallback files here (e.g. praline.png).
+                  If metafield + swatch list are both blank, leave grouped style empty
+                  so the base [data-swatch] CSS mapping can render the dot.
+                {%- endcomment -%}
+
+                <div class="product-block-group__swatch-wrap">
+                  <button
+                    type="button"
+                    class="product-block-group__swatch color-swatch-link{% if swatch_handle == effective_active_handle %} color-swatch-link-current is-active{% endif %}{% unless gp.available %} product-block-group__swatch--disabled{% endunless %}"
+                    data-group-swatch
+                    data-target-handle="{{ swatch_handle }}"
+                    data-ssr-product="1"
+                    data-ssr-available="{% if gp.available %}true{% else %}false{% endif %}"
+                    {% if swatch_token != blank %}data-swatch="{{ swatch_token }}"{% endif %}
+                    {% if swatch_url != blank %}data-product-url="{{ swatch_url }}"{% endif %}
+                    data-product-subtitle="{{ gp.metafields.descriptors.subtitle | strip | escape }}"
+                    role="tab"
+                    aria-selected="{% if swatch_handle == effective_active_handle %}true{% else %}false{% endif %}"
+                    aria-label="{{ swatch_raw | escape }}">
+                    <span class="product-block-group__swatch-dot related-swatch-img swatch-sample"{% if swatch_style != blank %} style="{{ swatch_style }}"{% endif %}></span>
+                  </button>
+                  <span class="swatch-disabled-ui" aria-hidden="true"><span class="line"></span></span>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- else -%}
+            {%- for swatch_handle in group_handles -%}
+              {%- assign swatch_handle = swatch_handle | strip -%}
+              {%- if swatch_handle != blank -%}
+              {%- assign color_name = '' -%}
+              {%- assign swatch_style = '' -%}
+              {%- assign swatch_file = blank -%}
+              {%- assign swatch_file_url = blank -%}
+              {%- assign gp_lookup = blank -%}
+              {%- if product != blank and product.handle == swatch_handle -%}
+                {%- assign gp_lookup = product -%}
+              {%- endif -%}
+              {%- if gp_lookup == blank and collection != blank and collection.products != blank -%}
+                {%- for collection_product in collection.products -%}
+                  {%- if collection_product.handle == swatch_handle -%}
+                    {%- assign gp_lookup = collection_product -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+              {%- if gp_lookup == blank -%}
+                {%- assign gp_lookup = all_products[swatch_handle] -%}
+              {%- endif -%}
+              {%- if gp_lookup != blank and gp_lookup.handle != swatch_handle -%}
+                {%- assign gp_lookup = blank -%}
+              {%- endif -%}
+              {%- assign swatch_hex_mf = blank -%}
+              {%- assign swatch_file_mf = blank -%}
+              {%- if gp_lookup != blank -%}
+                {%- for option in gp_lookup.options_with_values -%}
+                  {%- assign option_name = option.name | downcase -%}
+                  {%- if option_name == 'color' or option_name == 'colour' -%}
+                    {%- assign color_name = option.values | first -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- assign swatch_hex_mf = gp_lookup.metafields.custom.swatch_hex.value | default: gp_lookup.metafields.custom.swatch_hex -%}
+                {%- assign swatch_file_mf = gp_lookup.metafields.custom.swatch_file.value | default: gp_lookup.metafields.custom.swatch_file -%}
+              {%- endif -%}
+              {%- if color_name == blank -%}
+                {%- assign base_prefix = grouped_base_handle | append: '-' -%}
+                {%- if grouped_base_handle != blank and swatch_handle contains base_prefix -%}
+                  {%- assign color_name = swatch_handle | remove_first: base_prefix | replace: '-', ' ' -%}
+                {%- else -%}
+                  {%- assign color_name = swatch_handle | split: '-' | last | replace: '-', ' ' -%}
+                {%- endif -%}
+              {%- endif -%}
+              {%- assign swatch_token = color_name | downcase | replace: '"', '' | handleize -%}
+              {%- assign swatch_raw = color_name | downcase | replace: '"', '' -%}
+              {%- if swatch_file_mf != blank -%}
+                {%- assign swatch_file_url = swatch_file_mf | image_url: width: 128 -%}
+                {%- if swatch_file_url == blank -%}
+                  {%- assign swatch_file_url = swatch_file_mf | file_url -%}
+                {%- endif -%}
+                {%- if swatch_file_url != blank -%}
+                  {%- assign swatch_style = '--grouped-swatch-image:url(' | append: swatch_file_url | append: ')' -%}
+                {%- endif -%}
+              {%- endif -%}
+              {%- if swatch_style == blank and swatch_hex_mf != blank -%}
+                {%- assign swatch_style = '--grouped-swatch-color:' | append: swatch_hex_mf -%}
+              {%- endif -%}
+              {%- comment -%}
+                Do not force token-based fallback files here (e.g. praline.png).
+                If metafield + swatch list are both blank, leave grouped style empty
+                so the base [data-swatch] CSS mapping can render the dot.
+              {%- endcomment -%}
+
+              <div class="product-block-group__swatch-wrap">
+                <button
+                  type="button"
+                  class="product-block-group__swatch color-swatch-link{% if swatch_handle == effective_active_handle %} color-swatch-link-current is-active{% endif %}{% if gp_lookup != blank and gp_lookup.available == false %} product-block-group__swatch--disabled{% endif %}"
+                  data-group-swatch
+                  data-target-handle="{{ swatch_handle }}"
+                  {% if gp_lookup != blank %}
+                    data-ssr-product="1"
+                    data-ssr-available="{% if gp_lookup.available %}true{% else %}false{% endif %}"
+                  {% endif %}
+                  {% if swatch_token != blank %}data-swatch="{{ swatch_token }}"{% endif %}
+                  data-product-subtitle="{% if gp_lookup != blank %}{{ gp_lookup.metafields.descriptors.subtitle | strip | escape }}{% endif %}"
+                  role="tab"
+                  aria-selected="{% if swatch_handle == effective_active_handle %}true{% else %}false{% endif %}"
+                  aria-label="{{ swatch_raw | escape }}">
+                  <span class="product-block-group__swatch-dot related-swatch-img swatch-sample"{% if swatch_style != blank %} style="{{ swatch_style }}"{% endif %}></span>
+                </button>
+                <span class="swatch-disabled-ui" aria-hidden="true"><span class="line"></span></span>
+              </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+          <a
+            class="product-block-group__swatch product-block-group__swatch-more color-swatch-link"
+            href="{{ initial_product.url | within: collection }}"
+            data-group-swatch-more
+            aria-label="View more colors"
+            hidden>
+            +0
+          </a>
+        </div>
+        {%- endunless -%}
+        {%- if quickbuy -%}
+          <div class="product-block-group__quickbuy-sources" hidden aria-hidden="true">
+            {%- if use_group_products_for_swatches -%}
+              {%- for qp in group_products -%}
+                {%- assign qp_handle = qp.handle | strip -%}
+                {%- if qp != blank and qp_handle != blank -%}
+                  <div class="js-contains-quickbuy" data-product-handle="{{ qp_handle }}">
+                    {% render 'quick-buy-placeholder', product: qp, group_handles: group_handles, group_products: group_products, active_handle: qp_handle, collection: collection %}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- else -%}
+              {%- for qp_handle in group_handles -%}
+                {%- assign qp_handle = qp_handle | strip -%}
+                {%- assign qp = blank -%}
+                {%- if product != blank and product.handle == qp_handle -%}
+                  {%- assign qp = product -%}
+                {%- endif -%}
+                {%- if qp == blank and collection != blank and collection.products != blank -%}
+                  {%- for collection_product in collection.products -%}
+                    {%- if collection_product.handle == qp_handle -%}
+                      {%- assign qp = collection_product -%}
+                      {%- break -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+                {%- if qp == blank -%}
+                  {%- assign qp = all_products[qp_handle] -%}
+                {%- endif -%}
+                {%- if qp != blank and qp_handle != blank -%}
+                  <div class="js-contains-quickbuy" data-product-handle="{{ qp_handle }}">
+                    {% render 'quick-buy-placeholder', product: qp, group_handles: group_handles, active_handle: qp_handle, collection: collection %}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+      {% render 'product-block-plp-reviews', product: initial_product %}
+    </div>
+  {%- endif -%}
+</div>
+

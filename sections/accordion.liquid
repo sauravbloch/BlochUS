@@ -1,0 +1,180 @@
+<div class="blog" data-section-id="{{ section.id }}" data-section-type="blog">
+
+      <div class="container flip-mobile">
+
+        
+<div class="reading-width row flex_column_table"> 
+  
+ <div class="faq-block small-down--one-whole"> 
+                  {%- if section.settings.title != blank -%}
+                  <h3>{{ section.settings.title | escape }}</h3>
+                {%- endif -%}
+   
+    <div class="grid-no-gutter container large-row container--no-mobile-padding single-column-layout">
+      <div class="grid__item-no-gutter one-whole small-down--one-whole">
+        <div class="faq-articles-list relative">
+
+ 		{%- for block in section.blocks -%}
+              <article class="faq-article">
+                <section class="article-block">
+                  <div class="faq-content">
+                    <div class="article__title--no-image accordion">
+                      <b>{{ block.settings.title | escape }}</b>
+                    </div>
+
+                    <div class="rte faq__content panel">
+                      <div class="rte">{{ block.settings.text }}</div>
+                    </div>
+                  </div>
+                </section>
+              </article>
+		{%- endfor -%}
+
+
+        </div>
+      </div>
+    </div>
+
+   
+        </div>
+      </div>        
+ </div>   
+</div>
+<div style="clear:both;"></div>
+
+<style>
+/* Style the buttons that are used to open and close the accordion panel */
+.faq-block .block__heading{
+  margin-top: 30px;  
+}
+.accordion {
+  background-color: {{ section.settings.color_bg }};
+  cursor: pointer;
+  padding: 20px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  outline: none;
+  transition: 0.4s;
+  text-transform: uppercase;
+  border-bottom: solid 1px {{ section.settings.color_hover }};
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+  background-color: {{ section.settings.color_hover }};
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+  padding: 20px;
+  background-color: {{ section.settings.color_bg }};
+  display: none;
+}  
+.accordion:after {
+  /* content: '\02795'; /* Unicode character for "plus" sign (+) */
+  content: url('{{ 'chevron-down.svg' | asset_url }}');
+  font-size: 13px;
+  color: {{ section.settings.color_text }};
+  float: right;
+  margin-left: 5px;
+  
+}
+
+.active:after {
+  /* content: "\2796"; /* Unicode character for "minus" sign (-) */
+  content: url('{{ 'chevron-up.svg' | asset_url }}');
+}  
+</style>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    /* Toggle between adding and removing the "active" class,
+    to highlight the button that controls the panel */
+    this.classList.toggle("active");
+
+    /* Toggle between hiding and showing the active panel */
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  });
+}
+</script>
+
+{% schema %}
+{
+  "name": "Accordion",
+  "class": "spaced-section spaced-section--full-width",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Accordion Header",
+      "label": "Title"
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_hover",
+      "label": "Hover color",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text color",
+      "default": "#000000"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "default": "Column",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Your content here</p>",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Accordion",
+      "blocks": [
+        {
+          "type": "column"
+        },
+        {
+          "type": "column"
+        },
+        {
+          "type": "column"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

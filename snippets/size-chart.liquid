@@ -1,0 +1,18 @@
+  <div id="size-chart-dialog" 
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="size-chart-title"
+    class="size-chart-container container js-size-chart-container">
+    {% assign accessible_label = 'products.product.close_size_chart' | t: size_chart_name: size_chart_page.title %}
+    <button type="button" 
+      class="btn--plain icon feather-icon size-chart-close js-size-chart-close" 
+      aria-label="{{ accessible_label }}">
+      {% render 'feather-x', svg_title: accessible_label %}
+    </button>
+    <div class="size-chart-content large-section">
+      <h2 tabindex="0"
+        id="size-chart-title"
+        class="reading-width large-row">{{ size_chart_page.title }}</h2>
+      <div class="reading-width rte" id="size-chart-table">{{ size_chart_page.content }}</div>
+    </div>
+  </div>

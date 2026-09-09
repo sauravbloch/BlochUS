@@ -1,0 +1,171 @@
+<div class="blog" data-section-id="{{ section.id }}" data-section-type="blog">
+
+  {%- paginate blog.articles by 999 -%}
+      <div class="container flip-mobile">
+
+        
+<div class="page-width row flex_column_table">
+  
+   <div class="faq-block menu grid__item small-down--one-whole one-quarter flex_column">
+
+     	<p class="block__heading"><b>{{ section.settings.heading1 | escape }}</b></p>
+
+     <ul class="nav">
+       {%- for link in section.settings.menu-faqs.links -%}
+       <li class="nav__item">
+         <a href="{{ link.url }}" class="nav__link">{{ link.title }}</a>
+       </li>
+       {%- endfor -%}
+     </ul>
+ </div>  
+  
+ <div class="faq-block grid__item small-down--one-whole three-quarters flex_column">          
+          <h1 class="large-title">{{ blog.title }}</h1>
+   <p>{% if page_description %}{{ page_description | escape }}{% endif %}</p>
+    <div class="grid-no-gutter container large-row container--no-mobile-padding single-column-layout">
+      <div class="grid__item-no-gutter one-whole small-down--one-whole">
+        <div class="faq-articles-list relative">
+
+            {%- for article in blog.articles -%}
+              <article class="faq-article">
+                {% if article.image %}
+                    {% render 'responsive-image', image: article.image %}
+                {% endif %}
+                <section class="article-block">
+                  <div class="faq-content">
+                    <div class="{% if article.image == blank %} article__title--no-image{% endif %} accordion">
+                      <b>{{ article.title }}</b>
+                    </div>
+
+                    <div class="rte faq__content panel">
+                      {% if article.excerpt.size > 0 %}
+                        <p>{{ article.excerpt }}</p>
+                      {% else %}
+                        <p>{{ article.content }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if section.settings.show_featured_products %}
+                    <div class="js-content-products-slider">
+                      {% render 'content-products', content: article.content %}
+                    </div>
+                  {% endif %}
+                </section>
+              </article>
+            {%- endfor -%}
+            {% render 'pagination', paginate: paginate %}
+
+        </div>
+      </div>
+    </div>
+  {%- endpaginate -%}
+        </div>
+      </div>        
+ </div>   
+</div>
+<div style="clear:both;"></div>
+
+<style>
+/* Style the buttons that are used to open and close the accordion panel */
+.faq-block .block__heading{
+  margin-top: 30px;  
+}
+.accordion {
+  cursor: pointer;
+  padding: 20px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  outline: none;
+  transition: 0.4s;
+  text-transform: uppercase;
+  border-bottom: solid 1px {{ section.settings.color_hover }};
+  background-color: {{ section.settings.color_bg }};
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+  background-color: {{ section.settings.color_hover }};
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+}  
+.accordion:after {
+  /* content: '\02795'; /* Unicode character for "plus" sign (+) */
+  content: url('{{ 'chevron-down.svg' | asset_url }}');
+  font-size: 13px;
+  color: {{ section.settings.color_text }};
+  float: right;
+  margin-left: 5px;
+  
+}
+
+.active:after {
+  /* content: "\2796"; /* Unicode character for "minus" sign (-) */
+  content: url('{{ 'chevron-up.svg' | asset_url }}');
+}  
+</style>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    /* Toggle between adding and removing the "active" class,
+    to highlight the button that controls the panel */
+    this.classList.toggle("active");
+
+    /* Toggle between hiding and showing the active panel */
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  });
+}
+</script>
+
+{% schema %}
+  {
+    "name": "Blog-FAQs",
+    "settings": [
+    {
+    "type": "text",
+    "id": "heading1",
+    "label": "Heading",
+    "default": "Other FAQs"
+    },
+    {
+    "type": "link_list",
+    "id": "menu-faqs",
+    "label": "FAQs Menu",
+    "default": "main-menu"
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_hover",
+      "label": "Hover color",
+      "default": "#bbbbbb"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text color",
+      "default": "#000000"
+    }
+    ]
+  }
+{% endschema %}
+

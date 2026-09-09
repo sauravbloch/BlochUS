@@ -1,0 +1,174 @@
+{%- liquid
+  comment
+    Shop the Look card: image, badges, title, price, variant dropdowns, Add to Bag.
+    Uses native dropdowns only (>5 values or any count in this section). Two options = two side-by-side.
+    Variant id is in a hidden select name="id" for Ajax add to cart.
+  endcomment
+  assign current_variant = product.selected_or_first_available_variant
+  assign form_id = 'shop-the-look-form-' | append: section.id | append: '-' | append: product.id
+  assign product_json_id = 'ProductJson-' | append: product.id
+  if add_to_bag_text != blank
+    assign button_label = add_to_bag_text
+  else
+    assign button_label = 'products.product.add_to_cart' | t
+  endif
+-%}
+<div class="product-block shop-the-look-card {{ grid_class | default: 'grid-flex__item one-quarter small-down--one-half' }}" data-shop-the-look-card data-product-id="{{ product.id }}">
+  <script type="application/json" class="{{ product_json_id }}" data-product-json>{{ product | json }}</script>
+
+  {%- form 'product', product, id: form_id, class: 'ajax-product-form shop-the-look-card__form' -%}
+    <input type="hidden" name="quantity" value="1">
+
+    <div class="product-block__image-container">
+      <div class="global-border-radius relative">
+        <a class="product-block__image product-block__image--shape-{{ settings.product_grid_image_shape }} product-block__image--crop-{{ settings.prod_thumb_crop }} product-block__image--valign-{{ settings.prod_thumb_crop_align }}"
+           href="{{ product.url }}">
+          {%- if product.featured_media != blank -%}
+            <div class="image-one">
+              {%- liquid
+                if settings.product_grid_image_shape == 'natural'
+                  assign aspect_ratio = false
+                elsif settings.product_grid_image_shape == 'square'
+                  assign aspect_ratio = 1.0
+                elsif settings.product_grid_image_shape == 'landscape-32'
+                  assign aspect_ratio = 1.5
+                elsif settings.product_grid_image_shape == 'landscape-54'
+                  assign aspect_ratio = 1.25
+                elsif settings.product_grid_image_shape == 'portrait-45'
+                  assign aspect_ratio = 0.8
+                elsif settings.product_grid_image_shape == 'portrait-23'
+                  assign aspect_ratio = 0.67
+                endif
+              -%}
+              {% render 'responsive-image', image: product.featured_media.preview_image, aspect_ratio: aspect_ratio %}
+            </div>
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </a>
+
+        {% render 'product-badge', product: product %}
+      </div>
+    </div>
+
+    <div class="product-block__title">
+      <a href="{{ product.url }}" class="product-block__title-link" id="product-title-{{ product.id }}">
+        {{ product.title }}
+      </a>
+    </div>
+
+    <div class="product-price">
+      <span class="theme_money" data-shop-the-look-price>
+        {%- if settings.product_currency_code_enabled -%}
+          {{- current_variant.price | money_with_currency -}}
+        {%- else -%}
+          {{- current_variant.price | money -}}
+        {%- endif -%}
+      </span>
+    </div>
+
+    {%- unless product.has_only_default_variant -%}
+      {%- liquid
+        assign display_option_count = 0
+        for option in product.options_with_values
+          assign opt_name = option.name | downcase
+          if opt_name contains 'size' or opt_name contains 'width'
+            assign display_option_count = display_option_count | plus: 1
+          endif
+        endfor
+      -%}
+
+      {%- if display_option_count > 0 -%}
+        <div class="shop-the-look-card__options" data-shop-the-look-options>
+          {%- if display_option_count == 2 -%}
+            <div class="shop-the-look-card__options-row shop-the-look-card__options-row--two">
+              {%- for option in product.options_with_values -%}
+                {%- assign opt_index = forloop.index0 -%}
+                {%- assign opt_name = option.name | downcase -%}
+                {%- unless opt_name contains 'size' or opt_name contains 'width' -%}{% continue %}{%- endunless -%}
+                <div class="shop-the-look-card__option">
+                  <select id="{{ form_id }}-option-{{ opt_index }}"
+                          class="shop-the-look-card__select"
+                          data-option-index="{{ opt_index }}"
+                          aria-label="{{ option.name }}">
+                    {%- if opt_name contains 'size' -%}
+                      <option value="" selected disabled>Select size</option>
+                    {%- elsif opt_name contains 'width' -%}
+                      <option value="" selected disabled>Select width</option>
+                    {%- else -%}
+                      <option value="" selected disabled>{{ option.name }}</option>
+                    {%- endif -%}
+                    {%- for value in option.values -%}
+                      {%- assign available = false -%}
+                      {%- for v in product.variants -%}
+                        {%- if v.options[opt_index] == value and v.available -%}
+                          {%- assign available = true -%}
+                          {%- break -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                      <option value="{{ value | escape }}"{% unless available %} disabled{% endunless %}>{{ value }}{% unless available %} - {{ 'products.product.sold_out' | t }}{% endunless %}</option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- else -%}
+            {%- for option in product.options_with_values -%}
+              {%- assign opt_index = forloop.index0 -%}
+              {%- assign opt_name = option.name | downcase -%}
+              {%- unless opt_name contains 'size' or opt_name contains 'width' -%}{% continue %}{%- endunless -%}
+              <div class="shop-the-look-card__option">
+                <select id="{{ form_id }}-option-{{ opt_index }}"
+                        class="shop-the-look-card__select"
+                        data-option-index="{{ opt_index }}"
+                        aria-label="{{ option.name }}">
+                  {%- if opt_name contains 'size' -%}
+                    <option value="" selected disabled>Select size</option>
+                  {%- elsif opt_name contains 'width' -%}
+                    <option value="" selected disabled>Select width</option>
+                  {%- else -%}
+                    <option value="" selected disabled>{{ option.name }}</option>
+                  {%- endif -%}
+                  {%- for value in option.values -%}
+                    {%- assign available = false -%}
+                    {%- for v in product.variants -%}
+                      {%- if v.options[opt_index] == value and v.available -%}
+                        {%- assign available = true -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                    <option value="{{ value | escape }}"{% unless available %} disabled{% endunless %}>{{ value }}{% unless available %} - {{ 'products.product.sold_out' | t }}{% endunless %}</option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endunless -%}
+
+    <select name="id" class="shop-the-look-card__variant-select no-js" data-shop-the-look-variant-select aria-label="{{ 'products.product.selector_label' | t | escape }}">
+      {%- for variant in product.variants -%}
+        <option value="{{ variant.id }}"
+                {% if variant == current_variant %}selected{% endif %}
+                {% unless variant.available %}disabled{% endunless %}
+                data-option-0="{{ variant.option1 | escape }}"
+                data-option-1="{{ variant.option2 | escape }}"
+                data-option-2="{{ variant.option3 | escape }}"
+                data-price="{{ variant.price }}"
+                data-available="{{ variant.available }}">
+          {{ variant.title }}
+        </option>
+      {%- endfor -%}
+    </select>
+
+    <button
+      class="shop-the-look-card__add-btn btn btn--subtle-hover btn--fullwidth"
+      type="submit"
+      name="add"
+      data-add-to-cart
+      {% unless current_variant.available %}disabled{% endunless %}>
+        <span data-add-to-cart-text>{{ button_label }}</span>
+    </button>
+  {%- endform -%}
+</div>

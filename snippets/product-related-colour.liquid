@@ -1,0 +1,64 @@
+{% assign swatch_color_name = '' %}
+{% assign swatch_option_name = 'Color' %}
+{% for option in related_product.options_with_values %}
+  {% assign option_name = option.name | downcase %}
+  {% if option_name == 'color' or option_name == 'colour' %}
+    {% assign swatch_color_name = option.values | first %}
+    {% assign swatch_option_name = option.name %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% assign swatch_hex_mf = related_product.metafields.custom.swatch_hex.value | default: related_product.metafields.custom.swatch_hex %}
+{% assign swatch_file_mf = related_product.metafields.custom.swatch_file.value | default: related_product.metafields.custom.swatch_file %}
+{% assign color_group_ref = related_product.metafields.custom.color_group %}
+{% assign grouped_base_handle = '' %}
+{% if color_group_ref != blank %}
+  {% assign grouped_base_handle = color_group_ref | replace: 'color_group.', '' | strip %}
+{% endif %}
+{% if grouped_base_handle == blank and product.metafields.custom.color_group != blank %}
+  {% assign grouped_base_handle = product.metafields.custom.color_group | replace: 'color_group.', '' | strip %}
+{% endif %}
+{% if swatch_color_name == blank %}
+  {% assign swatch_handle = related_product.handle | strip %}
+  {% assign base_prefix = grouped_base_handle | append: '-' %}
+  {% if grouped_base_handle != blank and swatch_handle contains base_prefix %}
+    {% assign swatch_color_name = swatch_handle | remove_first: base_prefix | replace: '-', ' ' %}
+  {% else %}
+    {% assign swatch_color_name = swatch_handle | split: '-' | last | replace: '-', ' ' %}
+  {% endif %}
+{% endif %}
+
+{% assign has_swatch_meta = false %}
+{% if swatch_file_mf != blank or swatch_hex_mf != blank %}
+  {% assign has_swatch_meta = true %}
+{% endif %}
+{% if swatch_color_name != blank and has_swatch_meta %}
+  {% assign swatch_token = swatch_color_name | downcase | replace: '"', '' | handleize %}
+  {% assign swatch_raw = swatch_token | replace: '-', ' ' %}
+  {% assign swatch_style = '' %}
+
+  {% if swatch_file_mf != blank %}
+    {% assign swatch_file_url = swatch_file_mf | image_url: width: 128 %}
+    {% if swatch_file_url == blank %}
+      {% assign swatch_file_url = swatch_file_mf | file_url %}
+    {% endif %}
+    {% if swatch_file_url != blank %}
+      {% assign swatch_style = '--grouped-swatch-image:url(' | append: swatch_file_url | append: ')' %}
+    {% endif %}
+  {% endif %}
+  {% if swatch_style == blank and swatch_hex_mf != blank %}
+    {% assign swatch_style = '--grouped-swatch-color:' | append: swatch_hex_mf %}
+  {% endif %}
+
+  {% if product.handle == related_product.handle %}
+    <div class="related-swatch-text">{{ swatch_option_name }} - {{ swatch_color_name }}</div>
+  {% endif %}
+
+  <a href="{{ related_product.url | within: collection }}"
+    data-related-handle="{{ related_product.handle }}"
+    class="color-swatch-link {% if product.handle == related_product.handle %}color-swatch-link-current{% endif %}"
+    title="{{ swatch_option_name }} - {{ swatch_color_name }}{% if product.handle == related_product.handle %} - current{% endif %}">
+    <div class="related-swatch-img swatch-sample"{% if swatch_style != blank %} style="{{ swatch_style }}"{% endif %}></div>
+  </a>
+{% endif %}

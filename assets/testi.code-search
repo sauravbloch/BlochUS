@@ -1,0 +1,213 @@
+# Query: testi
+# ContextLines: 1
+
+179 results - 13 files
+
+assets\custom.css:
+  1195: /* TESTIMONIAL SECTION */
+  1196: .testimonials .testimonial-author-name{
+  1201: .testimonials .testimonial-author-company{
+  1204: .testimonials .testimonial-author-name:before {
+  1207: .testimonials .slick-dots li button{
+  1210: .testimonials .slick-dots li.slick-active button{
+
+assets\custom.css.liquid:
+  1195: /* TESTIMONIAL SECTION */
+  1196: .testimonials .testimonial-author-name{
+  1201: .testimonials .testimonial-author-company{
+  1204: .testimonials .testimonial-author-name:before {
+  1207: .testimonials .slick-dots li button{
+  1210: .testimonials .slick-dots li.slick-active button{
+
+assets\styles.css:
+  8471  }
+  8472: .testimonials .testimonials--title {
+  8473    margin-bottom: 10px;
+  8474  }
+  8475: .testimonials .testimonial {
+  8476    text-align: center;
+  8477  }
+  8478: .testimonials .testimonial-content {
+  8479    margin: 0;
+
+  8483  }
+  8484: .testimonials .testimonial-content a {
+  8485    text-decoration: underline;
+  8486  }
+  8487: .testimonials .testimonial-star .feather-star {
+  8488    height: 20px;
+
+  8490  }
+  8491: .testimonials .testimonial-author-image {
+  8492    height: 80px;
+
+  8495  }
+  8496: .testimonials .testimonial-author-name {
+  8497    font-size: 0.875rem;
+
+  8501  }
+  8502: .testimonials .testimonial-author-name::before {
+  8503    position: absolute;
+
+  8506  }
+  8507: .testimonials .slick-dots {
+  8508    margin-left: 15px;
+
+  8511  @media only screen and (max-width: 1023.98px) {
+  8512:   .testimonials .testimonial-content {
+  8513      padding: 0 30px;
+  8514    }
+  8515:   .testimonials .slick-dots {
+  8516      margin-left: 10px;
+
+  8521  @media only screen and (max-width: 479.98px) {
+  8522:   .testimonials {
+  8523      border-radius: 0;
+
+assets\styles.css.liquid:
+  8555: .testimonials .testimonials--title {
+  8558: .testimonials .testimonial {
+  8561: .testimonials .testimonial-content {
+  8567: .testimonials .testimonial-content a {
+  8570: .testimonials .testimonial-star .feather-star {
+  8574: .testimonials .testimonial-author-image {
+  8579: .testimonials .testimonial-author-name {
+  8585: .testimonials .testimonial-author-name::before {
+  8590: .testimonials .slick-dots {
+  8595:   .testimonials .testimonial-content {
+  8598:   .testimonials .slick-dots {
+  8605:   .testimonials {
+
+assets\theme.js:
+  6532:    * Testimonials Section Script
+  6535:    * @namespace Testimonials
+  6538:   theme.Testimonials = new function () {
+  6540:      * Testimonials section constructor. Runs on page load as well as Theme Editor
+  6547:       this.$slideshow = $('.js-testimonials-section', this.$container);
+  6550:        * Testimonials slick slideshow
+  7498:   theme.Sections.register('testimonials', theme.Testimonials);
+
+locales\es.json:
+  119:         "one": "Testimonio",
+  120:         "other": "Testimonios"
+
+sections\popup.liquid:
+    9:     data-test-mode="{% if section.settings.mode == 'testing' %}true{% else %}false{% endif %}">
+  118:             "value": "testing",
+
+sections\testimonials.liquid:
+    1: <div class="relative container container--no-mobile-padding large-row section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="testimonials" style="padding-top: {{ section.settings.padding-top }}px; padding-bottom: {{ section.settings.padding-bottom }}px;">
+    3:     .section-{{ section.id }}.testimonials {
+    7:     .section-{{ section.id }}.testimonials .large-title, .section-{{ section.id }}.testimonials .giant-title {
+   10:     .section-{{ section.id }}.testimonials .slick-dots li button {
+   13:     .section-{{ section.id }}.testimonials .slick-dots li.slick-active button {
+   17:     .section-{{ section.id }}.testimonials .feather-star {
+   22:       .section-{{ section.id }}.testimonials .testimonial-author-image {
+   27:   <div class="page-width testimonials large-section global-border-radius">
+   30:       <div class="testimonials--title text-center">
+   37:     <div class="grid-flex js-testimonials-section" data-autoplay="{{ section.settings.autoplay }}" data-autoplayspeed="{{ section.settings.autoplay_speed }}000">
+   39:         <div class="grid-flex__item testimonial one-half small-down--one-whole" {{ block.shopify_attributes }}>
+   40:           <div class="testimonial-stars">
+   42:               <span class="icon feather-icon testimonial-star">{% render 'feather-star' %}</span>
+   45:           <blockquote class="testimonial-content rte {% if section.settings.enlarge_text %} large-text{% else %} standard-text{% endif %}">
+   46:             {{ block.settings.testimonial }}
+   47:             <footer class="testimonial-author-info">
+   49:                 <div class="testimonial-author-image lazyload rimage-background global-border-radius" data-bgset="{% render 'bgset', image: block.settings.image %}" data-sizes="auto" data-parent-fit="cover"></div>
+   52:                 <div class="testimonial-author-name">{{ block.settings.author }}</div>
+   67:     "name": "Testimonials",
+   69:     "class": "section-testimonials",
+   75:         "default": "Testimonials"
+  148:         "type": "testimonial",
+  149:         "name": "Testimonial",
+  161:             "id": "testimonial",
+  164:             "info": "For best results, keep the word count consistent in each testimonial."
+  179:         "name": "Testimonials",
+  182:             "type": "testimonial"
+  184:             "type": "testimonial"
+
+templates\index.json:
+  532:       "type": "testimonials",
+  534:         "testimonial_QJJRXL": {
+  535:           "type": "testimonial",
+  538:             "testimonial": "<p>We couldn't be more pleased, the products and services are absolutely fantastic!</p>",
+  542:         "template--14499567829091__7cda98a9-605e-45bc-9cea-d468f74a05c6-testimonial-1": {
+  543:           "type": "testimonial",
+  546:             "testimonial": "<p>We couldn't be more pleased, the products and services are absolutely fantastic!</p>",
+  550:         "template--14499567829091__7cda98a9-605e-45bc-9cea-d468f74a05c6-testimonial-2": {
+  551:           "type": "testimonial",
+  554:             "testimonial": "<p>We couldn't be more pleased, the products and services are absolutely fantastic!</p>",
+  560:         "testimonial_QJJRXL",
+  561:         "template--14499567829091__7cda98a9-605e-45bc-9cea-d468f74a05c6-testimonial-1",
+  562:         "template--14499567829091__7cda98a9-605e-45bc-9cea-d468f74a05c6-testimonial-2"
+  566:         "title": "Testimonials",
+
+templates\page.elation-page.json:
+  166:     "testimonials_TaeaRR": {
+  167:       "type": "testimonials",
+  169:         "testimonial_jnJ764": {
+  170:           "type": "testimonial",
+  173:             "testimonial": "<p>\"My Elation ballet flats feel like a second skin. They are soft, flexible, and incredibly comfortable to work in.</p><p>Because they are so light, you feel free and able to move with ease. The subtle padding underneath is placed perfectly, offering just the right amount of support without bulk. I also love how aesthetically pleasing they are, giving a beautiful, clean line to my foot that enhances every movement.\"</p><p><em><strong>- Yasmine Naghdi, Bloch Ambassador, Principal Dancer.</strong></em></p>",
+  177:         "testimonial_MUXBpD": {
+  178:           "type": "testimonial",
+  181:             "testimonial": "<p>I love these shoes! They’re the best flat shoes I’ve ever worn (and I’ve worn a few!). They support the foot without hindering the movement, and feel like socks! The material is also extremely soft, which, for me, encourages articulation of the foot on the floor.</p><p><em><strong>- Madeleine Bell, Bloch Professional, Freelance Artist </strong></em></p>",
+  185:         "testimonial_jRcrA9": {
+  186:           "type": "testimonial",
+  189:             "testimonial": "<p>The Elation ballet flats have changed the way I work through my feet in class. The snug fit with stretchy canvas really allows me to articulate through my whole foot and give them a nice shape.</p><p><em><strong>- Nikita Boris, Bloch Professional, Cincinnati Ballet</strong></em></p>",
+  195:         "testimonial_jnJ764",
+  196:         "testimonial_MUXBpD",
+  197:         "testimonial_jRcrA9"
+  241:     "testimonials_TaeaRR",
+
+templates\page.flexus-page.json:
+  209:     "testimonials_tgFTrp": {
+  210:       "type": "testimonials",
+  212:         "testimonial_bBb4cB": {
+  213:           "type": "testimonial",
+  216:             "testimonial": "<p>“The Bloch Flexus pointe shoe has truly been a game-changer in my career. Whether dancing Sugar Plum in Nashville’s Nutcracker or making my debut as Aurora in Sleeping Beauty, I felt completely confident that the Flexus would support me through every demanding step. It molds beautifully to my foot, enhancing my lines while providing the strength, articulation, and freedom I need to perform at my highest level.” </p><p><strong>-Colette Tilinski, Company Artist with Nashville Ballet</strong></p>",
+  220:         "testimonial_MBt4gb": {
+  221:           "type": "testimonial",
+  224:             "testimonial": "<p>\"They changed my life! I thought European balance was the best shoe I had worn until I tried Flexus. I have never had so much stability on pointe and on flat. They move with my feet and still provide stability. I love them!\"<br/><br/><strong>- Madeleine Bell, Professional Dancer, Bloch Professional</strong></p>",
+  228:         "testimonial_9akytW": {
+  229:           "type": "testimonial",
+  232:             "testimonial": "<p>“What I enjoy most about my custom Flexus pointe shoes is that they give me the support and precision I need for my rehearsals and performances. I can turn and balance with control. They help me feel grounded yet light, allowing for clean pirouettes and steady poses. Whilst wearing them I’m able to really work through my feet, engaging every muscle and articulating each movement with detail and strength.”<br/><br/><strong>- Yasmine Naghdi, Bloch Ambassador, Principal Dancer</strong></p>",
+  238:         "testimonial_bBb4cB",
+  239:         "testimonial_MBt4gb",
+  240:         "testimonial_9akytW"
+  242:       "name": "Testimonials",
+  288:     "testimonials_tgFTrp",
+
+templates\page.heritage-page.json:
+  202:     "testimonials_pUhPAB": {
+  203:       "type": "testimonials",
+  205:         "testimonial_bd3QaP": {
+  206:           "type": "testimonial",
+  209:             "testimonial": "<p>“I love the v-cut of the Bloch Heritage because it allows my foot to give a sleek and longer look and enhance the arches of my feet when I'm on pointe. They're comfortable and reliable, especially when I need to wear pointe shoes for a long amount of time.”</p>",
+  213:         "testimonial_hJNikV": {
+  214:           "type": "testimonial",
+  217:             "testimonial": "<p>“The sleek style of the shoe fits my foot like a glove while providing just the right amount of lift and support for pirouettes or hops en pointe.”</p>",
+  221:         "testimonial_ktQtaq": {
+  222:           "type": "testimonial",
+  225:             "testimonial": "<p>“I've been wearing my customized Heritage for 8 years now, and I wouldn't change it for anything. I love their elongated look and how they hug my feet. They are very light and supportive, so I don't feel any restraint while dancing. They lift me up”</p>",
+  231:         "testimonial_bd3QaP",
+  232:         "testimonial_hJNikV",
+  233:         "testimonial_ktQtaq"
+  235:       "name": "Testimonials",
+  358:     "testimonials_pUhPAB",
+
+templates\product.core-grip-pro.json:
+   78:     "testimonials_4XXxm3": {
+   79:       "type": "testimonials",
+   81:         "testimonial_wjNbi8": {
+   82:           "type": "testimonial",
+   85:             "testimonial": "<p>We couldn't be more pleased, the products and services are absolutely fantastic!</p>",
+   89:         "testimonial_f6XLy7": {
+   90:           "type": "testimonial",
+   93:             "testimonial": "<p>We couldn't be more pleased, the products and services are absolutely fantastic!</p>",
+   98:         "testimonial_9eaEGr": {
+   99:           "type": "testimonial",
+  102:             "testimonial": "<p>We couldn't be more pleased, the products and services are absolutely fantastic!</p>",
+  108:         "testimonial_wjNbi8",
+  109:         "testimonial_f6XLy7",
+  110:         "testimonial_9eaEGr"
+  112:       "name": "Testimonials",
+  165:     "testimonials_4XXxm3",

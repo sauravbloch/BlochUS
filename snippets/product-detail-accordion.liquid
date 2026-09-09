@@ -1,0 +1,119 @@
+<div>
+  <div class="flip-mobile">
+
+      
+<div class="row flex_column_table"> 
+
+<div class="faq-block small-down--one-whole" style="margin-top: -50px;"> 
+  <div class="grid-no-gutter container large-row container--no-mobile-padding single-column-layout">
+    <div class="grid__item-no-gutter one-whole small-down--one-whole">
+      <div class="faq-articles-list relative">
+
+
+            <article class="faq-article">
+              <section class="article-block">
+                <div class="faq-content">
+                  <div class="article__title--no-image accordion">
+                    <b>{{ 'products.product.description' | t }}</b>
+                  </div>
+                  <div class="rte faq__content panel one">
+                    <div class="rte">{{ product.description }}</div>
+                  </div>
+                </div>
+              </section>
+            </article>
+
+          {% if acc_2_title != blank %}
+            <article class="faq-article">
+              <section class="article-block">
+                <div class="faq-content">
+                  <div class="article__title--no-image accordion">
+                    <b>{{ acc_2_title }}</b>
+                  </div>
+                  <div class="rte faq__content panel two">
+                    <div class="rte"><p></p>{{ product.metafields.my_fields.tab2_content }}<p></p></div>
+                  </div>
+                </div>
+              </section>
+            </article>
+          {% endif %}
+
+          {% if acc_3_title != blank %}
+            <article class="faq-article">
+              <section class="article-block">
+                <div class="faq-content">
+                  <div class="article__title--no-image accordion">
+                    <b>{{ acc_3_title }}</b>
+                  </div>
+                  <div class="rte faq__content panel three">
+                    <div class="rte">{{ acc_3_content }}</div>
+                  </div>
+                </div>
+              </section>
+            </article>    
+          {% endif %}
+
+
+      </div>
+    </div>
+  </div>
+
+ 
+      </div>
+    </div>        
+</div>   
+</div>
+<div style="clear:both;"></div>
+
+<style>
+.accordion {
+    cursor: pointer;
+    padding: 20px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    text-transform: uppercase;
+    border-bottom: solid 1px {{ block.settings.color_hover }};
+}
+
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+    display: none;
+} 
+/* .panel.one{ display: block; } */
+.accordion::after {
+    content: url('{{ 'chevron-down.svg' | asset_url }}');
+    font-size: 13px;
+    float: right;
+    margin-left: 5px;
+
+}
+
+.active::after {
+  content: url('{{ 'chevron-up.svg' | asset_url }}');
+}  
+</style>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+acc[i].addEventListener("click", function() {
+  /* Toggle between adding and removing the "active" class,
+  to highlight the button that controls the panel */
+  this.classList.toggle("active");
+
+  /* Toggle between hiding and showing the active panel */
+  var panel = this.nextElementSibling;
+  if (panel.style.display === "block") {
+    panel.style.display = "none";
+  } else {
+    panel.style.display = "block";
+  }
+});
+}
+</script>

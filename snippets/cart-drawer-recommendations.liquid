@@ -1,0 +1,111 @@
+{%- liquid
+  if heading == blank
+    assign rec_heading = 'cart.general.recommendations_heading' | t
+  else
+    assign rec_heading = heading
+  endif
+  if rec_heading == blank
+    assign rec_heading = 'Recommended for you'
+  endif
+  assign rec_limit = limit | default: 6
+  if rec_limit < 1
+    assign rec_limit = 1
+  endif
+  if rec_limit > 12
+    assign rec_limit = 12
+  endif
+  assign rec_id = 'cart-drawer-recommendations'
+-%}
+<div class="cart-drawer__recommendations-wrapper" data-cart-drawer-recommendations aria-label="{{ rec_heading }}">
+  <div class="cart-drawer__recommendations" data-collapsed="false">
+    <button type="button" class="cart-drawer__recommendations-header" aria-expanded="true" aria-controls="cart-drawer-recommendations-content-{{ rec_id }}" id="cart-drawer-recommendations-toggle-{{ rec_id }}">
+      <span class="cart-drawer__recommendations-heading">{{ rec_heading }}</span>
+      <span class="cart-drawer__recommendations-chevron" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+    </button>
+    <div id="cart-drawer-recommendations-content-{{ rec_id }}" class="cart-drawer__recommendations-content" role="region" aria-labelledby="cart-drawer-recommendations-toggle-{{ rec_id }}">
+      <div class="cart-drawer__recommendations-list-wrapper">
+        <button type="button" class="cart-drawer__recommendations-arrow cart-drawer__recommendations-arrow--prev" aria-label="{{ 'general.accessibility_labels.previous' | t }}" data-cart-drawer-rec-prev><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+        <div class="cart-drawer__recommendations-list js-cart-drawer-recommendations-carousel">
+          {%- for rec_product in collection.products limit: rec_limit -%}
+            {%- assign rec_variant = rec_product.selected_or_first_available_variant -%}
+            {%- assign rec_image = rec_variant.featured_media | default: rec_product.featured_media -%}
+            <div class="cart-drawer__recommendations-card" data-product-id="{{ rec_product.id }}">
+              <a href="{{ rec_product.url }}" class="cart-drawer__recommendations-card-image">
+                {%- if rec_image -%}
+                  <img src="{{ rec_image | image_url: width: 160 }}" alt="{{ rec_image.alt | default: rec_product.title | escape }}" width="80" height="120" loading="lazy" data-cart-drawer-rec-image>
+                {%- else -%}
+                  <div class="cart-drawer__recommendations-card-placeholder" data-cart-drawer-rec-image>{{ rec_product.title | slice: 0 }}</div>
+                {%- endif -%}
+              </a>
+              <div class="cart-drawer__recommendations-card-body">
+                <div class="cart-drawer__recommendations-card-top">
+                  <a href="{{ rec_product.url }}" class="cart-drawer__recommendations-card-title">{{ rec_product.title }}</a>
+                  <div class="cart-drawer__recommendations-card-price theme-money" data-cart-drawer-rec-price>{{ rec_variant.price | money }}</div>
+                </div>
+                <script type="application/json" class="cart-drawer__recommendations-variant-map" data-variant-map>
+                  [{%- for v in rec_product.variants -%}
+                    {"id":{{ v.id }},"option1":{{ v.option1 | json }},"option2":{{ v.option2 | json }},"option3":{{ v.option3 | json }},"available":{{ v.available }},"price":{{ v.price }},"image":"{%- if v.featured_media -%}{{ v.featured_media | image_url: width: 112 }}{%- elsif rec_product.featured_media -%}{{ rec_product.featured_media | image_url: width: 112 }}{%- endif -%}"}
+                    {%- unless forloop.last -%},{%- endunless -%}
+                  {%- endfor -%}]
+                </script>
+                <div class="cart-drawer__recommendations-variants">
+                  {%- comment -%} Row 1: Color (option 1) only, full width on its own row {%- endcomment -%}
+                  {%- for option in rec_product.options_with_values -%}
+                    {%- if option.position == 1 -%}
+                      <div class="cart-drawer__recommendations-options cart-drawer__recommendations-options--color-row" data-product-id="{{ rec_product.id }}">
+                        <div class="cart-drawer__recommendations-option" data-option-position="{{ option.position }}">
+                          {%- if option.values.size == 1 -%}
+                            <span class="cart-drawer__recommendations-option-single">{{ option.name }}: {{ option.selected_value }}</span>
+                          {%- else -%}
+                            <span class="cart-drawer__recommendations-option-label">{{ option.name }}</span>
+                            <div class="cart-drawer__recommendations-swatches" data-option-name="{{ option.name | escape }}">
+                              {%- for value in option.values -%}
+                                <button type="button" class="cart-drawer__recommendations-swatch cart-drawer__recommendations-swatch--dot{% if option.selected_value == value %} is-selected{% endif %}" data-value="{{ value | escape }}" data-swatch="{{ value | downcase | replace: '"', '' }}" aria-label="{{ value }}" aria-pressed="{% if option.selected_value == value %}true{% else %}false{% endif %}"><span class="visually-hidden">{{ value }}</span></button>
+                              {%- endfor -%}
+                            </div>
+                          {%- endif -%}
+                        </div>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                  {%- comment -%} Row 2: Size, Width, etc. + ADD button, inline and bottom-aligned {%- endcomment -%}
+                  {%- assign non_color_option_count = 0 -%}
+                  {%- for option in rec_product.options_with_values -%}
+                    {%- if option.position != 1 -%}
+                      {%- assign non_color_option_count = non_color_option_count | plus: 1 -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                  <div class="cart-drawer__recommendations-options-add-row">
+                    <div class="cart-drawer__recommendations-options" data-product-id="{{ rec_product.id }}">
+                      {%- for option in rec_product.options_with_values -%}
+                        {%- if option.position != 1 -%}
+                          <div class="cart-drawer__recommendations-option" data-option-position="{{ option.position }}">
+                            <span class="cart-drawer__recommendations-option-label">{{ option.name }}</span>
+                            <div class="cart-drawer__recommendations-select-wrapper">
+                              <select id="cart-drawer-rec-{{ rec_id }}-{{ rec_product.id }}-opt-{{ option.position }}" class="cart-drawer__recommendations-select" data-option-position="{{ option.position }}" data-option-name="{{ option.name | escape }}" aria-label="{{ option.name }}">
+                                {%- for value in option.values -%}
+                                  <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>{{ value }}</option>
+                                {%- endfor -%}
+                              </select>
+                              <span class="cart-drawer__recommendations-select-chevron" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                            </div>
+                          </div>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                    <div class="cart-drawer__recommendations-add-row">
+                      <button type="button" class="cart-drawer__recommendations-add btn btn--secondary btn--small" data-variant-id="{{ rec_variant.id }}" data-product-id="{{ rec_product.id }}" {% unless rec_variant.available %}disabled{% endunless %}>
+                        {{ 'cart.general.add_plus' | t }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+        <button type="button" class="cart-drawer__recommendations-arrow cart-drawer__recommendations-arrow--next" aria-label="{{ 'general.accessibility_labels.next' | t }}" data-cart-drawer-rec-next><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+      </div>
+    </div>
+  </div>
+</div>

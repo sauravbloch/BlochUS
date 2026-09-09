@@ -1,0 +1,56 @@
+<style>
+  .pagination {
+    li {
+      display: inline;
+      margin: 0 8px;
+      padding: 0 2px;
+      a {
+        padding: 0 2px;
+      }
+      a:hover {
+        outline: 2px solid;
+      }
+      span {
+        padding: unset;
+        margin: unset;
+      }
+    }
+  }
+</style>
+<div class="pagination large-row">
+  <h3 class="visually-hidden"
+    id="pagination-id">{{ 'general.pagination.heading' | t }}</h3>
+  <nav>
+    <ol class="pagination" aria-labelledby="pagination-id">
+      {%- if paginate.previous -%}
+        {%  assign previous = paginate.current_page | minus: 1 %}
+        <li>
+          <a class="previous"
+            href="{{ paginate.previous.url }}#filters-results"
+            title="{{ 'general.pagination.context' | t: number: previous, total: paginate.pages }}"><span aria-hidden="true">&laquo;</span> {{ 'general.accessibility_labels.previous' | t }}</a></li>
+      {%- endif -%}
+
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}
+          <li class="page"><a href="{{ part.url }}#filters-results" 
+              aria-label="{{ 'general.pagination.context' | t: number: part.title, total: paginate.pages }}">{{ part.title }}</a></li>
+        {%- else -%}
+          {%- if part.title == paginate.current_page -%}
+            <li class="active page current" aria-current="page"><a href="{{ part.url }}#filters-results" 
+                aria-label="{{ 'general.pagination.context' | t: number: part.title, total: paginate.pages }} - {{ 'general.pagination.current' | t }}"
+                title="{{ 'general.pagination.current' | t }}">{{ part.title }}</a></li>
+          {%- else -%}
+            <li class="deco" aria-hidden="hidden">
+              {{ part.title }}</li>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if paginate.next -%}
+        {%  assign next = paginate.current_page | plus: 1 %}
+        <li class="next"><a href="{{ paginate.next.url }}#filters-results"
+            title="{{ 'general.pagination.context' | t: number: next, total: paginate.pages }}">{{ 'general.accessibility_labels.next' | t }} <span aria-hidden="true">&raquo;</span></a></li>
+      {%- endif -%}
+    </ol>
+  </nav>
+</div>

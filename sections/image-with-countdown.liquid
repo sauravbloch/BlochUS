@@ -1,0 +1,258 @@
+<div class="relative container container--no-mobile-padding large-row section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="image-with-text">
+  {% style %}
+    .section-{{ section.id }} .image-with-text {
+      background-color: {{ section.settings.color_bg }};
+      color: {{ section.settings.color_text }};
+    }
+
+    .section-{{ section.id }} .image-with-text__image-size {
+      padding: {{ section.settings.image_size }}px;
+    	}
+  	.section-{{ section.id }} #demo h3 {
+    	letter-spacing: 3px;
+  		font-size: 1.8rem;
+  		margin-top:10px;
+    	}
+      .section-{{ section.id }} h3 span {
+      	font-size: 0.8rem;
+    	}
+
+    {% if section.settings.image_size == '120' %}
+      @media screen and (max-width: 1000px) and (min-width: 768px) {
+        .section-{{ section.id }} .image-with-text__image-size {
+          padding: {{ section.settings.image_size | divided_by: 2 }}px;
+        }
+      }
+      @media screen and (max-width: 580px) {
+        .section-{{ section.id }} .image-with-text__image-size {
+          padding: {{ section.settings.image_size | divided_by: 2 }}px;
+        }
+      }
+    {% endif %}
+  {% endstyle %}
+
+  <div class="page-width image-with-text flex global-border-radius {% if section.settings.image_position == 'right' %} image-with-text--reverse{% endif %} {% if section.settings.image_size == '0' %} image-with-text--full{% endif %} countdown">
+
+    <div class="one-half small-down--one-whole relative image-with-text__image">
+      <div class="image-with-text__image-size {% unless section.settings.image_size == '0' %}image-with-text__mobile-radius{% endunless %}">
+        {% if section.settings.image_link != blank %}<a href="{{ section.settings.image_link }}">{% endif %}
+        {% if section.settings.image == blank %}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% else %}
+          {% render 'responsive-image', image: section.settings.image, nomax: true %}
+        {% endif %}
+        {% if section.settings.image_link != blank %}</a>{% endif %}
+      </div>
+    </div>
+
+    <div class="one-half small-down--one-whole relative image-with-text__content">
+      <div class="{%- if section.settings.text_alignment == 'center' -%}center{%- endif -%}">
+        <p class="image-with-text__subtitle"><b>{{ section.settings.subtitle }}</b></p>
+        <h2 class="image-with-text__title {% if section.settings.enlarge_title %} giant-title{% else %} large-title{% endif %}">{{ section.settings.title }}</h2>
+        
+        {% if section.settings.countdown_date != blank %}
+        	<p id="demo"></p>
+        {% endif %}
+        
+        {% if section.settings.text %}
+          <div class="image-with-text__text {% if section.settings.enlarge_text %}large-text{% endif %}">{{ section.settings.text }}</div>
+        {% endif %}
+
+        {% if section.settings.button_label != blank %}
+          {%- assign inherit_colour = false -%}
+          {%- if section.settings.url_style == 'link_style' -%}
+            {%- assign alpha = section.settings.color_bg | color_extract: 'alpha' -%}
+            {%- if alpha > 0 and section.settings.color_bg != settings.color_body_background -%}
+              {%- assign inherit_colour = true -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          <a class="image-with-text__link {% if section.settings.url_style == 'button_1' %}btn btn--small btn--primary{% elsif section.settings.url_style == 'button_2' %}btn btn--small btn--secondary{% else %}standard-link {% if inherit_colour %}standard-link--inherit-color{% endif %}{% endif %}" href="{{ section.settings.button_link }}">
+            {{ section.settings.button_label }}
+          </a>
+        {% endif %}
+        {{ section.settings.custom_liquid }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if section.settings.countdown_date != blank %}
+<script>
+function pad(d) {
+    return (d < 10) ? '0' + d.toString() : d.toString();
+}  
+// Set the date we're counting down to
+  var countDownDate = new Date("{{ section.settings.countdown_date }}").getTime();
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get today's date and time
+  var now = new Date().getTime();
+
+  // Find the distance between now and the count down date
+  var distance = countDownDate - now;
+
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  seconds = pad(seconds);
+
+  // Display the result in the element with id="demo"
+  document.getElementById("demo").innerHTML = "<h3>" + days + "<span>D  </span>" + hours + "<span>H  </span>"
+  + minutes + "<span>M  </span>" + seconds + "<span>S  </span></h3>";
+
+  // If the count down is finished, write some text
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("demo").innerHTML = "EXPIRED";
+  }
+}, 1000);
+</script>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Image with countdown",
+    "tag": "section",
+    "class": "section-image-with-text",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "url",
+        "id": "image_link",
+        "label": "Link"
+      },
+      {
+        "type": "select",
+        "id": "image_size",
+        "label": "Size",
+        "options": [
+          { "value": "120", "label": "Small" },
+          { "value": "60", "label": "Medium" },
+          { "value": "30", "label": "Large" },
+          { "value": "0", "label": "Full" }
+        ],
+        "default": "0",
+        "info": "Images will not be stretched or cropped."
+      },
+      {
+        "type": "radio",
+        "id": "image_position",
+        "label": "Alignment",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "right", "label": "Right" }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Text"
+      },
+      {
+        "type": "text",
+        "id": "subtitle",
+        "label": "Heading",
+        "default": "Subtitle"
+
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Heading"
+
+      },
+      {
+        "type": "text",
+        "id": "countdown_date",
+        "label": "Countdown Date",
+        "default": "Mar 5, 2022 15:37:25",
+		"info": "Format: Mar 5, 2022 15:37:25"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>Advertise a sale! Or tell your shoppers something about yourself.<\/p>"
+      },
+      {
+        "type": "liquid",
+        "id": "custom_liquid",
+        "label": "Custom Liquid",
+        "default": "Add Liquid code or HTML to create advanced customizations."
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button",
+        "default": "Optional button"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button link"
+      },
+      {
+        "type": "radio",
+        "id": "url_style",
+        "label": "Button style",
+        "options": [
+          { "value": "button_1", "label": "Button - primary" },
+          { "value": "button_2", "label": "Button - secondary" },
+          { "value": "link_style", "label": "Link"}
+        ],
+        "default": "button_1"
+      },
+      {
+        "type": "checkbox",
+        "id": "enlarge_title",
+        "label": "Enlarge heading",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enlarge_text",
+        "label": "Enlarge text",
+        "default": false
+      },
+      {
+        "type": "radio",
+        "id": "text_alignment",
+        "label": "Text alignment",
+        "options": [
+          { "value": "center", "label": "Center" },
+          { "value": "left", "label": "Left" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Background color",
+        "default": "#dae4e6"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text color",
+        "default": "#333333"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Image with countdown"
+      }
+    ]
+  }
+{% endschema %}

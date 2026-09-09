@@ -1,0 +1,403 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'product-form-' | append: section.id | append: product.id
+  assign installments_form_id = product_form_id | append: '-installments'
+  assign grouped_handle_list = group_handles
+  if grouped_handle_list == blank
+    assign grouped_handle_list = product.handle | split: '||'
+  endif
+  assign grouped_base_handle = product.title | handleize
+  assign group_products_count = 0
+  if group_products != blank
+    for grouped_product in group_products
+      if grouped_product != blank and grouped_product.handle != blank
+        assign group_products_count = group_products_count | plus: 1
+      endif
+    endfor
+  endif
+  assign use_group_products_for_swatches = false
+  if group_products_count > 1
+    assign use_group_products_for_swatches = true
+  endif
+  assign group_count = 0
+  if use_group_products_for_swatches
+    for grouped_product in group_products
+      if grouped_product != blank and grouped_product.handle != blank
+        assign group_count = group_count | plus: 1
+      endif
+    endfor
+  else
+    for grouped_handle in grouped_handle_list
+      assign grouped_handle = grouped_handle | strip
+      if grouped_handle != blank
+        assign group_count = group_count | plus: 1
+      endif
+    endfor
+  endif
+  assign effective_active_handle = active_handle | default: product.handle
+-%}
+
+<style>
+  {%- for media in product.media -%}
+    [data-product-id="{{ product.id }}"].quickbuy-form .quickbuy__product-media-{{ forloop.index }} {
+      width: 360px;
+    }
+    @media (max-height: 750px) {
+      [data-product-id="{{ product.id }}"].quickbuy-form .quickbuy__product-media-{{ forloop.index }} {
+        width: 280px;
+      }
+    }
+    @media (max-height: 650px) {
+      [data-product-id="{{ product.id }}"].quickbuy-form .quickbuy__product-media-{{ forloop.index }} {
+        width: 230px;
+      }
+    }
+  {%- endfor -%}
+</style>
+
+<script type="application/json" class="ProductJson-{{ product.id }}" data-product-json>
+ {{ product | json }}
+</script>
+<script type="text/template" class="quickbuy-placeholder-template">
+  <div class="quickbuy-form placeholder product-detail" data-product-id="{{ product.id }}">
+    <div class="container">
+      <div class="quickbuy__toolbar">
+        <div class="quickbuy__close">
+          <a href="#" class="js-close-quickbuy icon feather-icon" aria-label="{{ 'general.accessibility_labels.close' | t | escape }}">{% render 'feather-x' %}</a>
+        </div>
+      </div>
+      <div class="quickbuy__media-container relative {% if product.media.first.media_type == 'image' %}quickbuy__media-container--current-image{% endif %}">
+        {% if product.available %}
+          {% if product.compare_at_price_max > product.price and settings.sale_label_enabled %}
+            <span class="product-label product-label--on-sale global-border-radius">{{ 'products.product.on_sale' | t }}</span>
+          {% endif %}
+        {% elsif settings.sold_label_enabled %}
+          <span class="product-label product-label--sold-out global-border-radius">{{ 'products.product.sold_out' | t }}</span>
+        {% endif %}
+
+        {% render 'product-badge', product: product %}
+
+        <div class="quickbuy__product-media global-border-radius">
+          {% for media in product.media %}
+            <div class="quickbuy__product-media-item quickbuy__product-media-{{ forloop.index }} relative" data-media-id="{{ media.id }}">
+              {% render 'media', media: media %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="quickbuy__slider-controls">
+          <button class="btn--plain prev icon feather-icon" aria-label="{{ 'products.product.prev_product_image' | t | escape }}">{% render 'feather-arrow-left' %}</button>
+          <button class="btn--plain next icon feather-icon" aria-label="{{ 'products.product.next_product_image' | t | escape }}">{% render 'feather-arrow-right' %}</button>
+        </div>
+      </div>
+      <div class="quickbuy__content">
+        <div class="quickbuy__titlebar">
+          <div>
+            <div class="quickbuy__title">{{ product.title }}</div>
+
+            <div id="quickbuy_variant_price" class="quickbuy__price product-price" data-price-wrapper>
+              {% if current_variant.compare_at_price > current_variant.price %}
+                <span class="visually-hidden">{{ 'products.product.on_sale' | t }}</span>
+              {% endif %}
+              <span class="{% if current_variant.compare_at_price > current_variant.price %}product-price__reduced{% endif %}" data-product-price>
+                <span class="theme-money">
+                  {%- if settings.product_currency_code_enabled -%}
+                    {{- current_variant.price | money_with_currency -}}
+                  {%- else -%}
+                    {{- current_variant.price | money -}}
+                  {%- endif -%}
+                </span>
+              </span>
+              {% if product.compare_at_price_max > product.price %}
+                <span class="visually-hidden" data-compare-text>{{ 'products.product.regular_price' | t }}</span>
+                <span data-compare-price>
+                  <span class="product-price__compare">
+                    {% if current_variant.compare_at_price > current_variant.price %}
+                      <span class="theme-money">{{ current_variant.compare_at_price | money }}</span>
+                    {% endif %}
+                  </span>
+                </span>
+              {% endif %}
+              {% render 'unit-price', variant: current_variant %}
+            </div>
+
+            {%- if settings.show_tax_and_shipping -%}
+              {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+                <div class="product-policies small-text">
+                  {%- if cart.taxes_included -%}
+                    {{ 'products.product.include_taxes' | t }}
+                  {%- endif -%}
+                  {%- if shop.shipping_policy.body != blank -%}
+                    {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+        </div>
+        <div class="quickbuy__form">
+          {% capture form_class %}quick-buy__product-form{% if settings.on_add_to_cart == 'ajax' and template.name != 'cart' %} ajax-product-form{% endif %}{% unless current_variant.available %} variant--unavailable{% endunless %}{% endcapture %}
+          {%- form 'product', product, id: product_form_id, class: form_class -%}
+            {%- if group_count > 0 -%}
+              {%- assign active_color_name = '' -%}
+              {%- assign quickbuy_color_label = 'products.product.color' | t -%}
+              {%- if quickbuy_color_label contains 'Translation missing' -%}
+                {%- assign quickbuy_color_label = 'Color' -%}
+              {%- endif -%}
+              {%- if use_group_products_for_swatches -%}
+                {%- for swatch_product in group_products -%}
+                  {%- if swatch_product != blank and swatch_product.handle == effective_active_handle -%}
+                    {%- for option in swatch_product.options_with_values -%}
+                      {%- assign option_name = option.name | downcase -%}
+                      {%- if option_name == 'color' or option_name == 'colour' -%}
+                        {%- assign active_color_name = option.values | first -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- else -%}
+                {%- for swatch_handle in grouped_handle_list -%}
+                  {%- assign swatch_handle = swatch_handle | strip -%}
+                  {%- assign swatch_product = blank -%}
+                  {%- if product != blank and product.handle == swatch_handle -%}
+                    {%- assign swatch_product = product -%}
+                  {%- endif -%}
+                  {%- if swatch_product == blank and collection != blank and collection.products != blank -%}
+                    {%- for collection_product in collection.products -%}
+                      {%- if collection_product.handle == swatch_handle -%}
+                        {%- assign swatch_product = collection_product -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                  {%- if swatch_product == blank -%}
+                    {%- assign swatch_product = all_products[swatch_handle] -%}
+                  {%- endif -%}
+                  {%- if swatch_product != blank and swatch_product.handle != swatch_handle -%}
+                    {%- assign swatch_product = blank -%}
+                  {%- endif -%}
+                  {%- if swatch_handle != blank -%}
+                    {%- if swatch_handle == effective_active_handle -%}
+                      {%- if swatch_product != blank -%}
+                        {%- for option in swatch_product.options_with_values -%}
+                          {%- assign option_name = option.name | downcase -%}
+                          {%- if option_name == 'color' or option_name == 'colour' -%}
+                            {%- assign active_color_name = option.values | first -%}
+                            {%- break -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                      {%- endif -%}
+                      {%- if active_color_name == blank -%}
+                        {%- assign base_prefix = grouped_base_handle | append: '-' -%}
+                        {%- if grouped_base_handle != blank and swatch_handle contains base_prefix -%}
+                          {%- assign active_color_name = swatch_handle | remove_first: base_prefix | replace: '-', ' ' -%}
+                        {%- else -%}
+                          {%- assign active_color_name = swatch_handle | split: '-' | last | replace: '-', ' ' -%}
+                        {%- endif -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+              <div class="quickbuy__group-swatches-label small-text" data-quickbuy-active-color-label>
+                {{ quickbuy_color_label }} - <span data-quickbuy-active-color-name>{{ active_color_name }}</span>
+              </div>
+              <div class="quickbuy__group-swatches product-block-group__swatches" role="tablist" aria-label="{{ quickbuy_color_label }}">
+                {%- if use_group_products_for_swatches -%}
+                  {%- for swatch_product in group_products -%}
+                    {%- assign swatch_handle = swatch_product.handle | strip -%}
+                    {%- if swatch_handle == blank -%}{%- continue -%}{%- endif -%}
+                    {%- assign color_name = '' -%}
+                    {%- for option in swatch_product.options_with_values -%}
+                      {%- assign option_name = option.name | downcase -%}
+                      {%- if option_name == 'color' or option_name == 'colour' -%}
+                        {%- assign color_name = option.values | first -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                    {%- assign swatch_token = color_name | downcase | replace: '"', '' | handleize -%}
+                    {%- assign swatch_raw = swatch_token | replace: '-', ' ' -%}
+                    {%- assign swatch_style = '' -%}
+                    {%- assign swatch_hex_mf = swatch_product.metafields.custom.swatch_hex.value | default: swatch_product.metafields.custom.swatch_hex -%}
+                    {%- assign swatch_file_mf = swatch_product.metafields.custom.swatch_file.value | default: swatch_product.metafields.custom.swatch_file -%}
+                    {%- if swatch_file_mf != blank -%}
+                      {%- assign swatch_file_url = swatch_file_mf | image_url: width: 128 -%}
+                      {%- if swatch_file_url == blank -%}
+                        {%- assign swatch_file_url = swatch_file_mf | file_url -%}
+                      {%- endif -%}
+                      {%- if swatch_file_url != blank -%}
+                        {%- assign swatch_style = '--grouped-swatch-image:url(' | append: swatch_file_url | append: ')' -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                    {%- if swatch_style == blank and swatch_hex_mf != blank -%}
+                      {%- assign swatch_style = '--grouped-swatch-color:' | append: swatch_hex_mf -%}
+                    {%- endif -%}
+                    <div class="product-block-group__swatch-wrap">
+                      <button
+                        type="button"
+                        class="product-block-group__swatch color-swatch-link{% if swatch_handle == effective_active_handle %} color-swatch-link-current is-active{% endif %}{% unless swatch_product.available %} product-block-group__swatch--disabled{% endunless %}"
+                        data-quickbuy-group-swatch
+                        data-target-handle="{{ swatch_handle }}"
+                        data-ssr-product="1"
+                        data-ssr-available="{% if swatch_product.available %}true{% else %}false{% endif %}"
+                        data-color-name="{{ swatch_raw | default: swatch_product.title | replace: '-', ' ' | escape }}"
+                        data-color-value="{{ swatch_token | escape }}"
+                        {% if swatch_token != blank %}data-swatch="{{ swatch_token }}"{% endif %}
+                        role="tab"
+                        aria-selected="{% if swatch_handle == effective_active_handle %}true{% else %}false{% endif %}"
+                        aria-label="{{ swatch_raw | default: swatch_product.title | replace: '-', ' ' | escape }}">
+                        <span class="product-block-group__swatch-dot related-swatch-img swatch-sample"{% if swatch_style != blank %} style="{{ swatch_style }}"{% endif %}></span>
+                      </button>
+                      <span class="swatch-disabled-ui" aria-hidden="true"><span class="line"></span></span>
+                    </div>
+                  {%- endfor -%}
+                {%- else -%}
+                {%- for swatch_handle in grouped_handle_list -%}
+                  {%- assign swatch_handle = swatch_handle | strip -%}
+                  {%- assign swatch_product = blank -%}
+                  {%- if product != blank and product.handle == swatch_handle -%}
+                    {%- assign swatch_product = product -%}
+                  {%- endif -%}
+                  {%- if swatch_product == blank and collection != blank and collection.products != blank -%}
+                    {%- for collection_product in collection.products -%}
+                      {%- if collection_product.handle == swatch_handle -%}
+                        {%- assign swatch_product = collection_product -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                  {%- if swatch_product == blank -%}
+                    {%- assign swatch_product = all_products[swatch_handle] -%}
+                  {%- endif -%}
+                  {%- if swatch_product != blank and swatch_product.handle != swatch_handle -%}
+                    {%- assign swatch_product = blank -%}
+                  {%- endif -%}
+                  {%- if swatch_handle != blank -%}
+                    {%- assign color_name = '' -%}
+                    {%- if swatch_product != blank -%}
+                      {%- for option in swatch_product.options_with_values -%}
+                        {%- assign option_name = option.name | downcase -%}
+                        {%- if option_name == 'color' or option_name == 'colour' -%}
+                          {%- assign color_name = option.values | first -%}
+                          {%- break -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    {%- endif -%}
+                    {%- if color_name == blank -%}
+                      {%- assign base_prefix = grouped_base_handle | append: '-' -%}
+                      {%- if grouped_base_handle != blank and swatch_handle contains base_prefix -%}
+                        {%- assign color_name = swatch_handle | remove_first: base_prefix | replace: '-', ' ' -%}
+                      {%- else -%}
+                        {%- assign color_name = swatch_handle | split: '-' | last | replace: '-', ' ' -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                    {%- assign swatch_token = color_name | downcase | replace: '"', '' | handleize -%}
+                    {%- assign swatch_raw = swatch_token | replace: '-', ' ' -%}
+                    {%- assign swatch_style = '' -%}
+                    {%- assign swatch_hex_mf = blank -%}
+                    {%- assign swatch_file_mf = blank -%}
+                    {%- if swatch_product != blank -%}
+                      {%- assign swatch_hex_mf = swatch_product.metafields.custom.swatch_hex.value | default: swatch_product.metafields.custom.swatch_hex -%}
+                      {%- assign swatch_file_mf = swatch_product.metafields.custom.swatch_file.value | default: swatch_product.metafields.custom.swatch_file -%}
+                    {%- endif -%}
+                    {%- if swatch_file_mf != blank -%}
+                      {%- assign swatch_file_url = swatch_file_mf | image_url: width: 128 -%}
+                      {%- if swatch_file_url == blank -%}
+                        {%- assign swatch_file_url = swatch_file_mf | file_url -%}
+                      {%- endif -%}
+                      {%- if swatch_file_url != blank -%}
+                        {%- assign swatch_style = '--grouped-swatch-image:url(' | append: swatch_file_url | append: ')' -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                    {%- if swatch_style == blank and swatch_hex_mf != blank -%}
+                      {%- assign swatch_style = '--grouped-swatch-color:' | append: swatch_hex_mf -%}
+                    {%- endif -%}
+                    <div class="product-block-group__swatch-wrap">
+                      <button
+                        type="button"
+                        class="product-block-group__swatch color-swatch-link{% if swatch_handle == effective_active_handle %} color-swatch-link-current is-active{% endif %}{% if swatch_product != blank and swatch_product.available == false %} product-block-group__swatch--disabled{% endif %}"
+                        data-quickbuy-group-swatch
+                        data-target-handle="{{ swatch_handle }}"
+                        {% if swatch_product != blank %}
+                          data-ssr-product="1"
+                          data-ssr-available="{% if swatch_product.available %}true{% else %}false{% endif %}"
+                        {% endif %}
+                        data-color-name="{{ swatch_raw | default: color_name | escape }}"
+                        data-color-value="{{ swatch_token | escape }}"
+                        {% if swatch_token != blank %}data-swatch="{{ swatch_token }}"{% endif %}
+                        role="tab"
+                        aria-selected="{% if swatch_handle == effective_active_handle %}true{% else %}false{% endif %}"
+                        aria-label="{{ swatch_raw | default: color_name | escape }}">
+                        <span class="product-block-group__swatch-dot related-swatch-img swatch-sample"{% if swatch_style != blank %} style="{{ swatch_style }}"{% endif %}></span>
+                      </button>
+                      <span class="swatch-disabled-ui" aria-hidden="true"><span class="line"></span></span>
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+            {% unless product.has_only_default_variant %}
+              <div class="quickbuy__variants flex">
+                {% render 'variant-picker', product: product %}
+              </div>
+            {% endunless %}
+
+            <select name="id" class="no-js" data-product-select aria-label="{{ 'products.product.selector_label' | t | escape }}">
+              {%- for variant in product.variants -%}
+                <option value="{{ variant.id }}"
+                  {% if variant == current_variant %}selected{% endif %}
+                  {% unless variant.available %}disabled{% endunless %}
+                  {% if variant.inventory_management != blank %}
+                    {% if variant.inventory_quantity <= 0 %}data-stock="out"{% endif %}
+                    {% if variant.inventory_quantity < 10 and settings.hide_unavailable_quantity_opts %}
+                      data-inventory="{{ variant.inventory_quantity }}"
+                    {% endif %}
+                  {% endif %}>
+                  {{- variant.title -}}
+                </option>
+              {%- endfor -%}
+            </select>
+
+            <div class="quickbuy__product-form--confirmation grid">
+              {%- if settings.quickbuy_show_quantity_selector == true -%}
+                <div class="quickbuy__quantity grid__item one-quarter">
+                  {% render 'quantity-selector', variant: current_variant %}
+                </div>
+              {%- endif -%}
+              <div class="grid__item three-quarters">
+                <button
+                  class="btn quickbuy__submit btn--subtle-hover"
+                  type="submit"
+                  name="add"
+                  data-add-to-cart
+                  {% unless current_variant.available %}disabled="disabled"{% endunless %}>
+                    <span data-add-to-cart-text>
+                      {% if current_variant.available %}
+                        {{ 'products.product.add_to_cart' | t }}
+                      {% else %}
+                        {{ 'products.product.sold_out' | t }}
+                      {% endif %}
+                    </span>
+                </button>
+              </div>
+            </div>
+            <div class="quickbuy__installments">
+              {%- form 'product', product, id: installments_form_id, class: form_class -%}
+                <input type="hidden" name="id" value="{{ current_variant.id }}" data-product-secondary-select>
+                {{ form | payment_terms }}
+              {%- endform -%}
+            </div>
+            {%- if product.available and settings.quickbuy_show_backorder_text == true -%}
+              {% render 'backorder', product: product, variant: current_variant %}
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+        <a class="quickbuy__more quickbuy__more-bottom" href="{{ product.url }}">
+          View Full Product Details<span class="icon feather-icon">{% render 'feather-chevron-right' %}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</script>

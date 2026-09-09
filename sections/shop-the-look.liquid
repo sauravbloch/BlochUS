@@ -1,0 +1,412 @@
+{%- liquid
+  comment
+    Shop the Look: related products from Shopify Search & Discovery metafield.
+    Uses ONLY: shopify--discovery--product_recommendation.related_products
+  endcomment
+  assign related_products = product.metafields['shopify--discovery--product_recommendation'].related_products.value
+  assign related_products_valid_count = 0
+  if related_products != blank and related_products.size > 0
+    for related_product in related_products
+      if related_product != blank
+        assign related_products_valid_count = related_products_valid_count | plus: 1
+      endif
+    endfor
+  endif
+-%}
+{%- if related_products_valid_count > 0 -%}
+  {%- assign heading_text = section.settings.heading | default: 'Shop the look' -%}
+  {%- assign stl_grid = section.settings.grid | default: 5 -%}
+  {%- capture grid_class_list -%}grid-flex__item{%- endcapture -%}
+
+  <div class="container space-row">
+  <div class="shop-the-look page-width section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="shop-the-look">
+    {%- if section.settings.background_color != blank or section.settings.background_color != 'rgba(0,0,0,0)' -%}
+      {% style %}
+        .section-{{ section.id }}.shop-the-look {
+          background-color: {{ section.settings.background_color }};
+        }
+      {% endstyle %}
+    {%- endif -%}
+
+    <div class="shop-the-look__header">
+      <h2 class="text-center large-row large-title shop-the-look__heading">{{ heading_text }}</h2>
+      <div class="shop-the-look__carousel-controls" data-shop-the-look-controls hidden>
+        <button class="btn--plain prev icon feather-icon" type="button" aria-label="{{ 'general.accessibility_labels.previous' | t | escape }} {{ heading_text | escape }}">{% render 'feather-arrow-left' %}</button>
+        <button class="btn--plain next icon feather-icon" type="button" aria-label="{{ 'general.accessibility_labels.next' | t | escape }} {{ heading_text | escape }}">{% render 'feather-arrow-right' %}</button>
+      </div>
+    </div>
+
+    <div class="related-products product-carousel-peek shop-the-look__carousel">
+      <div class="grid-flex product-recommendations-container js-shop-the-look-carousel" data-shop-the-look-carousel>
+      {%- for related_product in related_products -%}
+        {%- if related_product != blank -%}
+          {% render 'shop-the-look-card', product: related_product, section: section, add_to_bag_text: section.settings.add_to_bag_text, grid_class: grid_class_list %}
+        {%- endif -%}
+      {%- endfor -%}
+      </div>
+      {% render 'peek-carousel-advice' %}
+    </div>
+  </div>
+  </div>
+
+  <script>
+    (function() {
+      var section = document.querySelector('[data-section-id="{{ section.id }}"]');
+      if (!section) return;
+      var cards = section.querySelectorAll('[data-shop-the-look-card]');
+      var moneyFormat = window.theme && window.theme.moneyFormat ? window.theme.moneyFormat : '${{ amount }}';
+      function formatMoney(cents) {
+        if (window.theme && window.theme.Shopify && typeof window.theme.Shopify.formatMoney === 'function') {
+          return window.theme.Shopify.formatMoney(cents, moneyFormat);
+        }
+        return (cents / 100).toFixed(2);
+      }
+      cards.forEach(function(card) {
+        var form = card.querySelector('form.ajax-product-form');
+        var variantSelect = card.querySelector('[data-shop-the-look-variant-select]');
+        var optionControls = card.querySelectorAll('[data-shop-the-look-options] [data-option-index]');
+        var priceEl = card.querySelector('[data-shop-the-look-price]');
+        var addBtn = form ? form.querySelector('[data-add-to-cart]') : null;
+        if (!form || !variantSelect) return;
+
+        function getOptionPairs() {
+          var indices = {};
+          Array.prototype.forEach.call(optionControls, function(el) {
+            if (!el) return;
+            var idx = parseInt(el.getAttribute('data-option-index') || '0', 10);
+            indices[idx] = true;
+          });
+
+          var pairs = [];
+          Object.keys(indices).forEach(function(k) {
+            var idx = parseInt(k, 10);
+            var value = '';
+
+            var checkedRadio = card.querySelector('[data-shop-the-look-options] input[type="radio"][data-option-index="' + idx + '"]:checked');
+            if (checkedRadio) {
+              value = checkedRadio.value || '';
+            } else {
+              var sel = card.querySelector('[data-shop-the-look-options] select[data-option-index="' + idx + '"]');
+              if (sel) value = sel.value || '';
+            }
+
+            pairs.push({ idx: idx, value: value });
+          });
+
+          return pairs;
+        }
+
+        function getSelectedVariant() {
+          if (optionControls.length === 0) {
+            var sel = variantSelect.options[variantSelect.selectedIndex];
+            return sel && !sel.disabled ? sel : null;
+          }
+          var optPairs = getOptionPairs();
+          var options = Array.prototype.slice.call(variantSelect.options);
+          for (var i = 0; i < options.length; i++) {
+            var opt = options[i];
+            if (opt.disabled) continue;
+            var match = true;
+            for (var j = 0; j < optPairs.length; j++) {
+              var p = optPairs[j];
+              var dataVal = opt.getAttribute('data-option-' + p.idx);
+              if (dataVal !== p.value) { match = false; break; }
+            }
+            if (match) return opt;
+          }
+          return null;
+        }
+
+        function updateState() {
+          var variantOption = getSelectedVariant();
+          if (variantOption) {
+            variantSelect.value = variantOption.value;
+            if (priceEl) priceEl.textContent = formatMoney(parseInt(variantOption.getAttribute('data-price'), 10));
+            if (addBtn) {
+              addBtn.disabled = variantOption.getAttribute('data-available') !== 'true';
+              addBtn.classList.toggle('shop-the-look-card__add-btn--disabled', addBtn.disabled);
+            }
+          } else {
+            if (addBtn) {
+              addBtn.disabled = true;
+              addBtn.classList.add('shop-the-look-card__add-btn--disabled');
+            }
+          }
+        }
+
+        Array.prototype.forEach.call(optionControls, function(el) {
+          el.addEventListener('change', updateState);
+        });
+        updateState();
+      });
+
+      var forms = section.querySelectorAll('form.ajax-product-form');
+      if (forms.length) {
+        // Prefer the theme's built-in Ajax add-to-cart (opens cart drawer, updates header, etc.)
+        if (window.jQuery && window.theme && typeof window.theme.initAjaxAddToCartForm === 'function') {
+          window.theme.initAjaxAddToCartForm(window.jQuery(forms));
+        } else {
+          // Fallback: prevent navigation and do a minimal Ajax add + open drawer if available
+          Array.prototype.forEach.call(forms, function (f) {
+            f.addEventListener('submit', function (evt) {
+              evt.preventDefault();
+              var formData = new FormData(f);
+              fetch((window.theme && window.theme.routes && window.theme.routes.cart_add_url ? window.theme.routes.cart_add_url : '/cart/add') + '.js', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' },
+                body: new URLSearchParams(formData)
+              }).then(function () {
+                if (window.theme && window.theme.CartDrawer && typeof window.theme.CartDrawer.open === 'function') {
+                  window.theme.CartDrawer.open();
+                }
+              }).catch(function () {});
+            });
+          });
+        }
+      }
+
+      // Shop the look carousel: 1 + ~1/3 peek <768; 2 + peek 768–1023; 4 + peek from 1024px (see styles .section-shop-the-look .product-carousel-peek).
+      function initShopTheLookPeekCarousel(sectionRoot) {
+        if (!sectionRoot) return;
+        var attempt = 0;
+        var maxAttempts = 60;
+        var sectionId = sectionRoot.getAttribute('data-section-id');
+
+        function ready() {
+          return !!(window.jQuery &&
+            window.jQuery.fn &&
+            window.jQuery.fn.slick);
+        }
+
+        function run() {
+          if (!ready()) {
+            attempt += 1;
+            if (attempt <= maxAttempts) setTimeout(run, 100);
+            return;
+          }
+
+          var $section = window.jQuery(sectionRoot);
+          var $carousel = $section.find('[data-shop-the-look-carousel]');
+          if (!$carousel.length) return;
+          if ($carousel.hasClass('slick-initialized')) return;
+
+          var $controls = $section.find('[data-shop-the-look-controls]');
+          var $prev = $controls.find('.prev');
+          var $next = $controls.find('.next');
+          var namespace = '.shopTheLook-' + sectionId;
+          var $win = window.jQuery(window);
+
+          function getTargetSlides() {
+            var w = $win.width();
+            if (w < 768) return 1;
+            if (w < 1024) return 2;
+            return 4;
+          }
+
+          function shouldUseSlick() {
+            return $win.width() < 768;
+          }
+
+          function syncControls(slick) {
+            if (!slick || !$controls.length) return;
+            var w = window.jQuery(window).width();
+            var isDesktop = w >= 768;
+            var slidesToShow = slick.options.slidesToShow || 1;
+            var slideCount = slick.slideCount || 0;
+            var hasOverflow = slideCount > slidesToShow;
+            var show = isDesktop && hasOverflow;
+            $controls.prop('hidden', !show);
+            $prev.toggle(show);
+            $next.toggle(show);
+          }
+
+          function syncNonSlickControls() {
+            if (!$controls.length) return;
+            var isDesktop = $win.width() >= 768;
+            if (!isDesktop) {
+              $carousel.removeClass('stl-no-peek');
+              $controls.prop('hidden', true);
+              return;
+            }
+            var el = $carousel.get(0);
+            if (!el) {
+              $carousel.removeClass('stl-no-peek');
+              $controls.prop('hidden', true);
+              return;
+            }
+            var targetSlides = getTargetSlides();
+            var slideCount = $carousel.children().length;
+            var fitsWithoutPeek = slideCount <= targetSlides;
+            $carousel.toggleClass('stl-no-peek', fitsWithoutPeek);
+            if (fitsWithoutPeek) {
+              el.scrollLeft = 0;
+              $controls.prop('hidden', true);
+              $prev.toggle(false).prop('disabled', true);
+              $next.toggle(false).prop('disabled', true);
+              return;
+            }
+            var maxScrollLeft = Math.max(0, el.scrollWidth - el.clientWidth);
+            var hasOverflow = maxScrollLeft > 2;
+            var canGoPrev = hasOverflow && el.scrollLeft > 2;
+            var canGoNext = hasOverflow && el.scrollLeft < (maxScrollLeft - 2);
+            $controls.prop('hidden', !hasOverflow);
+            $prev.toggle(hasOverflow);
+            $next.toggle(hasOverflow);
+            $prev.prop('disabled', !canGoPrev);
+            $next.prop('disabled', !canGoNext);
+          }
+
+          function bindNonSlickControls() {
+            $prev.off('click.shopTheLookScroll').on('click.shopTheLookScroll', function () {
+              var el = $carousel.get(0);
+              if (!el) return;
+              var amount = Math.max(200, Math.floor(el.clientWidth * 0.6));
+              el.scrollBy({ left: -amount, behavior: 'smooth' });
+            });
+            $next.off('click.shopTheLookScroll').on('click.shopTheLookScroll', function () {
+              var el = $carousel.get(0);
+              if (!el) return;
+              var amount = Math.max(200, Math.floor(el.clientWidth * 0.6));
+              el.scrollBy({ left: amount, behavior: 'smooth' });
+            });
+            $carousel.off('scroll.shopTheLookScroll').on('scroll.shopTheLookScroll', function () {
+              syncNonSlickControls();
+            });
+          }
+
+          $carousel.off('init.shopTheLook reInit.shopTheLook afterChange.shopTheLook')
+            .on('init.shopTheLook reInit.shopTheLook afterChange.shopTheLook', function (evt, slick) {
+              syncControls(slick);
+            });
+
+          function rebuildSlickForWidth() {
+            if (!shouldUseSlick()) {
+              if ($carousel.hasClass('slick-initialized')) {
+                $carousel.slick('unslick');
+              }
+              bindNonSlickControls();
+              syncNonSlickControls();
+              return;
+            }
+            var targetSlides = getTargetSlides();
+            var prevArrowOption = targetSlides === 1 ? false : $prev;
+            var nextArrowOption = targetSlides === 1 ? false : $next;
+            if ($carousel.hasClass('slick-initialized')) {
+              $carousel.slick('unslick');
+            }
+            $carousel.slick({
+              infinite: false,
+              slidesToShow: targetSlides,
+              slidesToScroll: 1,
+              swipeToSlide: true,
+              dots: false,
+              prevArrow: prevArrowOption,
+              nextArrow: nextArrowOption
+            });
+            syncControls($carousel.slick('getSlick'));
+          }
+
+          var hasCarousel = $carousel.children().length > 1;
+          if (!hasCarousel) {
+            $controls.prop('hidden', true);
+            return;
+          }
+
+          rebuildSlickForWidth();
+          function onResizeAssess() {
+            rebuildSlickForWidth();
+          }
+          $win.off('debouncedresize' + namespace + '.stlSlides')
+            .on('debouncedresize' + namespace + '.stlSlides', onResizeAssess);
+          $win.off('resize' + namespace + '.stlSlides')
+            .on('resize' + namespace + '.stlSlides', onResizeAssess);
+        }
+
+        run();
+      }
+
+      initShopTheLookPeekCarousel(section);
+
+      if (!window.__shopTheLookPeekLoadBound) {
+        window.__shopTheLookPeekLoadBound = true;
+        document.addEventListener('shopify:section:load', function (event) {
+          var inner = event.target.querySelector && event.target.querySelector('[data-section-type="shop-the-look"]');
+          if (inner) initShopTheLookPeekCarousel(inner);
+        });
+      }
+
+      // Theme Editor: tear down peek carousel so resize listeners / Slick don't stack on section reload
+      if (!window.__shopTheLookPeekUnloadBound) {
+        window.__shopTheLookPeekUnloadBound = true;
+        document.addEventListener('shopify:section:unload', function (event) {
+          if (!window.jQuery) return;
+          window.jQuery(window).off('debouncedresize.shopTheLook-' + event.detail.sectionId + '.stlSlides');
+          window.jQuery(window).off('resize.shopTheLook-' + event.detail.sectionId + '.stlSlides');
+          var $root = window.jQuery(event.target);
+          var $shopSection = $root.find('[data-section-type="shop-the-look"]').addBack('[data-section-type="shop-the-look"]');
+          if (!$shopSection.length) return;
+          if (String($shopSection.attr('data-section-id')) !== String(event.detail.sectionId)) return;
+          var $carousel = $shopSection.find('[data-shop-the-look-carousel]');
+          var $controls = $shopSection.find('[data-shop-the-look-controls]');
+          $controls.find('.prev').off('click.shopTheLookScroll');
+          $controls.find('.next').off('click.shopTheLookScroll');
+          $carousel.off('scroll.shopTheLookScroll');
+          $carousel.off('init.shopTheLook reInit.shopTheLook afterChange.shopTheLook');
+          if ($carousel.hasClass('slick-initialized')) {
+            $carousel.slick('unslick');
+          }
+        });
+      }
+    })();
+  </script>
+{%- else -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      display: none !important;
+    }
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Shop the Look",
+  "tag": "section",
+  "class": "section-shop-the-look",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop the look"
+    },
+    {
+      "type": "text",
+      "id": "add_to_bag_text",
+      "label": "Add to cart button text",
+      "info": "Leave blank to use the theme default (Add to cart).",
+      "default": "Add to cart"
+    },
+    {
+      "type": "range",
+      "id": "grid",
+      "label": "Products per row",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 5,
+      "info": "Card width classes (e.g. one-fifth): match Product recommendations for consistency. Carousel shows 1+peek / 2+peek / 4+peek by screen width, not this number."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    }
+  ],
+  "templates": ["product"],
+  "presets": [
+    {
+      "name": "Shop the Look"
+    }
+  ]
+}
+{% endschema %}

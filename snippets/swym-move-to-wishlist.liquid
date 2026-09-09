@@ -1,0 +1,81 @@
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+
+
+
+<!--<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>-->
+
+<script src="//cdn.shopify.com/s/files/1/0083/3090/3631/t/5/assets/jquery-confirm.min.js"></script>
+
+
+<script type="text/javascript">
+function initMoveWishlist(){
+  var ShopifyCartData = {{ cart | json }} || {'items': []};
+  window.SwymCallbacks = window.SwymCallbacks || [];
+  window.SwymCallbacks.push(function(swat) {
+    // Add a confirmation step
+    
+    // For cart page button and dynamic cart
+    // Use delegate listener to attach click for the button
+    // TODO For more granular listeners, attach a direct listener
+    $( "body" ).on('click', '.move_to_wishlist', function(evt) {
+      evt.preventDefault();
+      var elem = this;
+      var lineNum = $(this).data()['line'];
+      var lineItem = ShopifyCartData.items[lineNum - 1];
+      
+      $.confirm({
+        title: 'Maybe...',
+        theme: 'supervan', // 'material', 'bootstrap'
+        content: 'Would you like to save this for later?', // TODO You can edit the message to show the product name
+        buttons: {
+          save: {
+              text: 'Yes!',
+              btnClass: 'btn-blue',
+              action: function(savebutton){
+                // Move to wishlist and remove
+                if(!lineItem) {
+                  // get from cart.js
+                  jQuery.getJSON('/cart.js', function (cart, textStatus) {
+                    ShopifyCartData = cart;
+                    var lineItem = ShopifyCartData.items[lineNum - 1];
+                    moveToWishlist(lineItem, lineNum, elem);
+                  });
+                } else {
+                  moveToWishlist(lineItem, lineNum, elem);
+                }
+              }
+          },
+          nah: {
+              text: 'Nah...',
+              btnClass: 'btn-red',
+              action: function(nahbutton){
+                // Just remove from cart
+                removeFromCart(lineNum);
+              }
+          }
+        }
+      });
+      
+    });
+    
+    function moveToWishlist(lineItem, lineNum, elem) {
+      var wishlistData = swat.platform.transformCartItem(lineItem);
+      swat.addToWishList(wishlistData, function() {
+        console.log('Item added to wishlist');
+        $(elem).addClass('moved_to_wishlist').addClass('moving_to_wishlist');
+        removeFromCart(lineNum);
+      });
+    }
+    function removeFromCart(lineNum) {
+      // Remove from cart via location
+      window.location = '/cart/change?line='+lineNum+'&quantity=0';
+      // You can also do it via cartJS AJAX APIs and dynamically update the UI
+      // More here https://help.shopify.com/themes/development/getting-started/using-ajax-api
+    }
+    
+  });  
+}
+(function(){
+  initMoveWishlist();
+})();
+</script>

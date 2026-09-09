@@ -1,0 +1,31 @@
+{
+  "sections": {
+    "pf-407829af": {
+      "type": "pf-407829af",
+      "settings": {
+        "pf_c3648c75_value": "Terms &amp; Conditions: &nbsp;Discount code will be sent to customers email address following completion of&nbsp;email newsletter signup form. Code cannot be shared and can only be used one time. 10% off discount excludes selected pointe shoes, Jason Samuels Smith Limited Edition tap shoes, outlet &amp; sale products. Code cannot be exchanged for cash value and cannot be used with any other BLOCH&nbsp;discount codes or promotions.&nbsp;",
+        "pf_4877c112_value": "<span style=\"font-style: italic; font-weight: 700;\">You'll always be first to find out about promotions, new product launches, news &amp; events and much much more!</span>",
+        "pf_4ed78e21_checkboxLabel": "I would like to sign up to the BLOCH Email Newsletter and receive regular email communications.",
+        "pf_a710ffd5_value": "Sign up to our Email Newsletter&nbsp;and receive 10% off your first&nbsp;order!",
+        "pf_273193b9_label_text": "I'd like to hear about",
+        "pf_7b014ed7_label_text": "I'd like to hear about",
+        "pf_2c410098_placeholder": "Enter your first name",
+        "pf_00984a38_placeholder": "Enter your last name",
+        "pf_4ed78e21_label_text": "Newsletter Signup",
+        "pf_4eda7b01_label_text": "I'm interested in",
+        "pf_67431168_label_text": "Newsletter Signup",
+        "pf_dd44cf27_label_text": "I'm interested in",
+        "pf_4a38f45a_placeholder": "Enter your email",
+        "pf_4a38f45a_label_text": "Email Address",
+        "pf_2c410098_label_text": "First Name",
+        "pf_00984a38_label_text": "Last Name",
+        "pf_d452f4b7_value": "Submit",
+        "pf_a4566464_label_text": "I'm a",
+        "pf_f45a4eda_label_text": "I'm a"
+      }
+    }
+  },
+  "order": [
+    "pf-407829af"
+  ]
+}

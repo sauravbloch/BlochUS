@@ -1,0 +1,1375 @@
+<div></div>
+{%- capture image_size -%}
+  {{ section.settings.logo_width | times: 2 }}x{%- endcapture -%}
+{% style %}
+  .store-logo--image {
+    max-width: {{ section.settings.logo_width }}px;
+    width: {{ section.settings.logo_width }}px;
+  }
+
+  @media only screen and (max-width: 939px) {
+    .store-logo--image {
+      width: auto;
+    }
+  }
+
+  {% if section.settings.desktop_layout == 'center' %}
+    .utils__item--search-icon,
+    .settings-open-bar--small,
+    .utils__right {
+      width: calc(50% -({{ section.settings.logo_width }}px / 2));
+    }
+  {% endif %}
+
+  /* ─────────────────────────────────────────────────────────────
+   Segment tabs + Category row (desktop)
+   ───────────────────────────────────────────────────────────── */
+
+/* Base (mobile-first) */
+.segment-tabs {
+  display: none;
+  gap: 4px;
+  align-items: center;
+}
+
+.segment-tabs .segment-tab.is-active > .site-nav__link {
+  border-bottom: 2px solid currentColor;
+}
+
+/* Category rows: only one visible at a time */
+.segment-cats { display: none; }
+.segment-cats.is-visible { display: flex; }
+
+/* Compact look for the category row */
+.segment-cats.site-nav {
+  gap: 4px;
+  align-items: center;
+  /*margin: 0;*/
+}
+
+/* Safety buffer for overlay mode */
+.segment-cats.site-nav::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: -10px; height: 10px;
+}
+
+.site-nav__item--megadropdown > .site-nav__link,
+.site-nav__item--smalldropdown > .site-nav__link { white-space: nowrap; }
+
+
+/* ============================== DESKTOP (>=940px) ============================== */
+@media (min-width: 940px) {
+  .segment-tabs { display: flex; }
+
+  /* Chevron flip on active tab */
+  .segment-tabs .seg-chevron { display:inline-block; margin-left:6px; vertical-align:middle; transition:transform .2s; line-height:0; }
+  .segment-tab.is-active .seg-chevron { transform: rotate(180deg); }
+
+  /* Prevent clipping */
+  .header-navigation,
+  .header-navigation .navigation__container,
+  .segment-cats { overflow: visible; }
+
+  /* Layering */
+  .header-navigation { position: relative; z-index: 30; }
+  .header-navigation .navigation__container { position: relative; }
+
+  /* === Overlay mode (default, non-pinned) === */
+  .segment-tabs { padding-bottom: 0; }
+  .segment-cats.site-nav {
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    z-index: 60;
+    opacity: 0;
+    transform: translateY(6px);
+    visibility: hidden;
+    pointer-events: none;
+    padding-top: 18px;
+    border-bottom: none !important;
+  }
+  .segment-cats.site-nav::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    top: -12px; height: 12px;
+  }
+  .segment-cats.site-nav.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Dropdowns always above cat row */
+  .site-nav__dropdown { z-index: 100; }
+
+  /* Hover/focus opens dropdowns from the overlay row */
+  .segment-cats .site-nav__item--has-dropdown { position: static; }
+  .segment-cats .site-nav__item--has-dropdown > .site-nav__dropdown {
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transform: translateY(6px);
+    border-top: none;
+    transition: opacity 50ms ease, transform 60ms ease, visibility 0s;
+  }
+  .segment-cats .site-nav__item--has-dropdown:hover > .site-nav__dropdown,
+  .segment-cats .site-nav__item--has-dropdown:focus-within > .site-nav__dropdown {
+    opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
+  }
+
+  /* === PINNED MODE (always show the active segment row UNDER the tabs) ===
+     JS toggles <html class="nm-pinned-cats"> on desktop. */
+  .nm-pinned-cats .header-navigation .navigation__container {
+    /* Break the theme’s horizontal flex so rows stack vertically */
+    display: block;
+  }
+
+  .nm-pinned-cats .segment-cats.site-nav {
+    /* Exit overlay: become a real second bar */
+    position: static;
+    top: auto; left: auto; right: auto;
+    transform: none;
+    width: 100%;
+    border-bottom: none !important;
+    padding-top: 12px;
+  }
+
+  /* Remove the overlay buffer in pinned mode */
+  .nm-pinned-cats .segment-cats.site-nav::before {
+    content: none; height: 0;
+  }
+
+  /* Only the active segment’s row shows */
+  .nm-pinned-cats .segment-cats.site-nav:not(.is-visible) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  .nm-pinned-cats .segment-cats.site-nav.is-visible {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* Keep tabs row full-width with no extra gap */
+  .nm-pinned-cats .segment-tabs { width: 100%; margin-bottom: 0; }
+
+  /* ==== Mega menu: keep columns intact inside overlay or pinned ==== */
+  .segment-cats .site-nav__dropdown.mega-dropdown { position: absolute; overflow: visible; box-shadow: none; border: none; }
+  .segment-cats .site-nav__dropdown.mega-dropdown::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 50%;
+    width: 100vw; transform: translateX(-50%);
+    background: #fff; box-shadow: 0 4px 2px -2px rgba(0,0,0,.06); pointer-events: none; z-index: -1;
+  }
+  .segment-cats .site-nav__dropdown.mega-dropdown > .page-width { margin: 0 0 0 -15px; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .site-nav { width: calc(100% + 15px); }
+
+  /* Promo bar mask while any cat row is visible 
+  .nm-hide-promo .store-messages-bar { background: #fff !important; }
+  .nm-hide-promo .store-messages-bar .store-messages { opacity: 0; pointer-events: none; }
+  */
+
+  /* --- Mega menu columns (scoped) --- */
+  .segment-cats .site-nav__dropdown.mega-dropdown .grid.site-nav__promo-container{ display:flex; align-items:flex-start; gap:32px; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .grid.site-nav__promo-container > .grid__item.three-quarters{ flex:0 0 75%; max-width:75%; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .grid.site-nav__promo-container > .grid__item.one-quarter{  flex:0 0 25%; max-width:25%; }
+
+  .segment-cats .site-nav__dropdown.mega-dropdown .mega-dropdown__container{
+    display:flex; flex-wrap:wrap; column-gap:64px; row-gap:12px;
+    padding:0; margin:0; list-style:none;
+  }
+  .segment-cats .site-nav__dropdown.mega-dropdown .mega-dropdown__item{ display:block; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .mega-dropdown__item.one-quarter{ flex:0 0 25%; max-width:25%; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .mega-dropdown__item.one-fifth{   flex:0 0 20%; max-width:20%; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .mega-dropdown__item.one-sixth{   flex:0 0 16.6667%; max-width:16.6667%; }
+
+  .segment-cats .site-nav__dropdown.mega-dropdown .site-nav__dropdown-heading{ display:block; margin:0 0 6px; font-weight:600; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .site-nav__submenu{ display:block; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .site-nav__submenu-container{ display:block; padding:0; margin:0; list-style:none; }
+  .segment-cats .site-nav__dropdown.mega-dropdown .mega-dropdown__subitem{ display:block; margin:2px 0; }
+
+  .site-nav__item--megadropdown > .site-nav__link,
+  .site-nav__item--smalldropdown > .site-nav__link { white-space: nowrap; }
+}
+
+{% endstyle %}
+
+{%- capture logo_html -%}
+  <!-- LOGO / STORE NAME -->
+  {%- if template.name == 'index' -%}
+    <h1 class="h1 store-logo {% if section.settings.desktop_layout == 'center' %} hide-for-search{% endif %} {% if section.settings.logo_position_mobile == 'inline' %} hide-for-search-mobile{% endif %} store-logo--{% if section.settings.logo != blank %}image {% else %}text {% endif %} store-logo-desktop--{{ section.settings.desktop_layout }} store-logo-mobile--{{ section.settings.logo_position_mobile }}" itemscope itemtype="http://schema.org/Organization">
+    {%- else -%}
+      <div class="h1 store-logo {% if section.settings.desktop_layout == 'center' %} hide-for-search{% endif %} {% if section.settings.logo_position_mobile == 'inline' %} hide-for-search-mobile{% endif %}   store-logo--{% if section.settings.logo != blank %}image{% else %}text{% endif %} store-logo-desktop--{{ section.settings.desktop_layout }} store-logo-mobile--{{ section.settings.logo_position_mobile }}" itemscope itemtype="http://schema.org/Organization">
+      {%- endif -%}
+
+      <!-- DESKTOP LOGO -->
+      <a href="/" itemprop="url" class="site-logo{% if section.settings.logo != blank %} site-header__logo-image{% endif %}">
+        <meta itemprop="name" content="{{ shop.name }}">
+        {%- if section.settings.logo != blank -%}
+          {%- capture img_size -%}
+            {{ section.settings.logo_width | times: 2 }}x{%- endcapture -%}
+          <img src="{{ section.settings.logo | img_url: img_size }}" alt="{{ section.settings.logo.alt | escape }}" itemprop="logo" width="{{ section.settings.logo_width | times: 2 }}" height="{{ section.settings.logo_width | times: 2 | divided_by: section.settings.logo.aspect_ratio | round }}">
+        {%- else -%}
+          {{ shop.name }}
+        {%- endif -%}
+      </a>
+
+      {%- if template.name == 'index' -%}
+      </h1>
+  {%- else -%}
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture desktop_search_icon_html -%}
+  {% unless section.settings.show_search_bar_desktop %}
+    <!-- DESKTOP SEARCH ICON-->
+    <div class="utils__item utils__item--search-icon utils__item--search-{{ section.settings.desktop_layout }} hide-for-search desktop-only">
+      <a href="{{ routes.search_url }}" class="plain-link js-search-form-open" aria-label="{{ 'general.accessibility_labels.search' | t | escape }}">
+        <span class="feather-icon icon--header">
+          {% render 'feather-search' %}
+        </span>
+        <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
+      </a>
+    </div>
+  {% endunless %}
+{%- endcapture -%}
+
+{%- capture mobile_search_icon_html -%}
+  <!-- MOBILE SEARCH ICON-->
+  <a href="{{ routes.search_url }}" class="plain-link utils__item utils__item--search-icon utils__item--search-{{ section.settings.logo_position_mobile }} hide-for-search mobile-only js-search-form-open" aria-label="{{ 'general.accessibility_labels.search' | t | escape }}">
+    <span class="feather-icon icon--header">
+      {% render 'feather-search' %}
+    </span>
+    <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
+  </a>
+{%- endcapture -%}
+
+{%- capture desktop_search_html -%}
+  <!-- DESKTOP SEARCH -->
+  {% assign search_id = 'open-search-closed '%}
+  {% if section.settings.show_search_bar_desktop %}
+    {% capture search_bar_class %}settings-open-bar desktop-only
+      {% if section.settings.desktop_layout == 'center' %}
+        settings-open-bar--small{% endif%}
+    {% endcapture %}
+    {% assign search_id = 'open-search-bar '%}
+  {% else %}
+    {% capture search_bar_class %}
+      {% if section.settings.desktop_layout == 'left' %}settings-close-bar--left{% endif%}
+      desktop-only{% endcapture %}
+  {% endif %}
+
+  {% render 'search-bar', settings_class: search_bar_class, search_id: search_id %}
+{%- endcapture -%}
+
+{%- capture mobile_search_html -%}
+  <!-- MOBILE SEARCH -->
+  {% assign search_id = 'open-search-mobile-closed '%}
+  {% if section.settings.show_search_bar_mobile %}
+    {% capture search_bar_class %}
+      settings-open-mobile-bar{% endcapture %}
+    {% assign search_id = 'open-search-mobile-bar '%}
+  {% else %}
+    {% capture search_bar_class %}
+      settings-close-mobile-bar{% endcapture %}
+  {% endif %}
+
+  {% render 'search-bar-mobile', settings_class: search_bar_class, search_id: search_id %}
+{%- endcapture -%}
+
+{%- capture account_html -%}
+  <div class="utils__item customer-account hide-for-search">
+    <a href="{{ routes.account_url }}" class="customer-account__parent-link feather-icon icon--header" aria-haspopup="true" aria-expanded="false" aria-label="{{ 'general.accessibility_labels.account' | t | escape }}">{% render 'icon-account' %}</a>
+    <ul class="customer-account__menu">
+      {% if customer %}
+        <li class="customer-account__link">
+          {% if customer.first_name != blank %}
+            {% capture first_name %}
+              <a href="{{ routes.account_url }}">{{ customer.first_name }}</a>
+            {% endcapture %}
+            {{ 'layout.customer.logged_in_as_html' | t: first_name: first_name }}
+          {% endif %}
+        </li>
+        <li class="customer-account__link">
+          <a href="{{ routes.account_url }}">{{ 'layout.customer.account' | t }}</a>
+        </li>
+        <li class="customer-account__link customer-logout">
+          <a href="{{ routes.account_logout_url }}">
+            {{ 'layout.customer.log_out' | t }}
+          </a>
+        </li>
+      {% else %}
+        <li class="customer-account__link customer-login">
+          <a href="{{ routes.account_login_url }}">
+            {{ 'layout.customer.log_in' | t }}
+          </a>
+        </li>
+        <li class="customer-account__link customer-register">
+          <a href="{{ routes.account_register_url }}">
+            {{ 'layout.customer.create_account' | t }}
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+{%- endcapture -%}
+
+{%- if template == 'gift_card' -%}
+
+  <div class="site-header site-header--logo-only">
+    <header class="header-content container" style="background-color:{{ section.settings.tab_color_1 }}">
+      <div class="page-header page-width">
+        <div class="h1 store-logo store-logo--{% if section.settings.logo != blank %}image{% else %}text{% endif %}" itemscope itemtype="http://schema.org/Organization">
+          <meta itemprop="url" content="{{ shop.url }}">
+          <meta itemprop="name" content="{{ shop.name }}">
+          {% if section.settings.logo != blank %}
+            <h1 class="site-logo site-header__logo-image">
+              {% capture img_size %}
+                {{ section.settings.logo_width | times: 2 }}x{% endcapture %}
+              <img src="{{ section.settings.logo | img_url: img_size }}" alt="{{ section.settings.logo.alt | escape }}" itemprop="logo" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}">
+            </h1>
+          {% else %}
+            <h1 class="site-logo">{{ shop.name }}</h1>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+  </div>
+
+{%- else -%}
+
+  <div class="site-header {% if section.settings.dock_nav %}docking-header{% endif %}" data-section-id="{{ section.id }}" data-section-type="header" role="banner">
+
+    {%- if section.settings.show_announcement_bar -%}
+      {%- if section.settings.home_only_announcement_bar == false or template == 'index' -%}
+        <section class="announcement-bar">
+          {%- if section.settings.announcement_bar_url != blank -%}
+            <a href="{{ section.settings.announcement_bar_url }}" class="announcement-bar__content container">{{ section.settings.announcement_bar_text }}</a>
+          {%- else -%}
+            <div class="announcement-bar__content container">{{ section.settings.announcement_bar_text }}</div>
+          {%- endif -%}
+        </section>
+      {%- endif -%}
+    {%- endif -%}
+
+    <header class="header-content container" style="background-color:{{ section.settings.tab_color_1 }}">
+      <div class="page-header page-width">
+
+        {%- if section.settings.desktop_layout == 'left' or section.settings.logo_position_mobile == 'own_row' -%}
+          {{ logo_html }}
+        {%- endif -%}
+
+        {%- if section.settings.dock_nav -%}
+          <div class="docked-mobile-navigation-container">
+            <div class="docked-mobile-navigation-container__inner" style="background-color:{{ section.settings.tab_color_1 }}">
+            {%- endif -%}
+
+            <div class="utils relative {% if section.settings.desktop_layout == 'center' %} utils--center{% endif %}">
+              <!-- MOBILE BURGER -->
+              <button class="btn btn--plain burger-icon feather-icon js-mobile-menu-icon hide-for-search" aria-label="{{ 'general.accessibility_labels.menu_toggle' | t }}">
+                {% render 'feather-menu' %}
+              </button>
+
+              {%- if section.settings.desktop_layout == 'center' -%}
+                {{ desktop_search_icon_html }}
+                {{ desktop_search_html }}
+              {%- endif -%}
+
+              {%- if section.settings.desktop_layout == 'center' or section.settings.logo_position_mobile == 'inline' -%}
+                {{ logo_html }}
+              {%- endif -%}
+
+              {%- if section.settings.desktop_layout == 'left' and section.settings.show_search_bar_desktop == true -%}
+                {{ desktop_search_html }}
+              {%- endif -%}
+
+              <div class="utils__right">
+                {%- if section.settings.show_country_selector or section.settings.show_language_selector -%}
+                  <!-- CURRENCY CONVERTER -->
+                  <div class="utils__item utils__item--currency header-localization header-localization--desktop hide-for-search">
+                    {% render 'localization', input_prefix: 'desktop-header' %}
+                  </div>
+                {%- endif -%}
+
+                {%- if section.settings.show_country_select -%}
+                  <!-- COUNTRY SELECT R8 - start -->
+                  {% render 'country-select' %}
+                {%- endif -%}
+
+                {%- if section.settings.desktop_layout == 'left' and section.settings.show_search_bar_desktop == false -%}
+                  {{ desktop_search_icon_html }}
+                  {{ desktop_search_html }}
+                {%- endif -%}
+
+                {%- if section.settings.show_search_bar_mobile == false -%}
+                  {{ mobile_search_icon_html }}
+                  {{ mobile_search_html }}
+                {%- endif -%}
+  
+                <!-- ACCOUNT -->
+                {% if shop.customer_accounts_enabled %}
+                  {{ account_html }}
+                {% endif %}
+
+                {% render 'wishlisthero-header-icon' %}
+
+                <!-- CART -->
+                {% capture cart_html %}
+                  <div class="utils__item header-cart hide-for-search">
+                    <button type="button" class="cart-toggle" aria-controls="cart-drawer" aria-expanded="false" title="{{ cart.item_count }} items in your cart">
+                      <span class="feather-icon icon--header">{% render 'feather-bag' %}</span>
+                      <span class="header-cart__count" aria-hidden="true">{{ cart.item_count }}</span>
+                    </button>
+                    {% unless cart.items == empty or template contains 'cart' %}
+                      <div class="cart-summary global-border-radius">
+                        <div class="cart-summary__header">{{ 'layout.cart.title' | t }}:</div>
+                        <div class="cart-summary__product-list">
+                          {% for item in cart.items %}
+                            <div class="cart-summary__product">
+                              <div class="cart-summary__product-image">
+                                {% render 'responsive-image', image: item.image %}
+                              </div>
+                              <div class="cart-summary__product__description">
+                                <div class="cart-summary__product-title">
+                                  {{ item.product.title | link_to: item.product.url }}
+                                  {% if item.quantity > 1 %}
+                                    <span class="cart-summary__quantity">{{ item.quantity }}</span>
+                                  {% endif %}
+                                </div>
+                                <div class="cart-summary__product__variants">
+                                  {% for option in item.product.options %}
+                                    {% capture value_key %}option{{ forloop.index }}{% endcapture %}
+                                    {% if item.variant[value_key] != 'Default Title' %}
+                                      <div class="added-notice__variant">
+                                        <span class="added-notice__variant-label">{{ option }}:</span>
+                                        <span class="added-notice__variant-value">{{ item.variant[value_key] }}</span>
+                                      </div>
+                                    {% endif %}
+                                  {% endfor %}
+                                </div>
+                                {% if item.selling_plan_allocation %}
+                                  <div class="cart-summary__selling-plan small-text">{{ item.selling_plan_allocation.selling_plan.name }}</div>
+                                {% endif %}
+                                <div class="cart-summary__price">
+                                  {% if item.original_line_price != item.final_line_price %}
+                                    <span class="product-price__reduced theme-money">{{ item.final_line_price | money }}</span>
+                                    <span class="product-price__compare theme-money">{{ item.original_line_price | money }}</span>
+                                  {% else %}
+                                    <span class="theme-money">{{ item.final_line_price | money }}</span>
+                                  {% endif %}
+                                  {%- if item.unit_price_measurement -%}
+                                    <div class="cart-summary__unit-price">
+                                      {% render 'unit-price', variant: item %}
+                                    </div>
+                                  {%- endif -%}
+
+                                  {% if item.line_level_discount_allocations.size > 0 %}
+                                    <ul class="cart-discount-list small-text">
+                                      {% for discount_allocation in item.line_level_discount_allocations %}
+                                        <li class="cart-discount cart-discount--inline">
+                                          <span class="cart-discount__label">{{ discount_allocation.discount_application.title }}</span>
+                                          <span class="cart-discount__amount theme-money">{{ discount_allocation.amount | money }}</span>
+                                        </li>
+                                      {% endfor %}
+                                    </ul>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                        <div class="cart-summary__footer">
+                          <div class="cart-summary__total-quantity-row">
+                            <span>{{ 'layout.cart.items' | t }}</span>
+                            <span>{{ cart.item_count }}</span>
+                          </div>
+
+                          {%- if cart.cart_level_discount_applications != blank -%}
+                            <ul class="cart-discount-list">
+                              {%- for discount_application in cart.cart_level_discount_applications -%}
+                                <li class="cart-discount cart-discount--inline">
+                                  <span class="cart-discount__label">{{ discount_application.title }}</span>
+                                  <span class="cart-discount__amount theme-money">{{ discount_application.total_allocated_amount | money }}</span>
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+
+                          <div class="cart-summary__total-price-row large-text">
+                            <span>{{ 'layout.cart.subtotal' | t }}</span>
+                            <span class="theme-money">
+                              {%- if settings.cart_currency_code_enabled -%}
+                                {{- cart.total_price | money_with_currency -}}
+                              {%- else -%}
+                                {{- cart.total_price | money -}}
+                              {%- endif -%}
+                            </span>
+                          </div>
+
+                          <a class="btn btn--primary btn--small btn--fullwidth cart-summary__button" href="{{ routes.cart_url }}">{{ 'layout.cart.go_to_cart' | t }}</a>
+                        </div>
+                      </div>
+                    {% endunless %}
+                  </div>
+                {% endcapture %}
+                {{ cart_html }}
+              </div>
+
+            </div>
+
+            {% if section.settings.dock_nav %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      {% render 'cart-drawer', recommendations_collection: settings.cart_drawer_recommendations_collection, recommendations_heading: settings.cart_drawer_recommendations_heading, recommendations_limit: settings.cart_drawer_recommendations_limit %}
+    </header>
+
+    {% if section.settings.dock_nav %}
+      <div class="docked-navigation-container docked-navigation-container--{{ section.settings.desktop_layout }}">
+        <div class="docked-navigation-container__inner">
+        {% endif %}
+
+        <section 
+          class="header-navigation container" 
+          style="background-color:{{ section.settings.tab_color_1 }}">
+          <nav 
+            id="mobile-menu-dialog"
+            aria-modal="true" 
+            aria-label="Mobile menu"
+            class="navigation__container page-width {% if section.settings.show_search_bar_mobile == true %}mobile-nav-no-margin-top{% endif %}" style="background-color:{{ section.settings.tab_color_1 }}">
+
+            <!-- DOCKED NAV SEARCH CENTER LAYOUT-->
+            {%- if section.settings.dock_nav and section.settings.desktop_layout == 'center' -%}
+              <div class="docking-header__utils docking-header__center-layout-search">
+                <a href="{{ routes.search_url }}" class="plain-link utils__item hide-for-search js-search-form-open" aria-label="{{ 'general.accessibility_labels.search' | t | escape }}">
+                  <span class="feather-icon icon--header">
+                    {% render 'feather-search' %}
+                  </span>
+                  <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
+                </a>
+              </div>
+            {%- endif -%}
+
+            <!-- MOBILE MENU UTILS -->
+            <div class="mobile-menu-utils">
+              {%- if section.settings.show_country_selector or section.settings.show_language_selector -%}
+                <!-- MOBILE MENU LOCALIZATION -->
+                <div class="utils__item utils__item--currency header-localization header-localization--mobile hide-for-search">
+                  {% render 'localization', input_prefix: 'mobile-header' %}
+                </div>
+              {%- endif -%}
+
+
+
+              {%- if section.settings.show_country_select -%}
+                <!-- COUNTRY SELECT R8 - start -->
+                {% render 'country-select' %}
+              {%- endif -%}
+
+
+              <!-- MOBILE MENU CLOSE -->
+              <button class="btn btn--plain close-mobile-menu js-close-mobile-menu" aria-label="{{ 'general.accessibility_labels.close' | t }}">
+                <span class="feather-icon icon--header">
+                  {% render 'feather-x' %}
+                </span>
+              </button>
+            </div>
+
+            <!-- MOBILE MENU SEARCH BAR -->
+            <div class="mobile-menu-search-bar">
+              {% render 'search-bar-mobile', settings_class: 'mobile-menu-search', search_id: 'mobile-menu-search' %}
+            </div>
+
+            {% comment %}
+              MOBILE MENU — Segment-first rendering.
+              Shows each Segment block (Dance, Active, etc.) as a top-level accordion,
+              and renders the full assigned menu tree beneath it.
+              Fallback to Main menu if no segment blocks exist.
+            {% endcomment %}
+            {%- assign segments = section.blocks | where: 'type', 'segment' -%}
+            {%- assign nm_segment_slug_seen_mobile = '' -%}
+
+            <!-- MOBILE MENU -->
+            <ul class="nav mobile-site-nav">
+              {%- comment -%}
+                Render ONLY the segment accordions (Dance, Active, etc.) on mobile,
+                each expanding to the same menu tree as desktop.
+                Dedupe by segment_slug (duplicate Segment blocks e.g. after merge would otherwise render twice).
+              {%- endcomment -%}
+
+              {%- for seg in segments -%}
+                {%- assign nm_seg_slug_m = seg.settings.segment_slug | strip | downcase | default: 'segment' -%}
+                {%- assign nm_seg_marker_m = '||' | append: nm_seg_slug_m | append: '||' -%}
+                {%- unless nm_segment_slug_seen_mobile contains nm_seg_marker_m -%}
+                  {%- assign nm_segment_slug_seen_mobile = nm_segment_slug_seen_mobile | append: nm_seg_marker_m -%}
+                {%- assign seg_label = seg.settings.segment_label | default: 'Segment' -%}
+                {%- assign seg_slug  = seg.settings.segment_slug  | downcase | default: 'segment' -%}
+                {%- assign seg_menu  = seg.settings.segment_menu -%}
+                {%- assign seg_url   = seg.settings.segment_landing | default: '/' -%}
+
+                <li class="mobile-site-nav__item" data-seg="{{ seg_slug }}">
+                  <a href="{{ seg_url }}" class="mobile-site-nav__link">{{ seg_label }}</a>
+
+                  {%- assign has_children = false -%}
+                  {%- if seg_menu and seg_menu.links and seg_menu.links.size > 0 -%}
+                    {%- assign has_children = true -%}
+                  {%- endif -%}
+
+                  {%- if has_children -%}
+                    {% capture accessible_label %}
+                      {{ 'general.accessibility_labels.open_dropdown' | t: menu_name: seg_label }}
+                    {% endcapture %}
+                    <button class="btn--plain feather-icon mobile-site-nav__icon"
+                            aria-label="{{ accessible_label }}">
+                      {% render 'svg-chevron-down', svg_title: accessible_label %}
+                    </button>
+
+                    <ul class="mobile-site-nav__menu">
+                      {%- for l1 in seg_menu.links -%}
+                        <li class="mobile-site-nav__item">
+                          <a href="{{ l1.url }}" class="mobile-site-nav__link">{{ l1.title }}</a>
+
+                          {%- if l1.links != blank -%}
+                            {% capture sub_label %}{{ 'general.accessibility_labels.open_dropdown' | t: menu_name: l1.title }}{% endcapture %}
+                            <button class="btn--plain feather-icon mobile-site-nav__icon"
+                                    aria-label="{{ sub_label }}">
+                              {% render 'svg-chevron-down', svg_title: sub_label %}
+                            </button>
+
+                            <ul class="mobile-site-nav__menu">
+                              {%- for l2 in l1.links -%}
+                                <li class="mobile-site-nav__item">
+                                  <a href="{{ l2.url }}" class="mobile-site-nav__link">{{ l2.title }}</a>
+
+                                  {%- if l2.links != blank -%}
+                                    {% capture subsub_label %}{{ 'general.accessibility_labels.open_dropdown' | t: menu_name: l1.title | append: ' ' | append: l2.title }}{% endcapture %}
+                                    <button class="btn--plain feather-icon mobile-site-nav__icon"
+                                            aria-label="{{ subsub_label }}">
+                                      {% render 'svg-chevron-down', svg_title: subsub_label %}
+                                    </button>
+
+                                    <ul class="mobile-site-nav__menu">
+                                      {%- for l3 in l2.links -%}
+                                        <li class="mobile-site-nav__item">
+                                          <a href="{{ l3.url }}" class="mobile-site-nav__link">{{ l3.title }}</a>
+                                        </li>
+                                      {%- endfor -%}
+                                    </ul>
+                                  {%- endif -%}
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </li>
+                {%- endunless -%}
+              {%- endfor -%}
+            </ul>
+
+
+
+            <div class="header-social-icons">
+              {% render 'social-icons', icon_setting: settings.social_custom_icon, icon_size: '48x' %}
+            </div>
+
+            <!-- MAIN MENU -->
+            {%- comment -%} ───────────────────────────────────────────────────────────────
+            SEGMENT TABS + TWO-TIER NAV: 
+            • Tabs row shows all segments (Dance, Active, …) from Header blocks.
+            • Hovering a tab reveals that segment’s categories row.
+            • Hovering a category shows its own dropdown (small or mega).
+            ────────────────────────────────────────────────────────────────────────── {%- endcomment -%}
+
+            {%- comment -%}
+              Robust ACTIVE segment resolver (L1–L4), Shopify-safe
+              • Normalize current path
+              • Exact or prefix+slash match
+              • Longest match wins
+            {%- endcomment -%}
+
+            {%- assign active_slug = section.settings.default_segment_slug | default: 'dance' -%}
+
+            {%- comment %} Normalize current path {% endcomment -%}
+            {%- assign current_path = request.path | downcase -%}
+            {%- assign current_path = current_path | split:'?' | first | split:'#' | first -%}
+            {%- assign cp_len = current_path | size -%}
+            {%- if current_path != '/' -%}
+              {%- assign cp_last_index = cp_len | minus: 1 -%}
+              {%- assign cp_last = current_path | slice: cp_last_index, 1 -%}
+              {%- if cp_last == '/' -%}
+                {%- assign cp_trim = cp_len | minus: 1 -%}
+                {%- assign current_path = current_path | slice: 0, cp_trim -%}
+                {%- assign cp_len = current_path | size -%}
+              {%- endif -%}
+            {%- endif -%}
+
+            {%- assign best_len = 0 -%}
+            {%- assign best_slug = active_slug -%}
+
+            {%- assign segments = section.blocks | where: 'type', 'segment' -%}
+            {%- assign nm_segment_slug_seen_resolve = '' -%}
+            {%- for seg in segments -%}
+              {%- assign slug = seg.settings.segment_slug | strip | downcase | default: 'segment' -%}
+              {%- assign nm_seg_marker_r = '||' | append: slug | append: '||' -%}
+              {%- unless nm_segment_slug_seen_resolve contains nm_seg_marker_r -%}
+                {%- assign nm_segment_slug_seen_resolve = nm_segment_slug_seen_resolve | append: nm_seg_marker_r -%}
+              {%- assign seg_menu = linklists[seg.settings.segment_menu] -%}
+              {%- if seg_menu and seg_menu.links and seg_menu.links.size > 0 -%}
+
+                {%- for l1 in seg_menu.links -%}
+                  {%- assign p1 = l1.url | replace: shop.url, '' | replace: shop.secure_url, '' | downcase | split:'?' | first | split:'#' | first -%}
+                  {%- assign p1_len = p1 | size -%}
+                  {%- if p1 != '/' and p1 != '' -%}
+                    {%- assign p1_last_index = p1_len | minus: 1 -%}
+                    {%- assign p1_last = p1 | slice: p1_last_index, 1 -%}
+                    {%- if p1_last == '/' -%}
+                      {%- assign p1_len = p1_len | minus: 1 -%}
+                      {%- assign p1 = p1 | slice: 0, p1_len -%}
+                    {%- endif -%}
+                  {%- endif -%}
+
+                  {%- assign p1_match = false -%}
+                  {%- if current_path == p1 -%}
+                    {%- assign p1_match = true -%}
+                  {%- else -%}
+                    {%- if p1 != '/' and current_path != '/' and p1_len > 0 -%}
+                      {%- assign p1_prefix = current_path | slice: 0, p1_len -%}
+                      {%- assign p1_after  = current_path | slice: p1_len, 1 -%}
+                      {%- if p1_prefix == p1 and p1_after == '/' -%}
+                        {%- assign p1_match = true -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endif -%}
+                  {%- if p1_match and p1_len > best_len -%}{%- assign best_len = p1_len -%}{%- assign best_slug = slug -%}{%- endif -%}
+
+                  {%- if l1.links != blank -%}
+                    {%- for l2 in l1.links -%}
+                      {%- assign p2 = l2.url | replace: shop.url, '' | replace: shop.secure_url, '' | downcase | split:'?' | first | split:'#' | first -%}
+                      {%- assign p2_len = p2 | size -%}
+                      {%- if p2 != '/' and p2 != '' -%}
+                        {%- assign p2_last_index = p2_len | minus: 1 -%}
+                        {%- assign p2_last = p2 | slice: p2_last_index, 1 -%}
+                        {%- if p2_last == '/' -%}
+                          {%- assign p2_len = p2_len | minus: 1 -%}
+                          {%- assign p2 = p2 | slice: 0, p2_len -%}
+                        {%- endif -%}
+                      {%- endif -%}
+
+                      {%- assign p2_match = false -%}
+                      {%- if current_path == p2 -%}
+                        {%- assign p2_match = true -%}
+                      {%- else -%}
+                        {%- if p2 != '/' and current_path != '/' and p2_len > 0 -%}
+                          {%- assign p2_prefix = current_path | slice: 0, p2_len -%}
+                          {%- assign p2_after  = current_path | slice: p2_len, 1 -%}
+                          {%- if p2_prefix == p2 and p2_after == '/' -%}
+                            {%- assign p2_match = true -%}
+                          {%- endif -%}
+                        {%- endif -%}
+                      {%- endif -%}
+                      {%- if p2_match and p2_len > best_len -%}{%- assign best_len = p2_len -%}{%- assign best_slug = slug -%}{%- endif -%}
+
+                      {%- if l2.links != blank -%}
+                        {%- for l3 in l2.links -%}
+                          {%- assign p3 = l3.url | replace: shop.url, '' | replace: shop.secure_url, '' | downcase | split:'?' | first | split:'#' | first -%}
+                          {%- assign p3_len = p3 | size -%}
+                          {%- if p3 != '/' and p3 != '' -%}
+                            {%- assign p3_last_index = p3_len | minus: 1 -%}
+                            {%- assign p3_last = p3 | slice: p3_last_index, 1 -%}
+                            {%- if p3_last == '/' -%}
+                              {%- assign p3_len = p3_len | minus: 1 -%}
+                              {%- assign p3 = p3 | slice: 0, p3_len -%}
+                            {%- endif -%}
+                          {%- endif -%}
+
+                          {%- assign p3_match = false -%}
+                          {%- if current_path == p3 -%}
+                            {%- assign p3_match = true -%}
+                          {%- else -%}
+                            {%- if p3 != '/' and current_path != '/' and p3_len > 0 -%}
+                              {%- assign p3_prefix = current_path | slice: 0, p3_len -%}
+                              {%- assign p3_after  = current_path | slice: p3_len, 1 -%}
+                              {%- if p3_prefix == p3 and p3_after == '/' -%}
+                                {%- assign p3_match = true -%}
+                              {%- endif -%}
+                            {%- endif -%}
+                          {%- endif -%}
+                          {%- if p3_match and p3_len > best_len -%}{%- assign best_len = p3_len -%}{%- assign best_slug = slug -%}{%- endif -%}
+
+                          {%- if l3.links != blank -%}
+                            {%- for l4 in l3.links -%}
+                              {%- assign p4 = l4.url | replace: shop.url, '' | replace: shop.secure_url, '' | downcase | split:'?' | first | split:'#' | first -%}
+                              {%- assign p4_len = p4 | size -%}
+                              {%- if p4 != '/' and p4 != '' -%}
+                                {%- assign p4_last_index = p4_len | minus: 1 -%}
+                                {%- assign p4_last = p4 | slice: p4_last_index, 1 -%}
+                                {%- if p4_last == '/' -%}
+                                  {%- assign p4_len = p4_len | minus: 1 -%}
+                                  {%- assign p4 = p4 | slice: 0, p4_len -%}
+                                {%- endif -%}
+                              {%- endif -%}
+
+                              {%- assign p4_match = false -%}
+                              {%- if current_path == p4 -%}
+                                {%- assign p4_match = true -%}
+                              {%- else -%}
+                                {%- if p4 != '/' and current_path != '/' and p4_len > 0 -%}
+                                  {%- assign p4_prefix = current_path | slice: 0, p4_len -%}
+                                  {%- assign p4_after  = current_path | slice: p4_len, 1 -%}
+                                  {%- if p4_prefix == p4 and p4_after == '/' -%}
+                                    {%- assign p4_match = true -%}
+                                  {%- endif -%}
+                                {%- endif -%}
+                              {%- endif -%}
+                              {%- if p4_match and p4_len > best_len -%}{%- assign best_len = p4_len -%}{%- assign best_slug = slug -%}{%- endif -%}
+                            {%- endfor -%}
+                          {%- endif -%}
+
+                        {%- endfor -%}
+                      {%- endif -%}
+
+                    {%- endfor -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endunless -%}
+            {%- endfor -%}
+
+            {%- assign active_slug = best_slug -%}
+
+
+            {%- comment -%} 1) SEGMENT TAB ROW (always visible desktop-only) {%- endcomment -%}
+            <ul class="segment-tabs nav site-nav desktop-only" role="menubar" aria-label="Segments">
+              {%- assign nm_segment_slug_seen_tabs = '' -%}
+              {%- for seg in segments -%}
+                {%- assign slug = seg.settings.segment_slug | strip | downcase | default: 'segment' -%}
+                {%- assign nm_seg_marker_t = '||' | append: slug | append: '||' -%}
+                {%- unless nm_segment_slug_seen_tabs contains nm_seg_marker_t -%}
+                  {%- assign nm_segment_slug_seen_tabs = nm_segment_slug_seen_tabs | append: nm_seg_marker_t -%}
+                {%- assign seg_menu_handle = seg.settings.segment_menu -%}
+                {%- assign seg_menu = linklists[seg_menu_handle] -%}
+
+                {%- assign has_children = false -%}
+                {%- if seg_menu and seg_menu.links and seg_menu.links.size > 0 -%}
+                  {%- assign has_children = true -%}
+                {%- endif -%}
+
+                <li class="segment-tab site-nav__item{% if slug == active_slug %} is-active{% endif %}"
+                    data-seg="{{ slug }}">
+                  <a class="site-nav__link"
+                    href="{{ seg.settings.segment_landing | default: '/' }}"
+                    aria-haspopup="{{ has_children | json }}"
+                    aria-expanded="{% if slug == active_slug and has_children %}true{% else %}false{% endif %}">
+                    {{ seg.settings.segment_label }}
+                    {%- if has_children -%}
+                      <span class="site-nav__icon seg-chevron" aria-hidden="true">
+                        {% render 'svg-chevron-down' %}
+                      </span>
+                    {%- endif -%}
+                  </a>
+                </li>
+                {%- endunless -%}
+              {%- endfor -%}
+            </ul>
+
+            {%- comment -%} 2) PER-SEGMENT CATEGORY ROWS (only one visible at a time) {%- endcomment -%}
+            {%- assign nm_segment_slug_seen_cats = '' -%}
+            {%- for seg in segments -%}
+              {%- assign slug = seg.settings.segment_slug | strip | downcase | default: 'segment' -%}
+              {%- assign nm_seg_marker_c = '||' | append: slug | append: '||' -%}
+              {%- unless nm_segment_slug_seen_cats contains nm_seg_marker_c -%}
+                {%- assign nm_segment_slug_seen_cats = nm_segment_slug_seen_cats | append: nm_seg_marker_c -%}
+              {%- assign seg_handle = seg.settings.segment_menu | default: section.settings.main_linklist -%}
+              {%- assign seg_links  = linklists[seg_handle].links -%}
+
+              <ul class="nav site-nav segment-cats desktop-only" data-seg="{{ slug }}">
+                {%- for link in seg_links -%}
+                  {%- assign link_count = link.links | size -%}
+
+                  {%- if link.links != blank -%}
+                    {%- if link.levels <= 1 -%}
+                      {%- assign dropdown_type = 'small' -%}
+                    {%- else -%}
+                      {%- if link_count <= 1 -%}{%- assign dropdown_type = 'small' -%}{%- else -%}{%- assign dropdown_type = 'mega' -%}{%- endif -%}
+                    {%- endif -%}
+
+                    <li class="site-nav__item site-nav__item--has-dropdown site-nav__item--{{ dropdown_type }}dropdown">
+                      {% assign accessible_label_open  = 'general.accessibility_labels.open_dropdown'  | t: menu_name: link.title %}
+                      {% assign accessible_label_close = 'general.accessibility_labels.open_dropdown'  | t: menu_name: link.title %}
+                      <a href="{{ link.url }}" class="site-nav__link" aria-haspopup="true" aria-expanded="false">
+                        {{ link.title }}
+                        <span class="feather-icon site-nav__icon visible" title="{{ accessible_label_open }}">{% render 'svg-chevron-down', menu_name: accessible_label_open %}</span>
+                        <span class="feather-icon site-nav__icon hide"    title="{{ accessible_label_close }}">{% render 'svg-chevron-up',   menu_name: accessible_label_close %}</span>
+                      </a>
+
+                      {%- comment -%} Find a matching promo for this dropdown + current segment {%- endcomment -%}
+                      {%- assign has_promo   = false -%}
+                      {%- assign promo_block = nil   -%}
+
+                      {%- assign context_seg = slug | default: active_slug | downcase -%} 
+                      {%- assign link_title_dcase = link.title | downcase -%}
+
+                      {%- for b in section.blocks -%}
+                        {%- if b.type == 'menu_promo' -%}
+                          {%- assign b_title = b.settings.dropdown_link_title | downcase -%}
+                          {%- if b_title == link_title_dcase -%}
+                            {%- assign raw_keys = b.settings.segment_key | downcase | replace: ' ', '' -%}
+                            {%- assign seg_match = false -%}
+                            {%- if raw_keys == blank -%}
+                              {%- assign seg_match = true -%}
+                            {%- else -%}
+                              {%- assign keys = raw_keys | split: ',' -%}
+                              {%- for k in keys -%}
+                                {%- if k == context_seg -%}{%- assign seg_match = true -%}{%- break -%}{%- endif -%}
+                              {%- endfor -%}
+                            {%- endif -%}
+                            {%- if seg_match -%}
+                              {%- assign has_promo = true -%}
+                              {%- assign promo_block = b -%}
+                              {%- break -%}
+                            {%- endif -%}
+                          {%- endif -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+
+                      {%- if dropdown_type == 'small' -%}
+                        <div class="site-nav__dropdown {% if has_promo %}site-nav__dropdown--with-promo{% endif %} js-mobile-menu-dropdown small-dropdown">
+                          {%- if has_promo -%}
+                            <div class="grid site-nav__promo-container">
+                              <div class="grid__item one-half">
+                          {%- endif -%}
+
+                          <ul class="small-dropdown__container">
+                            {%- for childlink in link.links -%}
+                              <li class="small-dropdown__item">
+                                {%- if childlink.links != blank -%}
+                                  <a href="{{ childlink.url }}" class="site-nav__link site-nav__dropdown-heading">{{ childlink.title }}</a>
+                                  <div class="site-nav__submenu">
+                                    <ul class="site-nav__submenu-container">
+                                      {%- for sublink in childlink.links -%}
+                                        <li class="small-dropdown__subitem">
+                                          <a href="{{ sublink.url }}" class="site-nav__link site-nav__dropdown-link">{{ sublink.title }}</a>
+                                        </li>
+                                      {%- endfor -%}
+                                    </ul>
+                                  </div>
+                                {%- else -%}
+                                  <a href="{{ childlink.url }}" class="site-nav__link site-nav__dropdown-link">{{ childlink.title }}</a>
+                                {%- endif -%}
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+
+                          {%- if has_promo -%}
+                              </div>
+                              <div class="grid__item one-half text-center site-nav__promo">
+                                <div class="global-border-radius site-nav__promo-image">
+                                  {%- if promo_block.settings.link_url != blank -%}<a href="{{ promo_block.settings.link_url }}">{%- endif -%}
+                                    {%- if promo_block.settings.image != blank -%}
+                                      {%- render 'responsive-image', image: promo_block.settings.image -%}
+                                    {%- else -%}
+                                      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                                    {%- endif -%}
+                                  {%- if promo_block.settings.link_url != blank -%}</a>{%- endif -%}
+                                </div>
+                                <div class="site-nav__dropdown-heading">{{ promo_block.settings.text }}</div>
+                                {%- if promo_block.settings.link_text != blank -%}
+                                  <a href="{{ promo_block.settings.link_url }}">{{ promo_block.settings.link_text }}</a>
+                                {%- endif -%}
+                              </div>
+                            </div>
+                          {%- endif -%}
+                        </div>
+                      {%- else -%}
+                        <div class="site-nav__dropdown js-mobile-menu-dropdown mega-dropdown container">
+                          <div class="page-width">
+                            {%- if has_promo -%}
+                              <div class="grid site-nav__promo-container">
+                                <div class="grid__item three-quarters">
+                            {%- endif -%}
+
+                              <ul class="mega-dropdown__container grid grid--uniform">
+                                {%- for childlink in link.links -%}
+                                  <li class="mega-dropdown__item grid__item {%- if has_promo -%}one-quarter{%- else -%}{{ section.settings.mega-columns }}{%- endif -%}">
+                                    <a href="{{ childlink.url }}" class="site-nav__link site-nav__dropdown-heading">{{ childlink.title }}</a>
+
+                                    {%- if childlink.links != blank -%}
+                                      <div class="site-nav__submenu">
+                                        <ul class="site-nav__submenu-container">
+                                          {%- for sublink in childlink.links -%}
+                                            <li class="mega-dropdown__subitem">
+                                              <a href="{{ sublink.url }}" class="site-nav__link site-nav__dropdown-link">{{ sublink.title }}</a>
+                                            </li>
+                                          {%- endfor -%}
+                                        </ul>
+                                      </div>
+                                    {%- endif -%}
+                                  </li>
+                                {%- endfor -%}
+                              </ul>
+
+                            {%- if has_promo -%}
+                                </div>
+                                <div class="grid__item one-quarter text-center site-nav__promo">
+                                  <div class="global-border-radius site-nav__promo-image">
+                                    {%- if promo_block.settings.link_url != blank -%}<a href="{{ promo_block.settings.link_url }}">{%- endif -%}
+                                      {%- if promo_block.settings.image != blank -%}
+                                        {%- render 'responsive-image', image: promo_block.settings.image -%}
+                                      {%- else -%}
+                                        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                                      {%- endif -%}
+                                    {%- if promo_block.settings.link_url != blank -%}</a>{%- endif -%}
+                                  </div>
+                                  <div class="site-nav__dropdown-heading">{{ promo_block.settings.text }}</div>
+                                  {%- if promo_block.settings.link_text != blank -%}
+                                    <a href="{{ promo_block.settings.link_url }}">{{ promo_block.settings.link_text }}</a>
+                                  {%- endif -%}
+                                </div>
+                              </div>
+                            {%- endif -%}
+                          </div>
+                        </div>
+                      {%- endif -%}
+                    </li>
+                  {%- else -%}
+                    <li class="site-nav__item">
+                      <a href="{{ link.url }}" class="site-nav__link">{{ link.title }}</a>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            {%- endunless -%}
+            {%- endfor -%}
+
+
+            {% if section.settings.dock_nav %}
+              <div class="docking-header__utils utils">
+                <!-- DOCKED NAV SEARCH LEFT LAYOUT -->
+                <div class="docking-header__left-layout-search utils__item">
+                  <a href="{{ routes.search_url }}" class="plain-link hide-for-search js-search-form-open" aria-label="{{ 'general.accessibility_labels.search' | t | escape }}">
+                    <span class="feather-icon icon--header">
+                      {% render 'feather-search' %}
+                    </span>
+                    <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
+                  </a>
+                </div>
+
+                {% capture search_bar_class %}settings-closed-bar{% endcapture %}
+
+                {% render 'search-bar', settings_class: search_bar_class, force_hidden: true, search_id: 'closed-docked-search' %}
+
+                <!-- DOCKED ACCOUNT -->
+                {% if shop.customer_accounts_enabled %}
+                  {{ account_html }}
+                {% endif %}
+
+                <div class="utils__item hide-for-search">
+                  {% render 'wishlisthero-header-icon' %}
+                </div>
+
+                <!-- DOCKED NAV CART -->
+                {{ cart_html }}
+              </div>
+            {% endif %}
+          </nav>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+              const header  = document.querySelector('.header-navigation');
+              if (!header) return;
+
+              const DESKTOP = window.matchMedia('(min-width: 940px)');
+              const isDesktop = () => DESKTOP.matches;
+
+              // Keep the category row visible on desktop
+              const PINNED = true;
+
+              // Storage helpers (prefer localStorage, fall back to cookie)
+              const storage = {
+                get() {
+                  try { return localStorage.getItem('nmActiveSeg') || readCookie('nmActiveSeg'); }
+                  catch(e){ return readCookie('nmActiveSeg'); }
+                },
+                set(slug) {
+                  try { localStorage.setItem('nmActiveSeg', slug); } catch(e){}
+                  // 7-day cookie fallback
+                  const maxAge = 60*60*24*7;
+                  document.cookie = "nmActiveSeg=" + encodeURIComponent(slug) + "; path=/; max-age=" + maxAge;
+                }
+              };
+              function readCookie(name) {
+                const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+                return m ? decodeURIComponent(m[1]) : null;
+              }
+
+              // Tabs (Dance / Active)
+              let tabs = Array.from(header.querySelectorAll('.segment-tabs .site-nav__item'));
+              if (!tabs.length) tabs = Array.from(header.querySelectorAll('.segment-tabs li'));
+
+              // Rows (per-segment category bars)
+              const rows = Array.from(header.querySelectorAll('ul.segment-cats[data-seg]'));
+
+              // Index helpers
+              const rowBySlug = {};
+              const tabBySlug = {};
+              rows.forEach(r => rowBySlug[r.dataset.seg] = r);
+              tabs.forEach(t => {
+                const slug = t.dataset.seg || t.getAttribute('data-segment');
+                if (slug) tabBySlug[slug] = t;
+              });
+
+              // Slugs we actually have
+              const validSlugs = Object.keys(rowBySlug);
+
+              // Default/active tab from server-rendered state
+              const initialActiveTab = header.querySelector('.segment-tabs .site-nav__item.is-active') || tabs[0];
+              const liquidDefaultSlug = initialActiveTab ? (initialActiveTab.dataset.seg || initialActiveTab.getAttribute('data-segment')) : null;
+
+              function setExpanded(slug, open) {
+                const tab = tabBySlug[slug];
+                if (!tab) return;
+                const link = tab.querySelector('.site-nav__link[aria-haspopup="true"]') || tab.querySelector('.site-nav__link');
+                if (link) link.setAttribute('aria-expanded', open ? 'true' : 'false');
+                tab.classList.toggle('is-active', !!open);
+              }
+
+              function showRow(row) {
+                if (!row) return;
+                rows.forEach(r => {
+                  const isTarget = r === row;
+                  r.classList.toggle('is-visible', isTarget);
+                  setExpanded(r.dataset.seg, isTarget);
+                });
+                document.documentElement.classList.add('nm-hide-promo');
+                if (PINNED && isDesktop()) document.documentElement.classList.add('nm-pinned-cats');
+              }
+
+              function showBySlug(slug) {
+                if (!isDesktop()) return;
+                const row = rowBySlug[slug];
+                if (row) showRow(row);
+              }
+
+              // --- Remember chosen segment on clicks (L1–L4 under any segment) ---
+              // 1) Clicking a segment tab
+              tabs.forEach(function(tab){
+                const slug = tab.dataset.seg || tab.getAttribute('data-segment');
+                tab.addEventListener('click', function(){
+                  if (slug) storage.set(slug);
+                });
+              });
+
+              // 2) Clicking any link inside a segment’s category row or its dropdown
+              Object.entries(rowBySlug).forEach(([slug, row]) => {
+                row.addEventListener('click', function(e){
+                  const a = e.target.closest('a');
+                  if (!a) return;
+                  storage.set(slug);
+                });
+                // Also capture clicks inside dropdown panels opened from this row
+                row.querySelectorAll('.site-nav__dropdown').forEach(dd => {
+                  dd.addEventListener('click', function(e){
+                    const a = e.target.closest('a');
+                    if (!a) return;
+                    storage.set(slug);
+                  });
+                });
+              });
+
+              // Hover/focus to switch visible row (same as before)
+              tabs.forEach(function(tab, i){
+                const slug = tab.dataset.seg || tab.getAttribute('data-segment');
+
+                tab.addEventListener('mouseenter', function(){
+                  if (isDesktop()) showBySlug(slug);
+                });
+                tab.addEventListener('focusin', function(){
+                  if (isDesktop()) showBySlug(slug);
+                });
+
+                // Desktop: first click opens its row; second click follows href
+                tab.addEventListener('click', function(e){
+                  if (!isDesktop()) return;
+                  const targetRow = rowBySlug[slug];
+                  const isOpen = targetRow && targetRow.classList.contains('is-visible');
+                  if (!isOpen) { e.preventDefault(); showRow(targetRow); }
+                });
+              });
+
+              // On load, prefer the last chosen segment if it’s valid.
+              // This solves shared-URL collisions (e.g., a collection linked under both segments).
+              function initForViewport() {
+                if (isDesktop()) {
+                  document.documentElement.classList.toggle('nm-pinned-cats', PINNED);
+
+                  const last = storage.get();
+                  const chosen = (last && validSlugs.includes(last)) ? last : (liquidDefaultSlug || validSlugs[0]);
+
+                  showBySlug(chosen);
+                } else {
+                  // Mobile: we don't show the desktop row; clear pinned classes
+                  document.documentElement.classList.remove('nm-pinned-cats', 'nm-hide-promo');
+                  rows.forEach(r => r.classList.remove('is-visible'));
+                  validSlugs.forEach(slug => setExpanded(slug, false));
+                }
+              }
+              initForViewport();
+
+              DESKTOP.addEventListener('change', initForViewport);
+            });
+            </script>
+
+        </section>
+
+        <!-- MOBILE OPEN SEARCH -->
+        {% if section.settings.show_search_bar_mobile %}
+          {% capture search_bar_class %}search-bar--open search-bar--open-mobile{% endcapture %}
+
+          {% render 'search-bar-mobile', settings_class: search_bar_class, search_id: 'open-search-mobile-bar' %}
+        {% endif %}
+
+        {% assign message_count = 0 %}
+        {% if section.settings.message_1_text != blank %}
+          {% assign message_count = message_count | plus: 1 %}{% endif %}
+        {% if section.settings.message_2_text != blank %}
+          {% assign message_count = message_count | plus: 1 %}{% endif %}
+        {% if section.settings.message_3_text != blank %}
+          {% assign message_count = message_count | plus: 1 %}{% endif %}
+
+        {% if section.settings.show_messages and message_count > 0 %}
+          {% if section.settings.home_only_messages == false or template == 'index' %}
+            <section class="store-messages-bar container">
+              <div class="page-width store-messages {% if section.settings.slideshow_messages and message_count > 1 %}js-messages-slider{% elsif message_count > 1 %}js-mobile-messages-slider{% endif %}">
+                {% for i in (1..3) %}
+                  {% capture text_key %}message_{{ i }}_text{% endcapture %}
+                  {% capture url_key %}message_{{ i }}_url{% endcapture %}
+                  {% if section.settings[text_key] != blank %}
+                    <div class="store-message {% unless section.settings.slideshow_messages %}store-message--static{% endunless %}">
+                      {% if section.settings[url_key] %}
+                        <a class="store-message-link" href="{{ section.settings[url_key] }}">
+                        {% endif %}
+                        {{ section.settings[text_key] }}
+                        {% if section.settings[url_key] != blank %}
+                        </a>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </section>
+          {% endif %}
+        {% endif %}
+
+        {% if section.settings.dock_nav %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Header",
+    "settings": [
+      { "type": "header", "content": "Logo" },
+      { "type": "image_picker", "id": "logo", "label": "Image" },
+      { "type": "range", "id": "logo_width", "min": 30, "max": 450, "step": 5, "unit": "px", "label": "Maximum width", "default": 200 },
+      { "type": "color", "id": "tab_color_1", "label": "Tab color", "default": "#8E9190" },
+
+      { "type": "header", "content": "Layout" },
+      { "type": "radio", "id": "desktop_layout", "label": "Desktop alignment", "options": [{"value":"left","label":"Left"},{"value":"center","label":"Center"}], "default": "left" },
+      { "type": "checkbox", "id": "show_search_bar_desktop", "label": "Show open search bar on desktop", "default": false },
+      { "type": "checkbox", "id": "show_search_bar_mobile", "label": "Show open search bar on mobile", "default": false },
+      { "type": "radio", "id": "logo_position_mobile", "label": "Mobile logo position", "options": [{"value":"inline","label":"Inline - left aligned between the icons"},{"value":"own_row","label":"Own row - centered above the icons"}], "default": "own_row" },
+      { "type": "checkbox", "id": "dock_nav", "label": "Enable sticky header", "default": false },
+
+      { "type": "header", "content": "Announcement bar" },
+      { "type": "checkbox", "id": "show_announcement_bar", "label": "Show announcement bar", "default": false },
+      { "type": "checkbox", "id": "home_only_announcement_bar", "label": "Show only on the home page", "default": false },
+      { "type": "text", "id": "announcement_bar_text", "label": "Text", "default": "Add notices for your shoppers here" },
+      { "type": "url", "id": "announcement_bar_url", "label": "Link" },
+
+      { "type": "header", "content": "Navigation" },
+      { "type": "link_list", "id": "main_linklist", "label": "Menu", "default": "main-menu" },
+
+      { "type": "radio", "id": "mega-columns", "label": "Mega Menu Columns", "options": [
+        { "value": "one-quarter", "label": "4" },
+        { "value": "one-fifth", "label": "5" },
+        { "value": "one-sixth", "label": "6" }
+      ], "default": "one-quarter" },
+
+      { "type": "header", "content": "Country/Region Selector", "info": "To add a country/region, go to your [payment settings.](/admin/settings/payments)" },
+      { "type": "checkbox", "id": "show_country_selector", "label": "Enable country/region selector", "default": true },
+
+      { "type": "header", "content": "Language Selector", "info": "To add a language, go to your [language settings.](/admin/settings/languages)" },
+      { "type": "checkbox", "id": "show_language_selector", "label": "Show language selector", "default": true },
+
+      { "type": "checkbox", "id": "show_country_select", "label": "Show country selector", "default": false },
+      { "type": "text", "id": "country_abbr1", "label": "This Store's Country Abbreviation" },
+      { "type": "text", "id": "country_name1", "label": "This Store's Country Full Name" },
+      { "type": "text", "id": "country_link1", "label": "This Store's Link" },
+      { "type": "text", "id": "country_abbr2", "label": "Store 2's Country Abbreviation" },
+      { "type": "text", "id": "country_name2", "label": "Store 2's Country Full Name" },
+      { "type": "text", "id": "country_link2", "label": "Store 2's Link" },
+      { "type": "text", "id": "country_abbr3", "label": "Store 3's Country Abbreviation" },
+      { "type": "text", "id": "country_name3", "label": "Store 3's Country Full Name" },
+      { "type": "text", "id": "country_link3", "label": "Store 3's Link" },
+      { "type": "text", "id": "country_abbr4", "label": "Store 4's Country Abbreviation" },
+      { "type": "text", "id": "country_name4", "label": "Store 4's Country Full Name" },
+      { "type": "text", "id": "country_link4", "label": "Store 4's Link" },
+      { "type": "text", "id": "country_abbr5", "label": "Store 5's Country Abbreviation" },
+      { "type": "text", "id": "country_name5", "label": "Store 5's Country Full Name" },
+      { "type": "text", "id": "country_link5", "label": "Store 5's Link" },
+
+      { "type": "header", "content": "Store messages" },
+      { "type": "paragraph", "content": "These are displayed under the main menu, great for promotions and notices" },
+      { "type": "checkbox", "id": "show_messages", "label": "Show store messages", "default": false },
+      { "type": "checkbox", "id": "home_only_messages", "label": "Show only on the home page", "default": false },
+      { "type": "checkbox", "id": "slideshow_messages", "label": "Enable carousel on large screens", "default": false, "info": "The messages will always be in a carousel on small screens" },
+      { "type": "text", "id": "message_1_text", "label": "Message 1 text" },
+      { "type": "url", "id": "message_1_url", "label": "Link" },
+      { "type": "text", "id": "message_2_text", "label": "Message 2 text" },
+      { "type": "url", "id": "message_2_url", "label": "Link" },
+      { "type": "text", "id": "message_3_text", "label": "Message 3 text" },
+      { "type": "url", "id": "message_3_url", "label": "Link" },
+
+      { "type": "text", "id": "default_segment_slug", "label": "Default segment slug", "default": "dance" }
+    ],
+    "blocks": [
+      {
+        "type": "menu_promo",
+        "name": "Menu promotion",
+        "settings": [
+          { "type": "paragraph", "content": "Promotions are shown in a selected dropdown menu. They are not visible in the mobile menu. [Learn more](https://cleancanvas.co.uk/support/boost/menu-images)" },
+          { "type": "text", "id": "dropdown_link_title", "label": "Dropdown link name", "info": "The promotion will show inside this dropdown menu" },
+          { "type": "text", "id": "segment_key", "label": "Segment slug(s)", "info": "Enter one or more segment slugs (e.g. dance, active, gifts). Comma-separate for multiple. Leave blank to show in all segments." },
+          { "type": "image_picker", "id": "image", "label": "Image" },
+          { "type": "text", "id": "text", "label": "Text" },
+          { "type": "text", "id": "link_text", "label": "Link text" },
+          { "type": "url", "id": "link_url", "label": "Link URL" }
+        ]
+      },
+      {
+        "type": "segment",
+        "name": "Segment",
+        "settings": [
+          { "type": "text", "id": "segment_label", "label": "Segment label", "default": "Dance" },
+          { "type": "text", "id": "segment_slug", "label": "Segment slug", "default": "dance" },
+          { "type": "link_list", "id": "segment_menu", "label": "Navigation menu" },
+          { "type": "url", "id": "segment_landing", "label": "Landing page URL", "default": "/" }
+        ]
+      }
+    ],
+    "max_blocks": 20
+  }
+{% endschema %}

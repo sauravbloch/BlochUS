@@ -1,0 +1,239 @@
+<div
+  class="b-rewards b-rewards__section--compact b-rewards__redeem"
+  style="background: {{ section.settings.bg }};"
+>
+  <div class="page-width">
+
+    <div class="b-rewards__center b-rewards__redeem-header">
+      {% if section.settings.eyebrow != blank %}
+        <p class="b-rewards__eyebrow">
+          {{ section.settings.eyebrow | escape }}
+        </p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="large-title b-rewards__title b-rewards__redeem-heading">
+          {{ section.settings.heading | escape }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="rte b-rewards__intro b-rewards__redeem-intro">
+          {{ section.settings.text }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="b-rewards__split b-rewards__redeem-layout">
+
+      <div class="b-rewards__split-media b-rewards__redeem-media">
+        {% if section.settings.image != blank %}
+          {{
+            section.settings.image
+            | image_url: width: 1600
+            | image_tag:
+              widths: '550, 800, 1100, 1400, 1600',
+              loading: 'lazy',
+              class: 'b-rewards__redeem-image',
+              alt: section.settings.image.alt
+          }}
+        {% else %}
+          <div class="b-rewards__placeholder">
+            Add a rewards image
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="b-rewards__redeem-card">
+
+        <div
+          class="b-rewards__conversion"
+          aria-label="{{ section.settings.points_amount | escape }} points equals {{ section.settings.reward_amount | escape }} off"
+        >
+          <div class="b-rewards__conversion-value">
+            <span class="b-rewards__conversion-number">
+              {{ section.settings.points_amount | escape }}
+            </span>
+
+            <span class="b-rewards__conversion-label">
+              {{ section.settings.points_label | escape }}
+            </span>
+          </div>
+
+          <span
+            class="b-rewards__conversion-equals"
+            aria-hidden="true"
+          >
+            =
+          </span>
+
+          <div class="b-rewards__conversion-value">
+            <span class="b-rewards__conversion-number">
+              {{ section.settings.reward_amount | escape }}
+            </span>
+
+            <span class="b-rewards__conversion-label">
+              {{ section.settings.reward_label | escape }}
+            </span>
+          </div>
+        </div>
+
+        {% assign rewards = section.settings.rewards
+          | newline_to_br
+          | split: '<br />'
+        %}
+
+        {% if section.settings.rewards != blank %}
+          <ul class="b-rewards__redeem-examples">
+            {% for reward in rewards %}
+              {% assign clean = reward | strip %}
+
+              {% if clean != blank %}
+                {% assign reward_parts = clean | split: '=' %}
+                {% assign points_text = reward_parts[0] | strip %}
+                {% assign savings_text = reward_parts[1] | strip %}
+
+                <li class="b-rewards__redeem-example">
+                  <span class="b-rewards__redeem-example-points">
+                    {{ points_text }}
+                  </span>
+
+                  {% if savings_text != blank %}
+                    <strong class="b-rewards__redeem-example-savings">
+                      {{ savings_text }}
+                    </strong>
+                  {% endif %}
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        {% if section.settings.button_label != blank %}
+          <div class="b-rewards__buttons b-rewards__redeem-buttons">
+            <a
+              class="btn btn--primary"
+              href="{{ section.settings.button_link | default: routes.account_url }}"
+            >
+              {{ section.settings.button_label | escape }}
+            </a>
+          </div>
+        {% endif %}
+
+        <div class="b-rewards__redeem-note">
+  <a href="{{ routes.account_login_url }}">Log in</a>
+  or
+  <a href="{{ routes.account_register_url }}">create an account</a>
+  to view your balance and rewards.
+</div>
+
+        {% for block in section.blocks %}
+          <div
+            class="b-rewards__app"
+            {{ block.shopify_attributes }}
+          >
+            {% render block %}
+          </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "B-Rewards redeem",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "REDEEM REWARDS"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Turn points into savings"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Intro",
+      "default": "<p>Every 30 points earns $1 off your next purchase.</p>"
+    },
+    {
+      "type": "text",
+      "id": "points_amount",
+      "label": "Points amount",
+      "default": "30"
+    },
+    {
+      "type": "text",
+      "id": "points_label",
+      "label": "Points label",
+      "default": "POINTS"
+    },
+    {
+      "type": "text",
+      "id": "reward_amount",
+      "label": "Reward amount",
+      "default": "$1"
+    },
+    {
+      "type": "text",
+      "id": "reward_label",
+      "label": "Reward label",
+      "default": "OFF"
+    },
+    {
+      "type": "textarea",
+      "id": "rewards",
+      "label": "Examples, one per line",
+      "info": "Separate the points and reward with an equals sign.",
+      "default": "150 POINTS = $5 OFF\n300 POINTS = $10 OFF"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button",
+      "default": "View my rewards"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Note below button",
+      "default": "<p>Log in or Create an Account to see your balance and rewards.</p>"
+    },
+    {
+      "type": "color",
+      "id": "bg",
+      "label": "Background",
+      "default": "#e7d1cc"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "B-Rewards redeem"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,14 @@
+{%- comment -%}
+  PLP: Yotpo + native Shopify reviews row. Only output when review metafields indicate reviews exist.
+{%- endcomment -%}
+{%- if product.metafields.reviews.rating_count != blank and product.metafields.reviews.rating_count > 0 -%}
+  <div class="product-block__plp-reviews">
+    <div class="yotpo bottomLine" data-product-id="{{ product.id }}"></div>
+    <div class="product-block__rating theme-product-reviews-summary">
+      {% render 'rating', rating_value: product.metafields.reviews.rating.value %}
+      <span class="cc-rating-custom-caption">
+        {{ product.metafields.reviews.rating_count }} {{ 'products.product.reviews_link' | t: count: product.metafields.reviews.rating_count | downcase }}
+      </span>
+    </div>
+  </div>
+{%- endif -%}

@@ -1,0 +1,79 @@
+{%- liquid
+  assign limit = limit | default: 4
+  assign recommended_products = null
+  if cart != blank and cart.items.size > 0
+    assign first_product = cart.items[0].product
+    if first_product != blank and first_product.metafields.custom.cart_upsell_products != blank and first_product.metafields.custom.cart_upsell_products.value != blank
+      assign recommended_products = first_product.metafields.custom.cart_upsell_products.value | slice: 0, limit
+    endif
+    if first_handle != blank
+      assign first_product = all_products[first_handle]
+      if first_product != blank and first_product.metafields.custom.cart_upsell_products != blank and first_product.metafields.custom.cart_upsell_products.value != blank
+        assign recommended_products = first_product.metafields.custom.cart_upsell_products.value | slice: 0, rec_limit
+      endif
+      if first_handle != blank
+        assign first_product = all_products[first_handle]
+        if first_product != blank and first_product.metafields.custom.cart_upsell_products != blank and first_product.metafields.custom.cart_upsell_products.value != blank
+          assign recommended_products = first_product.metafields.custom.cart_upsell_products.value | slice: 0, rec_limit
+        endif
+      endif
+    endif
+  endif
+  assign recommendations_heading = heading | default: 'cart.general.recommendations_heading' | t
+  if recommendations_heading == blank
+    assign recommendations_heading = 'Recommended for you'
+  endif
+  assign embed_id = 'cart-drawer-recommendations-embed'
+-%}
+<div class="cart-drawer__recommendations-wrapper" data-section-id="{{ embed_id }}" data-cart-drawer-recommendations-limit="{{ limit }}" aria-label="{{ recommendations_heading }}">
+  {%- capture recommendation_cards -%}
+    {%- for rec_product in recommended_products -%}
+      {%- if rec_product.handle == blank or rec_product.id == blank %}{% continue %}{% endif -%}
+      {%- assign rec_variant = rec_product.selected_or_first_available_variant -%}
+      <div class="cart-drawer__recommendations-card" data-product-id="{{ rec_product.id }}">
+        <a href="{{ rec_product.url }}" class="cart-drawer__recommendations-card-image">
+          {%- if rec_product.featured_media -%}
+            <img src="{{ rec_product.featured_media | image_url: width: 240 }}" alt="{{ rec_product.featured_media.alt | default: rec_product.title | escape }}" width="240" height="240" loading="lazy">
+          {%- else -%}
+            <div class="cart-drawer__recommendations-card-placeholder">{{ rec_product.title | slice: 0 }}</div>
+          {%- endif -%}
+        </a>
+        <div class="cart-drawer__recommendations-card-body">
+          <a href="{{ rec_product.url }}" class="cart-drawer__recommendations-card-title">{{ rec_product.title }}</a>
+          <div class="cart-drawer__recommendations-card-price theme-money">{{ rec_variant.price | money }}</div>
+          <script type="application/json" class="cart-drawer__recommendations-variant-map">
+            [{%- for v in rec_product.variants -%}{"id":{{ v.id }},"option1":{{ v.option1 | json }},"option2":{{ v.option2 | json }},"option3":{{ v.option3 | json }},"available":{{ v.available }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]
+          </script>
+          <div class="cart-drawer__recommendations-options" data-product-handle="{{ rec_product.handle }}">
+            {%- for option in rec_product.options_with_values -%}
+              <div class="cart-drawer__recommendations-option" data-option-index="{{ forloop.index0 }}">
+                <label class="cart-drawer__recommendations-option-label" for="cart-drawer-rec-{{ embed_id }}-{{ rec_product.id }}-opt-{{ forloop.index0 }}">{{ option.name }}:</label>
+                <select id="cart-drawer-rec-{{ embed_id }}-{{ rec_product.id }}-opt-{{ forloop.index0 }}" class="cart-drawer__recommendations-select" data-option-position="{{ option.position }}" aria-label="{{ option.name }}">
+                  {%- for value in option.values -%}<option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>{{ value }}</option>{%- endfor -%}
+                </select>
+              </div>
+            {%- endfor -%}
+          </div>
+          <button type="button" class="cart-drawer__recommendations-add btn btn--secondary btn--small" data-variant-id="{{ rec_variant.id }}" {% unless rec_variant.available %}disabled{% endunless %}>
+            {%- if rec_variant.available -%}{{ 'products.product.add_to_cart' | t }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+          </button>
+        </div>
+      </div>
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- if recommended_products != blank and recommendation_cards != blank -%}
+    <div class="cart-drawer__recommendations" data-collapsed="false">
+      <button type="button" class="cart-drawer__recommendations-header" aria-expanded="true" aria-controls="cart-drawer-recommendations-content-{{ embed_id }}" id="cart-drawer-recommendations-toggle-{{ embed_id }}">
+        <span class="cart-drawer__recommendations-heading">{{ recommendations_heading }}</span>
+        <span class="cart-drawer__recommendations-chevron" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div id="cart-drawer-recommendations-content-{{ embed_id }}" class="cart-drawer__recommendations-content" role="region" aria-labelledby="cart-drawer-recommendations-toggle-{{ embed_id }}">
+        <div class="cart-drawer__recommendations-list-wrapper">
+          <div class="cart-drawer__recommendations-list js-cart-drawer-recommendations-carousel">{{ recommendation_cards }}</div>
+        </div>
+      </div>
+    </div>
+  {%- else -%}
+    <div class="cart-drawer__recommendations cart-drawer__recommendations--empty" data-use-fallback="true" style="display: none;"></div>
+  {%- endif -%}
+</div>

@@ -1,0 +1,503 @@
+{% doc %}
+  @prompt
+    can you create a column block that will appear as a row of 4 on desktop but will appear as a row of 4 that is able to scroll on mobile, show 2 columns on screen before scroll on mobile, can you give the block a heading and 2 subheading blocks, with the option to have 5 columns but can be hidden, allow for an image in each column, make scrollable between columns on mobile, allow to scroll across all columns on mobile, show scroll bar underneath columns, reduce top padding, allow heading text to change font , ensure each image can be linked to
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-scrollable-row-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.top_padding }}px 0 40px 0;
+  }
+
+  .ai-scrollable-row__heading-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 32px;
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-family: {{ block.settings.heading_font.family }}, {{ block.settings.heading_font.fallback_families }};
+    font-weight: {{ block.settings.heading_font.weight }};
+    font-style: {{ block.settings.heading_font.style }};
+  }
+
+  .ai-scrollable-row__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: {{ block.settings.column_gap }}px;
+  }
+
+  .ai-scrollable-row__column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ai-scrollable-row__column-{{ ai_gen_id }}.hidden {
+    display: none;
+  }
+
+  .ai-scrollable-row__image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .ai-scrollable-row__image-link-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-scrollable-row__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-scrollable-row__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-scrollable-row__image-placeholder-{{ ai_gen_id }} svg {
+    width: 50%;
+    height: 50%;
+  }
+
+  .ai-scrollable-row__subheading-{{ ai_gen_id }} {
+    color: {{ block.settings.subheading_color }};
+    font-size: {{ block.settings.subheading_size }}px;
+    margin-bottom: 8px;
+  }
+
+  .ai-scrollable-row__content-{{ ai_gen_id }} {
+    color: {{ block.settings.content_color }};
+    font-size: {{ block.settings.content_size }}px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-scrollable-row-{{ ai_gen_id }} {
+      padding: {{ block.settings.top_padding }}px 0 40px 0;
+    }
+
+    .ai-scrollable-row__container-{{ ai_gen_id }} {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: {{ block.settings.column_gap }}px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 20px;
+      margin: 0 -20px;
+      scrollbar-width: thin;
+      scrollbar-color: {{ block.settings.scrollbar_color }} transparent;
+    }
+
+    .ai-scrollable-row__container-{{ ai_gen_id }}::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .ai-scrollable-row__container-{{ ai_gen_id }}::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 0 20px;
+    }
+
+    .ai-scrollable-row__container-{{ ai_gen_id }}::-webkit-scrollbar-thumb {
+      background-color: {{ block.settings.scrollbar_color }};
+      border-radius: 4px;
+    }
+
+    .ai-scrollable-row__column-{{ ai_gen_id }} {
+      flex: 0 0 45%;
+      min-width: 45%;
+      scroll-snap-align: start;
+    }
+  }
+{% endstyle %}
+
+<scrollable-row-{{ ai_gen_id }} class="ai-scrollable-row-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading != blank %}
+    <h2 class="ai-scrollable-row__heading-{{ ai_gen_id }}">
+      {{ block.settings.heading }}
+    </h2>
+  {% endif %}
+
+  <div class="ai-scrollable-row__container-{{ ai_gen_id }}">
+    {% for i in (1..5) %}
+      {% liquid
+        assign enabled_key = 'column_' | append: i | append: '_enabled'
+        assign image_key = 'column_' | append: i | append: '_image'
+        assign link_key = 'column_' | append: i | append: '_link'
+        assign subheading_key = 'column_' | append: i | append: '_subheading'
+        assign content_key = 'column_' | append: i | append: '_content'
+        assign enabled = block.settings[enabled_key]
+        assign image = block.settings[image_key]
+        assign link = block.settings[link_key]
+        assign subheading = block.settings[subheading_key]
+        assign content = block.settings[content_key]
+      %}
+      
+      {% if enabled %}
+        <div class="ai-scrollable-row__column-{{ ai_gen_id }}">
+          <div class="ai-scrollable-row__image-wrapper-{{ ai_gen_id }}">
+            {% if link != blank %}
+              <a href="{{ link }}" class="ai-scrollable-row__image-link-{{ ai_gen_id }}">
+                {% if image %}
+                  <img
+                    src="{{ image | image_url: width: 600 }}"
+                    alt="{{ image.alt | escape }}"
+                    loading="lazy"
+                    width="{{ image.width }}"
+                    height="{{ image.height }}"
+                    class="ai-scrollable-row__image-{{ ai_gen_id }}"
+                  >
+                {% else %}
+                  <div class="ai-scrollable-row__image-placeholder-{{ ai_gen_id }}">
+                    {{ 'image' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+              </a>
+            {% else %}
+              {% if image %}
+                <img
+                  src="{{ image | image_url: width: 600 }}"
+                  alt="{{ image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ image.width }}"
+                  height="{{ image.height }}"
+                  class="ai-scrollable-row__image-{{ ai_gen_id }}"
+                >
+              {% else %}
+                <div class="ai-scrollable-row__image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+          
+          {% if subheading != blank %}
+            <div class="ai-scrollable-row__subheading-{{ ai_gen_id }}">
+              {{ subheading }}
+            </div>
+          {% endif %}
+          
+          {% if content != blank %}
+            <div class="ai-scrollable-row__content-{{ ai_gen_id }}">
+              {{ content }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</scrollable-row-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ScrollableRow{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.container = this.querySelector('.ai-scrollable-row__container-{{ ai_gen_id }}');
+      }
+    }
+
+    customElements.define('scrollable-row-{{ ai_gen_id }}', ScrollableRow{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Scrollable row",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Features"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "sans-serif"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "header",
+      "content": "Column 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "column_1_enabled",
+      "label": "Show column 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "column_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "column_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "column_1_subheading",
+      "label": "Subheading",
+      "default": "Feature 1"
+    },
+    {
+      "type": "textarea",
+      "id": "column_1_content",
+      "label": "Content",
+      "default": "Description for feature 1"
+    },
+    {
+      "type": "header",
+      "content": "Column 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "column_2_enabled",
+      "label": "Show column 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "column_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "column_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "column_2_subheading",
+      "label": "Subheading",
+      "default": "Feature 2"
+    },
+    {
+      "type": "textarea",
+      "id": "column_2_content",
+      "label": "Content",
+      "default": "Description for feature 2"
+    },
+    {
+      "type": "header",
+      "content": "Column 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "column_3_enabled",
+      "label": "Show column 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "column_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "column_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "column_3_subheading",
+      "label": "Subheading",
+      "default": "Feature 3"
+    },
+    {
+      "type": "textarea",
+      "id": "column_3_content",
+      "label": "Content",
+      "default": "Description for feature 3"
+    },
+    {
+      "type": "header",
+      "content": "Column 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "column_4_enabled",
+      "label": "Show column 4",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "column_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "column_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "column_4_subheading",
+      "label": "Subheading",
+      "default": "Feature 4"
+    },
+    {
+      "type": "textarea",
+      "id": "column_4_content",
+      "label": "Content",
+      "default": "Description for feature 4"
+    },
+    {
+      "type": "header",
+      "content": "Column 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "column_5_enabled",
+      "label": "Show column 5",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "column_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "url",
+      "id": "column_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "column_5_subheading",
+      "label": "Subheading",
+      "default": "Feature 5"
+    },
+    {
+      "type": "textarea",
+      "id": "column_5_content",
+      "label": "Content",
+      "default": "Description for feature 5"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "top_padding",
+      "label": "Top padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "range",
+      "id": "content_size",
+      "label": "Content size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Content color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "scrollbar_color",
+      "label": "Scrollbar color (mobile)",
+      "default": "#cccccc"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scrollable row"
+    }
+  ]
+}
+{% endschema %}

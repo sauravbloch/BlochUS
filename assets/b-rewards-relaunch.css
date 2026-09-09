@@ -1,0 +1,1185 @@
+.b-rewards {
+  --br-bg: #fff;
+  --br-text: #1f1f1f;
+  --br-muted: #6a6464;
+  --br-line: #d9d4d4;
+  --br-accent: #e7d1cc;
+  --br-accent-border: #dab8ac;
+  --br-accent-text: #4c4545;
+  --br-dark: #252121;
+  color: var(--br-text);
+}
+
+.b-rewards * {
+  box-sizing: border-box;
+}
+
+.b-rewards__section {
+  padding: 72px 0;
+}
+
+.b-rewards__section--compact {
+  padding: 48px 0;
+}
+
+.b-rewards__eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+}
+
+.b-rewards__title {
+  margin: 0 0 18px;
+  line-height: 1.05;
+}
+
+.b-rewards__intro {
+  max-width: 720px;
+  margin: 0 auto 38px;
+}
+
+.b-rewards__center {
+  text-align: center;
+}
+
+.b-rewards__buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.b-rewards__hero {
+  position: relative;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #eee;
+}
+
+.b-rewards__hero-media,
+.b-rewards__hero-media::after {
+  position: absolute;
+  inset: 0;
+}
+
+.b-rewards__hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.b-rewards__hero-media::after {
+  content: "";
+  background: rgba(0, 0, 0, var(--br-overlay, 0.25));
+}
+
+.b-rewards__hero-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 80px 0;
+  color: var(--br-hero-text, #fff);
+}
+
+.b-rewards__hero-copy {
+  max-width: 620px;
+}
+
+.b-rewards__hero-copy--center {
+  margin: auto;
+  text-align: center;
+}
+
+.b-rewards__hero-copy--right {
+  margin-left: auto;
+  text-align: right;
+}
+
+.b-rewards__hero-title {
+  font-size: clamp(42px, 6vw, 86px);
+  margin: 0 0 16px;
+  line-height: 0.95;
+}
+
+.b-rewards__hero-text {
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.b-rewards__grid {
+  display: grid;
+  gap: 24px;
+}
+
+.b-rewards__grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.b-rewards__grid--4 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Center the final card when the grid contains seven cards */
+.b-rewards__grid--4 > .b-rewards__card:last-child:nth-child(3n + 1) {
+  grid-column: 2;
+}
+
+.b-rewards__card {
+  height: 100%;
+  padding: 30px;
+  background: var(--br-card, #fff);
+  border: 1px solid var(--br-line);
+  border-radius: var(--br-radius, 0);
+}
+
+.b-rewards__step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 22px;
+  border: 1px solid var(--br-accent-border);
+  border-radius: 50%;
+  background: var(--br-accent);
+  color: var(--br-accent-text);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.b-rewards__card h3 {
+  margin: 0 0 10px;
+}
+
+.b-rewards__card p:last-child {
+  margin-bottom: 0;
+}
+
+.b-rewards__earn-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  margin-bottom: 18px;
+}
+
+.b-rewards__points {
+  font-weight: 700;
+  margin-top: 16px;
+}
+
+/* ================================
+   B-Rewards membership tiers
+================================ */
+
+.b-rewards__tiers-header {
+  margin-bottom: 48px;
+}
+
+.b-rewards__tiers-eyebrow {
+  margin-bottom: 14px;
+}
+
+.b-rewards__tiers-eyebrow::after {
+  display: none;
+}
+
+.b-rewards__tiers-heading {
+  margin-bottom: 18px;
+}
+
+.b-rewards__tiers-intro {
+  margin-bottom: 0;
+}
+
+.b-rewards__tiers-heading {
+  margin-bottom: 16px;
+
+  /* Keep this headline in Universal Sans */
+  font-family: "Universal Sans", Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.b-rewards__tiers-intro {
+  margin-bottom: 0;
+  color: var(--br-muted);
+}
+
+.b-rewards__tiers {
+  display: grid;
+  grid-template-columns: repeat(var(--br-cols, 3), minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+.b-rewards__tier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  padding: 38px 32px 30px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e7d1cc;
+  border-radius: 6px;
+  text-align: center;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+/* Progressive top accents */
+.b-rewards__tier::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 5px;
+}
+
+/* Tier 1: light blush */
+.b-rewards__tier:nth-child(1)::before {
+  background: linear-gradient(
+    90deg,
+    #f7eeeb 0%,
+    #e7d1cc 50%,
+    #f7eeeb 100%
+  );
+}
+
+/* Tier 2: medium blush */
+.b-rewards__tier:nth-child(2)::before {
+  background: linear-gradient(
+    90deg,
+    #e7d1cc 0%,
+    #dab8ac 50%,
+    #e7d1cc 100%
+  );
+}
+
+/* Tier 3: deepest blush */
+.b-rewards__tier:nth-child(3)::before {
+  background: linear-gradient(
+    90deg,
+    #dab8ac 0%,
+    #c68f82 50%,
+    #dab8ac 100%
+  );
+}
+
+.b-rewards__tier:hover {
+  transform: translateY(-3px);
+  border-color: #dab8ac;
+  box-shadow: 0 12px 30px rgba(218, 184, 172, 0.12);
+}
+
+.b-rewards__tier-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.b-rewards__tier-label {
+  margin: 0;
+  color: #1f1f1f;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.b-rewards__tier-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 8px;
+  margin-top: 14px;
+}
+
+.b-rewards__tier-dots span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Keep dot size consistent; deepen the color by tier */
+.b-rewards__tier:nth-child(1) .b-rewards__tier-dots span {
+  background: #e7d1cc;
+}
+
+.b-rewards__tier:nth-child(2) .b-rewards__tier-dots span {
+  background: #dab8ac;
+}
+
+.b-rewards__tier:nth-child(3) .b-rewards__tier-dots span {
+  background: #c68f82;
+}
+
+.b-rewards__tier-name {
+  margin: 20px 0 0;
+  font-size: clamp(40px, 4vw, 58px);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.b-rewards__tier-accent {
+  display: block;
+  width: 58px;
+  height: 2px;
+  margin: 24px auto 22px;
+  background: #dab8ac;
+}
+
+.b-rewards__tier-threshold {
+  margin: 0;
+  color: var(--br-muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.b-rewards__rate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 27px 0 22px;
+}
+
+.b-rewards__rate-number {
+  color: #dab8ac;
+  font-size: clamp(58px, 6vw, 78px);
+  font-weight: 400;
+  line-height: 0.85;
+}
+
+.b-rewards__rate-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #1f1f1f;
+  text-align: left;
+}
+
+.b-rewards__rate-copy strong {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+}
+
+.b-rewards__rate-copy small {
+  margin-top: 5px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+.b-rewards__tier-intro {
+  min-height: 48px;
+  color: #4c4545;
+}
+
+.b-rewards__tier-intro p {
+  margin: 0;
+}
+
+.b-rewards__benefits {
+  width: 100%;
+  margin: 26px 0 0;
+  padding: 0;
+  border-top: 1px solid rgba(218, 184, 172, 0.45);
+  list-style: none;
+  text-align: left;
+}
+
+.b-rewards__benefits li {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 58px;
+  padding: 12px 0;
+border-bottom: 1px solid rgba(218, 184, 172, 0.45);
+}
+
+.b-rewards__benefits li:last-child {
+  border-bottom: 0;
+}
+
+.b-rewards__benefit-check {
+  display: inline-flex;
+  flex: 0 0 30px;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: #e7d1cc;
+  border: 1px solid #dab8ac;
+  border-radius: 50%;
+  color: #6f645f;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+.b-rewards__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+.b-rewards__split-media img {
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  object-fit: cover;
+}
+
+.b-rewards__split-copy {
+  padding: 64px;
+}
+
+.b-rewards__reward-list {
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.b-rewards__reward-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--br-line);
+}
+
+/* ================================
+   B-Rewards redemption section
+================================ */
+
+.b-rewards__redeem {
+  overflow: hidden;
+}
+
+.b-rewards__redeem-header {
+  margin-bottom: 36px;
+}
+
+.b-rewards__redeem-heading {
+  margin-bottom: 16px;
+  font-family: "Universal Sans", Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.b-rewards__redeem-intro {
+  margin-bottom: 0;
+  color: var(--br-muted);
+}
+
+/* Balanced two-column module */
+.b-rewards__redeem-layout {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  width: 100%;
+  max-width: 880px;
+  min-height: 300px;
+  margin-right: auto;
+  margin-left: auto;
+  gap: 18px;
+}
+
+.b-rewards__redeem-media {
+  align-self: stretch;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.b-rewards__redeem-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.b-rewards__redeem-media .b-rewards__placeholder {
+  height: 100%;
+  min-height: 300px;
+  max-height: 300px;
+  border-radius: 6px;
+}
+
+/* One clean white redemption card */
+.b-rewards__redeem-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 300px;
+  padding: 26px 28px 22px;
+  background: #fffdfc;
+  border: 1px solid rgba(199, 150, 136, 0.65);
+  border-radius: 6px;
+}
+
+/* Main conversion */
+.b-rewards__conversion {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 22px;
+}
+
+.b-rewards__conversion-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.b-rewards__conversion-number {
+  color: #1f1f1f;
+  font-size: clamp(52px, 5vw, 68px);
+  font-weight: 400;
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+}
+
+.b-rewards__conversion-label {
+  margin-top: 12px;
+  color: #4c4545;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.b-rewards__conversion-equals {
+  color: #c79688;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* Simple divided reward rows */
+.b-rewards__redeem-examples {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(199, 150, 136, 0.4);
+  list-style: none;
+}
+
+.b-rewards__redeem-example {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 54px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(199, 150, 136, 0.4);
+}
+
+.b-rewards__redeem-example-points {
+  color: #1f1f1f;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.b-rewards__redeem-example-savings {
+  color: #b87363;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: right;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* CTA */
+.b-rewards__redeem-buttons {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.b-rewards__redeem-buttons .btn {
+  width: 100%;
+  min-height: 48px;
+}
+
+.b-rewards__redeem-note {
+  margin-top: 10px;
+  color: #4c4545;
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: center;
+}
+.b-rewards__redeem-note a {
+  color: #1f1f1f;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+
+.b-rewards__redeem-note a:hover {
+  color: #b87363;
+}
+.b-rewards__redeem-note p {
+  margin: 0;
+}
+
+.b-rewards__app {
+  margin-top: 32px;
+}
+
+.b-rewards__faq {
+  max-width: 900px;
+  margin: auto;
+  border-top: 1px solid var(--br-line);
+}
+
+.b-rewards__faq-item {
+  border-bottom: 1px solid var(--br-line);
+}
+
+.b-rewards__faq-button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.b-rewards__faq-icon {
+  font-size: 24px;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.b-rewards__faq-button[aria-expanded="true"] .b-rewards__faq-icon {
+  transform: rotate(45deg);
+}
+
+.b-rewards__faq-panel {
+  display: none;
+  padding: 0 0 24px;
+}
+
+.b-rewards__faq-panel[aria-hidden="false"] {
+  display: block;
+}
+
+.b-rewards__placeholder {
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eee;
+  color: #777;
+}
+
+.b-rewards .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.b-rewards__note {
+  margin-top: 20px;
+  color: var(--br-muted);
+  font-size: 13px;
+}
+
+/* ================================
+   B-Rewards FAQ grouped layout
+================================ */
+
+.b-rewards__faq-v2-header {
+  margin-bottom: 54px;
+}
+
+.b-rewards__faq-v2-heading {
+  margin-bottom: 18px;
+  font-family: "Universal Sans", Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.b-rewards__faq-v2-intro {
+  margin-bottom: 0;
+  color: var(--br-muted);
+}
+
+.b-rewards__faq-v2-content {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(218, 184, 172, 0.65);
+}
+
+.b-rewards__faq-category {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.6fr);
+  column-gap: 64px;
+  padding: 46px 0 50px;
+  border-bottom: 1px solid rgba(218, 184, 172, 0.65);
+}
+
+.b-rewards__faq-category-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.b-rewards__faq-category-number {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 2px;
+  margin: 12px 0 0;
+  overflow: hidden;
+  background: #dab8ac;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.b-rewards__faq-category-title {
+  margin: 0 0 12px;
+  color: #1f1f1f;
+  font-family: "Universal Sans", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.b-rewards__faq-category-intro {
+  max-width: 310px;
+  color: var(--br-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.b-rewards__faq-v2-question {
+  margin: 0 0 10px;
+  color: #1f1f1f;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+
+.b-rewards__faq-v2-answer {
+  max-width: 620px;
+  color: var(--br-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.b-rewards__faq-v2-answer p {
+  margin-top: 0;
+}
+
+.b-rewards__faq-v2-answer p:last-child {
+  margin-bottom: 0;
+}
+
+.b-rewards__faq-v2-answer a {
+  color: #1f1f1f;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.b-rewards__faq-v2-answer a:hover {
+  color: #b87363;
+}
+
+@media (max-width: 989px) {
+  .b-rewards__grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: none;
+  }
+
+  .b-rewards__grid--4 > .b-rewards__card:last-child:nth-child(3n + 1) {
+    grid-column: auto;
+  }
+
+  .b-rewards__tiers {
+    overflow-x: auto;
+    grid-template-columns: repeat(
+      var(--br-cols, 3),
+      minmax(290px, 1fr)
+    );
+    padding: 12px 0;
+    scroll-snap-type: x proximity;
+  }
+
+  .b-rewards__tier {
+    scroll-snap-align: start;
+  }
+
+  .b-rewards__split-copy {
+    padding: 42px;
+  }
+
+  .b-rewards__hero {
+    min-height: 520px;
+  }
+
+  .b-rewards__redeem-header {
+    margin-bottom: 32px;
+  }
+
+  .b-rewards__redeem-layout {
+    max-width: 820px;
+    min-height: 280px;
+    gap: 16px;
+  }
+
+  .b-rewards__redeem-image,
+  .b-rewards__redeem-media .b-rewards__placeholder {
+    min-height: 280px;
+    max-height: 280px;
+  }
+
+  .b-rewards__redeem-card {
+    min-height: 280px;
+    padding: 24px 24px 20px;
+  }
+
+  .b-rewards__conversion {
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .b-rewards__conversion-number {
+    font-size: clamp(50px, 6vw, 66px);
+  }
+
+  .b-rewards__conversion-label {
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .b-rewards__conversion-equals {
+    font-size: 30px;
+  }
+
+  .b-rewards__redeem-example {
+    min-height: 54px;
+    padding: 12px 0;
+  }
+
+  .b-rewards__redeem-example-points {
+    font-size: 14px;
+  }
+
+  .b-rewards__redeem-example-savings {
+    font-size: 16px;
+  }
+
+
+
+  .b-rewards__faq-v2-content {
+    max-width: 860px;
+  }
+
+  .b-rewards__faq-category {
+    grid-template-columns: minmax(190px, 0.7fr) minmax(0, 1.4fr);
+    column-gap: 38px;
+  }
+
+  .b-rewards__faq-category-title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 749px) {
+  .b-rewards__section {
+    padding: 50px 0;
+  }
+
+  .b-rewards__grid--3,
+  .b-rewards__grid--4 {
+    grid-template-columns: 1fr;
+  }
+
+  .b-rewards__hero {
+    min-height: 580px;
+    align-items: flex-end;
+  }
+
+  .b-rewards__hero-content {
+    padding: 55px 0;
+  }
+
+  .b-rewards__hero-copy,
+  .b-rewards__hero-copy--right {
+    margin: auto;
+    text-align: center;
+  }
+
+  .b-rewards__split {
+    grid-template-columns: 1fr;
+  }
+
+  .b-rewards__split-media img,
+  .b-rewards__placeholder {
+    min-height: 360px;
+  }
+
+  .b-rewards__split-copy {
+    padding: 40px 22px;
+  }
+
+  .b-rewards__buttons {
+    flex-direction: column;
+  }
+
+  .b-rewards__buttons .btn {
+    width: 100%;
+  }
+
+  .b-rewards__tiers-header {
+    margin-bottom: 34px;
+  }
+
+  .b-rewards__tiers {
+    overflow: visible;
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+
+  .b-rewards__tier {
+    padding: 34px 24px 26px;
+  }
+
+  .b-rewards__tier-name {
+    font-size: 44px;
+  }
+
+  .b-rewards__rate-number {
+    font-size: 64px;
+  }
+
+  .b-rewards__redeem-header {
+    margin-bottom: 28px;
+  }
+
+  .b-rewards__redeem-heading {
+    margin-bottom: 14px;
+  }
+
+  .b-rewards__redeem-layout {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    min-height: 0;
+    gap: 18px;
+  }
+
+  .b-rewards__redeem-image,
+  .b-rewards__redeem-media .b-rewards__placeholder {
+    min-height: 270px;
+    max-height: 270px;
+  }
+
+  .b-rewards__redeem-card {
+    min-height: 0;
+    padding: 28px 22px 24px;
+  }
+
+  .b-rewards__conversion {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .b-rewards__conversion-number {
+    font-size: clamp(48px, 16vw, 64px);
+  }
+
+  .b-rewards__conversion-label {
+    margin-top: 9px;
+    font-size: 12px;
+  }
+
+  .b-rewards__conversion-equals {
+    font-size: 26px;
+  }
+
+  .b-rewards__redeem-example {
+    min-height: 52px;
+    gap: 16px;
+    padding: 11px 0;
+  }
+
+  .b-rewards__redeem-example-points {
+    font-size: 13px;
+  }
+
+  .b-rewards__redeem-example-savings {
+    font-size: 15px;
+  }
+
+  .b-rewards__redeem-buttons {
+    margin-top: 18px;
+  }
+
+  .b-rewards__redeem-buttons .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .b-rewards__redeem-note {
+    margin-top: 12px;
+    font-size: 11px;
+  }
+
+
+
+  .b-rewards__faq-v2-header {
+    margin-bottom: 38px;
+  }
+
+  .b-rewards__faq-v2-content {
+    max-width: none;
+  }
+
+  .b-rewards__faq-category {
+    grid-template-columns: 1fr;
+    row-gap: 30px;
+    padding: 36px 0 40px;
+  }
+
+  .b-rewards__faq-category-header {
+    gap: 14px;
+  }
+
+  .b-rewards__faq-category-title {
+    font-size: 22px;
+  }
+
+  .b-rewards__faq-category-intro {
+    max-width: none;
+  }
+
+  .b-rewards__faq-v2-item {
+  padding: 0 0 32px;
+  margin: 0 0 32px;
+  border-bottom: 1px solid rgba(217, 212, 212, 0.8);
+}
+.b-rewards__faq-v2-question {
+  margin-bottom: 12px;
+}
+
+.b-rewards__faq-v2-answer {
+  margin-bottom: 0;
+}
+
+ .b-rewards__faq-v2-question {
+  font-size: 14px;
+}
+
+.b-rewards__faq-v2-answer {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.b-rewards__faq-category:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+}
+
+/* ================================
+   B-Rewards FAQ final refinements
+   - Remove category marker
+   - Increase space between questions
+   - Remove final category divider only
+================================ */
+
+/* Remove the number / line before each category name */
+.b-rewards__faq-category-number {
+  display: none !important;
+}
+
+.b-rewards__faq-category-header {
+  gap: 0;
+}
+
+/* Ensure each question and answer reads as its own spaced item */
+.b-rewards__faq-v2-item {
+  display: block;
+  padding: 0 0 36px;
+  margin: 0 0 36px;
+  border-bottom: 1px solid rgba(217, 212, 212, 0.8);
+}
+
+.b-rewards__faq-v2-item:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.b-rewards__faq-v2-question {
+  margin: 0 0 12px;
+}
+
+.b-rewards__faq-v2-answer {
+  margin: 0;
+}
+
+.b-rewards__faq-v2-answer p {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.b-rewards__faq-v2-answer p:last-child {
+  margin-bottom: 0;
+}
+
+/* Remove the blush divider beneath the final category only */
+.b-rewards__faq-category:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+@media (max-width: 749px) {
+  .b-rewards__faq-category-header {
+    gap: 0;
+  }
+
+  .b-rewards__faq-v2-item {
+    padding-bottom: 28px;
+    margin-bottom: 28px;
+  }
+
+  .b-rewards__faq-category:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+}

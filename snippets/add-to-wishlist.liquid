@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<script type="text/javascript">
+function initMoveWishlist(){
+  var ShopifyCartData = {{ cart | json }} || {'items': []};
+  window.SwymCallbacks = window.SwymCallbacks || [];
+  window.SwymCallbacks.push(function(swat) {
+    
+    $( "body" ).on('click', '.move_to_wishlist', function(evt) {
+      evt.preventDefault();
+      var elem = this;
+      console.log(elem);
+      console.log("---------------");
+      var lineNum = $(this).data()['line'];
+      console.log(lineNum);
+       console.log("---------------");
+      var lineItem = ShopifyCartData.items[lineNum - 1];
+      console.log(lineItem);
+      console.log("---------------");
+      moveToWishlist(lineItem, lineNum, elem);
+      
+    
+    });
+    
+    function moveToWishlist(lineItem, lineNum, elem) {
+      var wishlistData = swat.platform.transformCartItem(lineItem);
+      swat.addToWishList(wishlistData, function() {
+        console.log('Item added to wishlist');
+        $(elem).addClass('moved_to_wishlist').addClass('moving_to_wishlist');
+        removeFromCart(lineNum);
+      });
+    }
+
+    
+  });  
+}
+(function(){
+  initMoveWishlist();
+})();
+</script>

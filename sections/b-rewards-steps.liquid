@@ -1,0 +1,15 @@
+<div class="b-rewards b-rewards__section" style="background:{{ section.settings.bg }};">
+  <div class="page-width">
+    <div class="b-rewards__center">
+      {% if section.settings.eyebrow != blank %}<p class="b-rewards__eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
+      <h2 class="large-title b-rewards__title">{{ section.settings.heading | escape }}</h2>
+      {% if section.settings.text != blank %}<div class="rte b-rewards__intro">{{ section.settings.text }}</div>{% endif %}
+    </div>
+    <div class="b-rewards__grid b-rewards__grid--3">
+      {% for block in section.blocks %}<div class="b-rewards__card" {{ block.shopify_attributes }}><span class="b-rewards__step-number">{{ forloop.index }}</span><h3>{{ block.settings.heading | escape }}</h3><div class="rte">{{ block.settings.text }}</div></div>{% endfor %}
+    </div>
+  </div>
+</div>
+{% schema %}
+{"name":"B-Rewards steps","tag":"section","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"HOW IT WORKS"},{"type":"text","id":"heading","label":"Heading","default":"Join. Earn. Enjoy."},{"type":"richtext","id":"text","label":"Intro","default":"<p>Membership is free and rewarding from your very first purchase.</p>"},{"type":"color","id":"bg","label":"Background","default":"#ffffff"}],"blocks":[{"type":"step","name":"Step","limit":3,"settings":[{"type":"text","id":"heading","label":"Heading","default":"Create an account"},{"type":"richtext","id":"text","label":"Text","default":"<p>Sign up for B-Rewards to start earning points.</p>"}]}],"presets":[{"name":"B-Rewards steps","blocks":[{"type":"step"},{"type":"step"},{"type":"step"}]}]}
+{% endschema %}

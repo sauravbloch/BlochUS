@@ -1,0 +1,75 @@
+{%- liquid
+  comment
+    Section wrapper to satisfy theme JSON templates that reference
+    the 'cart-drawer-recommendations' section type.
+
+    The cart drawer itself renders recommendations inside `snippets/cart-drawer.liquid`
+    (and calls `render 'cart-drawer-recommendations'`), so in normal storefront rendering
+    this section does not need to output visible content.
+
+    If `hidden_for_section_api` is false, we render the snippet so the section can be
+    previewed/placed on a page if desired.
+  endcomment
+
+  assign enabled = section.settings.enable
+  assign hidden = section.settings.hidden_for_section_api
+  assign heading = section.settings.heading
+  assign limit = section.settings.recommendations_limit | default: 6
+
+  assign rec_collection = collections[section.settings.collection]
+  if rec_collection == blank
+    assign rec_collection = collections[settings.cart_drawer_recommendations_collection]
+  endif
+-%}
+
+{%- if enabled and hidden != true and rec_collection != blank -%}
+  {% render 'cart-drawer-recommendations', collection: rec_collection, heading: heading, limit: limit %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Cart drawer recs",
+  "tag": "section",
+  "class": "section-cart-drawer-recommendations",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Recommended for you"
+    },
+    {
+      "type": "range",
+      "id": "recommendations_limit",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "label": "Max products",
+      "default": 6
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection (optional override)"
+    },
+    {
+      "type": "checkbox",
+      "id": "hidden_for_section_api",
+      "label": "Hidden (used by Section Rendering API)",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart drawer recs"
+    }
+  ]
+}
+{% endschema %}
+

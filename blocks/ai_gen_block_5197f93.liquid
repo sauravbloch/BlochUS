@@ -1,0 +1,428 @@
+{% doc %}
+  @prompt
+    can you create me a mulitcolumn block that has a html code heading and space for 3 images with heading, subheading and CTA link below, can you make them CTA links instead of buttons, make text left aligned and the heading bold
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-multicolumn-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 0;
+  }
+
+  .ai-multicolumn-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-multicolumn-heading-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ block.settings.heading_spacing }}px;
+  }
+
+  .ai-multicolumn-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.column_gap }}px;
+  }
+
+  .ai-multicolumn-item-{{ ai_gen_id }} {
+    text-align: left;
+  }
+
+  .ai-multicolumn-image-wrapper-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.image_spacing }}px;
+    overflow: hidden;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-multicolumn-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-multicolumn-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-multicolumn-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  .ai-multicolumn-item-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.item_heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 {{ block.settings.item_heading_spacing }}px;
+    font-weight: bold;
+  }
+
+  .ai-multicolumn-item-subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.item_subheading_size }}px;
+    color: {{ block.settings.subheading_color }};
+    margin: 0 0 {{ block.settings.item_subheading_spacing }}px;
+    line-height: 1.5;
+  }
+
+  .ai-multicolumn-item-link-{{ ai_gen_id }} {
+    display: inline-block;
+    color: {{ block.settings.cta_text_color }};
+    text-decoration: underline;
+    font-size: {{ block.settings.cta_font_size }}px;
+    transition: color 0.3s ease;
+  }
+
+  .ai-multicolumn-item-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.cta_hover_text_color }};
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-multicolumn-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.column_gap | times: 1.5 }}px;
+    }
+  }
+{% endstyle %}
+
+<multicolumn-block-{{ ai_gen_id }} class="ai-multicolumn-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-multicolumn-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <div class="ai-multicolumn-heading-{{ ai_gen_id }}">
+        {{ block.settings.heading }}
+      </div>
+    {% endif %}
+
+    <div class="ai-multicolumn-grid-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign image_key = 'image_' | append: i
+          assign heading_key = 'heading_' | append: i
+          assign subheading_key = 'subheading_' | append: i
+          assign link_key = 'link_' | append: i
+          assign link_text_key = 'link_text_' | append: i
+
+          assign image = block.settings[image_key]
+          assign heading = block.settings[heading_key]
+          assign subheading = block.settings[subheading_key]
+          assign link = block.settings[link_key]
+          assign link_text = block.settings[link_text_key]
+        %}
+
+        <div class="ai-multicolumn-item-{{ ai_gen_id }}">
+          <div class="ai-multicolumn-image-wrapper-{{ ai_gen_id }}">
+            {% if image %}
+              <img
+                src="{{ image | image_url: width: 600 }}"
+                alt="{{ image.alt | escape }}"
+                loading="lazy"
+                width="{{ image.width }}"
+                height="{{ image.height }}"
+                class="ai-multicolumn-image-{{ ai_gen_id }}"
+              >
+            {% else %}
+              <div class="ai-multicolumn-image-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if heading != blank %}
+            <h3 class="ai-multicolumn-item-heading-{{ ai_gen_id }}">{{ heading }}</h3>
+          {% endif %}
+
+          {% if subheading != blank %}
+            <div class="ai-multicolumn-item-subheading-{{ ai_gen_id }}">{{ subheading }}</div>
+          {% endif %}
+
+          {% if link != blank and link_text != blank %}
+            <a href="{{ link }}" class="ai-multicolumn-item-link-{{ ai_gen_id }}">
+              {{ link_text }}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</multicolumn-block-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Multicolumn",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Main heading"
+    },
+    {
+      "type": "html",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Spacing below heading",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Column 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading_1",
+      "label": "Heading",
+      "default": "Column 1"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading_1",
+      "label": "Subheading",
+      "default": "Add a description for this column"
+    },
+    {
+      "type": "url",
+      "id": "link_1",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "link_text_1",
+      "label": "Link text",
+      "default": "Learn more"
+    },
+    {
+      "type": "header",
+      "content": "Column 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading_2",
+      "label": "Heading",
+      "default": "Column 2"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading_2",
+      "label": "Subheading",
+      "default": "Add a description for this column"
+    },
+    {
+      "type": "url",
+      "id": "link_2",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "link_text_2",
+      "label": "Link text",
+      "default": "Learn more"
+    },
+    {
+      "type": "header",
+      "content": "Column 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading_3",
+      "label": "Heading",
+      "default": "Column 3"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading_3",
+      "label": "Subheading",
+      "default": "Add a description for this column"
+    },
+    {
+      "type": "url",
+      "id": "link_3",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "link_text_3",
+      "label": "Link text",
+      "default": "Learn more"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Column gap",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Image style"
+    },
+    {
+      "type": "range",
+      "id": "image_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Spacing below image",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Column heading"
+    },
+    {
+      "type": "range",
+      "id": "item_heading_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "range",
+      "id": "item_heading_spacing",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Spacing below",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Column subheading"
+    },
+    {
+      "type": "range",
+      "id": "item_subheading_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "range",
+      "id": "item_subheading_spacing",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Spacing below",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "CTA link"
+    },
+    {
+      "type": "range",
+      "id": "cta_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "Text color",
+      "default": "#0e0e0e"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_text_color",
+      "label": "Hover text color",
+      "default": "#4c4545"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multicolumn"
+    }
+  ]
+}
+{% endschema %}
