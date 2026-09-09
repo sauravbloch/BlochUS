@@ -1,0 +1,63 @@
+{{ 'class-filter.css' | asset_url | stylesheet_tag }}
+
+<div class="class-selector-section page-width" data-section-id="{{ section.id }}" data-section-type="class-selector">
+  {%- if section.settings.heading != blank -%}
+    <h2 class="class-selector__heading large-title">{{ section.settings.heading | escape }}</h2>
+  {%- endif -%}
+
+  <div class="class-selector__control">
+    <label class="class-selector__label" for="ClassFilterSelect-{{ section.id }}">
+      {{ section.settings.label | default: 'Choose your class' | escape }}
+    </label>
+
+    <div class="custom-select">
+      <select
+        id="ClassFilterSelect-{{ section.id }}"
+        class="class-filter-select"
+        data-class-filter-select
+      >
+        <option value="all">{{ section.settings.all_label | default: 'All classes' | escape }}</option>
+      </select>
+      
+    </div>
+  </div>
+</div>
+
+{{ 'class-filter.js' | asset_url | script_tag }}
+
+{% schema %}
+  {
+    "name": "Choose Classes",
+    "tag": "section",
+    "class": "section-class-selector",
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Find your class"
+      },
+      {
+        "type": "text",
+        "id": "label",
+        "label": "Dropdown label",
+        "default": "Choose your class"
+      },
+      {
+        "type": "text",
+        "id": "all_label",
+        "label": "\"Show all\" option label",
+        "default": "All classes"
+      }
+    ],
+    "templates": [
+      "index",
+      "page"
+    ],
+    "presets": [
+      {
+        "name": "Choose Classes"
+      }
+    ]
+  }
+{% endschema %}

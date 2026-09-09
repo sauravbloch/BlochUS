@@ -1,0 +1,193 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+ {
+    "sections": {
+      "class_selector": {
+        "type": "class-selector",
+        "settings": {
+          "heading": "Sarasota Ballet Classes",
+          "label": "Choose your class",
+          "all_label": "All classes"
+        }
+      },
+      "featured_collection_1": {
+        "type": "featured-collection-tagged",
+        "settings": {
+          "class_tag": " Pre-Primary A/B & Primary A/B/C",
+          "title": " Pre-Primary A/B & Primary A/B/C",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "pre-primary-a-b-primary-a-b-c",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 2,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      },
+      "featured_collection_2": {
+        "type": "featured-collection-tagged",
+        "settings": {
+          "class_tag": "Level 1A/1B",
+          "title": "Level 1A/1B",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "level-1a-1b",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 2,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      },
+      "featured_collection_3": {
+        "type": "featured-collection-tagged",
+        "settings": {
+          "class_tag": "Level 2A/2B/2C",
+          "title": "Level 2A/2B/2C",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "level-2a-2b-2c",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 2,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      },
+      "featured_collection_tagged_gEcWU3": {
+        "type": "featured-collection-tagged",
+        "name": "Featured collection (Class tag)",
+        "settings": {
+          "class_tag": "Level 3A/3B",
+          "title": "Level 3A/3B",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "level-3a-3b",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 1,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      },
+      "featured_collection_tagged_8xFpxM": {
+        "type": "featured-collection-tagged",
+        "name": "Featured collection (Class tag)",
+        "settings": {
+          "class_tag": "Level 4A/4B",
+          "title": "Level 4A/4B",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "level-4a-4b",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 1,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      },
+      "featured_collection_tagged_qgCgfq": {
+        "type": "featured-collection-tagged",
+        "name": "Featured collection (Class tag)",
+        "settings": {
+          "class_tag": "MCB (Conservatory)",
+          "title": "MCB (Conservatory)",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "mcb-conservatory",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 1,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      },
+      "featured_collection_tagged_EqnT7q": {
+        "type": "featured-collection-tagged",
+        "name": "Featured collection (Class tag)",
+        "settings": {
+          "class_tag": "  Trainee A&B",
+          "title": "  Trainee A&B",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "trainee-a-b",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 1,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      },
+      "featured_collection_tagged_B4cAji": {
+        "type": "featured-collection-tagged",
+        "name": "Featured collection (Class tag)",
+        "settings": {
+          "class_tag": "Boys- Sarasota Ballet School",
+          "title": "Boys- Sarasota Ballet School",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "boys-sarasota-ballet-school",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 1,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      },
+      "featured_collection_tagged_NV4xmR": {
+        "type": "featured-collection-tagged",
+        "name": "Featured collection (Class tag)",
+        "settings": {
+          "class_tag": "Boys- Conservatory and Trainee",
+          "title": "Boys- Conservatory and Trainee",
+          "enlarge_title": false,
+          "link_text": "View All",
+          "collection": "boys-conservatory-and-trainee",
+          "show_vendor": false,
+          "enable_carousel": true,
+          "grid": 5,
+          "row_count": 1,
+          "grid_mobile": "2",
+          "padding-top": 0,
+          "padding-bottom": 0
+        }
+      }
+    },
+    "order": [
+      "class_selector",
+      "featured_collection_1",
+      "featured_collection_2",
+      "featured_collection_3",
+      "featured_collection_tagged_gEcWU3",
+      "featured_collection_tagged_8xFpxM",
+      "featured_collection_tagged_qgCgfq",
+      "featured_collection_tagged_EqnT7q",
+      "featured_collection_tagged_B4cAji",
+      "featured_collection_tagged_NV4xmR"
+    ]
+  }
+  
