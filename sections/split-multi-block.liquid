@@ -1,0 +1,328 @@
+{% style %}
+  #shopify-section-{{ section.id }} .media-grid-5 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__hero {
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__side-item {
+    aspect-ratio: 1 / 1;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__side-item:nth-of-type(1) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  #shopify-section-{{ section.id }} .media-grid-5__side-item:nth-of-type(2) {
+    grid-column: 4;
+    grid-row: 1;
+  }
+  #shopify-section-{{ section.id }} .media-grid-5__side-item:nth-of-type(3) {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  #shopify-section-{{ section.id }} .media-grid-5__side-item:nth-of-type(4) {
+    grid-column: 4;
+    grid-row: 2;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__item {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__item .placeholder-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    padding: 24px;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__overlay-inner {
+    pointer-events: auto;
+    max-width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__overlay--top-left {
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+  }
+  #shopify-section-{{ section.id }} .media-grid-5__overlay--top-right {
+    align-items: flex-start;
+    justify-content: flex-end;
+    text-align: right;
+  }
+  #shopify-section-{{ section.id }} .media-grid-5__overlay--middle {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  #shopify-section-{{ section.id }} .media-grid-5__overlay--bottom-left {
+    align-items: flex-end;
+    justify-content: flex-start;
+    text-align: left;
+  }
+  #shopify-section-{{ section.id }} .media-grid-5__overlay--bottom-right {
+    align-items: flex-end;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__heading {
+    margin: 0 0 8px;
+    color: #ffffff;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__hero .media-grid-5__heading {
+    font-size: 2em;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__side .media-grid-5__heading {
+    font-size: 1em;
+    font-weight: 600;
+  }
+
+  #shopify-section-{{ section.id }} .media-grid-5__cta {
+    color: #ffffff;
+    text-decoration: underline;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+    font-size: 0.9em;
+    display: inline-block;
+  }
+
+  @media (max-width: 767px) {
+    #shopify-section-{{ section.id }} .media-grid-5 {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto auto auto;
+    }
+    #shopify-section-{{ section.id }} .media-grid-5__hero {
+      grid-column: 1 / span 2;
+      grid-row: 1;
+      aspect-ratio: 4 / 3;
+    }
+    #shopify-section-{{ section.id }} .media-grid-5__side-item:nth-of-type(1) {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    #shopify-section-{{ section.id }} .media-grid-5__side-item:nth-of-type(2) {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    #shopify-section-{{ section.id }} .media-grid-5__side-item:nth-of-type(3) {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    #shopify-section-{{ section.id }} .media-grid-5__side-item:nth-of-type(4) {
+      grid-column: 2;
+      grid-row: 3;
+    }
+  }
+{% endstyle %}
+
+<div class="container media-grid-5-section" data-section-id="{{ section.id }}" data-section-type="media-grid-5">
+  <div class="page-width">
+
+    {%- if section.settings.section_heading != blank -%}
+      <h2 class="media-grid-5__section-heading small-title">{{ section.settings.section_heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- liquid
+      assign blocks = section.blocks
+      assign hero_block = blocks | first
+      assign side_blocks = blocks | slice: 1, 4
+    -%}
+
+    {%- if blocks.size > 0 -%}
+      <div class="media-grid-5">
+
+        {%- if hero_block -%}
+          {%- liquid
+            assign block = hero_block
+            if block.settings.cta_url != blank
+              assign cta_url = block.settings.cta_url
+            else
+              assign cta_url = '#'
+            endif
+          -%}
+          <div class="media-grid-5__item media-grid-5__hero global-border-radius" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              <img
+                src="{{ block.settings.image | image_url: width: 1200 }}"
+                srcset="{{ block.settings.image | image_url: width: 600 }} 600w, {{ block.settings.image | image_url: width: 1200 }} 1200w, {{ block.settings.image | image_url: width: 1800 }} 1800w"
+                sizes="50vw"
+                alt="{{ block.settings.image.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.image.width }}"
+                height="{{ block.settings.image.height }}">
+            {%- else -%}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+
+            {%- if block.settings.heading != blank or block.settings.cta_text != blank -%}
+              <div class="media-grid-5__overlay media-grid-5__overlay--{{ block.settings.text_position }}">
+                <div class="media-grid-5__overlay-inner">
+                  {%- if block.settings.heading != blank -%}
+                    <h3 class="media-grid-5__heading">{{ block.settings.heading | escape }}</h3>
+                  {%- endif -%}
+                  {%- if block.settings.cta_text != blank -%}
+                    <a href="{{ cta_url }}" class="media-grid-5__cta">{{ block.settings.cta_text | escape }}</a>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if side_blocks.size > 0 -%}
+          {%- for block in side_blocks -%}
+            {%- liquid
+              if block.settings.cta_url != blank
+                assign cta_url = block.settings.cta_url
+              else
+                assign cta_url = '#'
+              endif
+            -%}
+            <div class="media-grid-5__item media-grid-5__side-item" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                <img
+                  src="{{ block.settings.image | image_url: width: 700 }}"
+                  srcset="{{ block.settings.image | image_url: width: 350 }} 350w, {{ block.settings.image | image_url: width: 700 }} 700w, {{ block.settings.image | image_url: width: 1000 }} 1000w"
+                  sizes="25vw"
+                  alt="{{ block.settings.image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ block.settings.image.width }}"
+                  height="{{ block.settings.image.height }}">
+              {%- else -%}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+
+              {%- if block.settings.heading != blank or block.settings.cta_text != blank -%}
+                <div class="media-grid-5__overlay media-grid-5__overlay--{{ block.settings.text_position }}">
+                  <div class="media-grid-5__overlay-inner">
+                    {%- if block.settings.heading != blank -%}
+                      <h3 class="media-grid-5__heading">{{ block.settings.heading | escape }}</h3>
+                    {%- endif -%}
+                    {%- if block.settings.cta_text != blank -%}
+                      <a href="{{ cta_url }}" class="media-grid-5__cta">{{ block.settings.cta_text | escape }}</a>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "split-multi-block",
+  "class": "section-media-grid-5",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Gap between images",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Title",
+          "info": "Optional. If left blank, only the CTA (if set) will show."
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "CTA text"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "CTA link"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "top-right", "label": "Top right" },
+            { "value": "middle", "label": "Middle" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-right", "label": "Bottom right" }
+          ],
+          "default": "bottom-left"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "split-multi-block",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}
