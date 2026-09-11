@@ -12,7 +12,7 @@
 	fill: {{ section.settings.foreground }};
 	}
 
-	/* --- Rebecca Minkoff style layout --- */
+	
 	#shopify-section-{{ section.id }} .page-footer__top {
 		display: flex;
 		flex-wrap: wrap;
@@ -37,20 +37,15 @@
 	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form {
 		margin: 0 0 20px;
 	}
-	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__heading,
-	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__text {
-		display: none;
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__response {
+		font-size: 0.85em;
+		margin-bottom: 10px;
 	}
-	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form form {
-		display: block !important;
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__response--success {
+		color: #1a7f37;
 	}
-	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form .h-captcha {
-		display: block !important;
-		width: 0 !important;
-		height: 0 !important;
-		overflow: hidden !important;
-		margin: 0 !important;
-		padding: 0 !important;
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__response--error {
+		color: #d0242f;
 	}
 	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__inputs {
 		display: flex;
@@ -70,13 +65,20 @@
 		max-width: 25% !important;
 		box-sizing: border-box;
 		text-align: right;
+    background: inherit !important;
+    color: #000 !important;
+    min-width:auto;
+    padding: 0 0 0 50px;
 	}
+  #shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__inputs .subscribe-form__submit:hover {
+    box-shadow:inherit !important;
+  }
 	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__email {
 		width: 100%;
 		border: none !important;
 		background: transparent !important;
 		padding: 8px 0;
-		font-size: 0.9em;
+		font-size: 15px;
 		color: inherit;
 		box-sizing: border-box;
 	}
@@ -117,6 +119,10 @@
 		width: 20px;
 		height: auto;
 		color: inherit;
+	}
+	#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__submit:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 		text-align: right;
 	}
@@ -165,6 +171,17 @@
 		content: '';
 	}
 
+  .page-footer__brand-col {
+    padding-right:7%;
+}
+ .page-footer__end.mobile_end {
+      display:none;
+    }
+
+  .copyright-text.desktop_end {
+    display:block;
+  }
+
 	/* Desktop / tablet: always show content, no toggle interaction */
 	@media (min-width: 768px) {
 		#shopify-section-{{ section.id }} .footer-block__details > *:not(summary) {
@@ -185,12 +202,21 @@
     #shopify-section-{{ section.id }} .page-footer__brand-col {
       margin-bottom:0;
     }
+
+    #shopify-section-footer .page-footer__brand-col .subscribe-form {
+      margin-bottom:0;
+    }
+
 		#shopify-section-{{ section.id }} .page-footer__brand-col .subscribe-form__inputs {
 			max-width: 100%;
 		}
 
-    #shopify-section-footer .page-footer__brand-col .subscribe-form {
-      margin-bottom:0;
+    .page-footer__end.mobile_end {
+      display:block;
+    }
+
+    .copyright-text.desktop_end {
+      display:none;
     }
 
 
@@ -256,51 +282,27 @@
         <div class="page-footer__top">
 
           <div class="page-footer__brand-col">
-            <a href="{{ routes.root_url }}" class="page-footer__brand-name"><img src="https://us.blochworld.com/cdn/shop/files/Bloch_logo_5950875b-233b-4c79-b849-66b560ef6d91_80x.png?v=1737021674" alt="footer bloch logo"></a>
+             <a href="{{ routes.root_url }}" class="page-footer__brand-name"><img src="https://us.blochworld.com/cdn/shop/files/Bloch_logo_5950875b-233b-4c79-b849-66b560ef6d91_80x.png?v=1737021674" alt="footer bloch logo"></a>
 
             {%- if section.settings.show_subscribe_form -%}
               <div class="subscribe-form">
-                <h2 class="visually-hidden">{{ 'layout.footer.subscribe_heading' | t }}</h2>
-                <div class="subscribe-form__heading">
-                  {{- section.settings.subscribe_title -}}
-                </div>
-
-                {%- if section.settings.subscribe_description != blank -%}
-                  <div class="subscribe-form__text rte small-text">
-                    {{- section.settings.subscribe_description -}}
+                <div class="subscribe-form__response" data-klaviyo-response hidden></div>
+                <form
+                  class="subscribe-form__inputs"
+                  data-klaviyo-subscribe-form
+                  data-klaviyo-company-id="Tb3MxU"
+                  data-klaviyo-list-id="VL7enH"
+                >
+                  <div class="input-wrapper">
+                    <label class="visually-hidden" for="footer_mailinglist_email">Email address</label>
+                    <input type="email" required class="subscribe-form__email required" value="" id="footer_mailinglist_email" name="email" placeholder="Sign up for email & get 10% Off">
                   </div>
-                {%- endif -%}
-
-                {%- form 'customer' -%}
-                  {%- if form.posted_successfully? -%}
-                    <div class="subscribe-form__response footer-subscribe-form__response--success">
-                      <h3>{{ 'layout.footer.subscribe_success' | t }}</h3>
-                    </div>
-                  {%- else -%}
-                    {%- if form.errors -%}
-                      <div class="subscribe-form__response">
-                        {%- for field in form.errors -%}
-                          <p class="error-message">{{ field | capitalize }} - {{ form.errors.messages[field] }}</p>
-                        {%- endfor -%}
-                      </div>
-                    {%- endif -%}
-
-                    <input type="hidden" id="contact_tags" name="contact[tags]" value="prospect,newsletter">
-                    <div class="subscribe-form__inputs">
-                      <div class="input-wrapper">
-                        <label class="visually-hidden" for="footer_mailinglist_email">
-                          {{- section.settings.subscribe_label -}}
-                        </label>
-                        <input type="email" required class="subscribe-form__email required" value="" id="footer_mailinglist_email" name="contact[email]" placeholder="{{ section.settings.subscribe_label }}">
-                      </div>
-                      <button class="subscribe-form__submit" type="submit" aria-label="{{ section.settings.subscribe_button }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false">
-                          <path d="M0.5 7H19M19 7L13 1M19 7L13 13" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                  {%- endif -%}
-                {%- endform -%}
+                  <button class="subscribe-form__submit" type="submit" aria-label="Sign up">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false">
+                      <path d="M0.5 7H19M19 7L13 1M19 7L13 13" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </form>
               </div>
             {%- endif -%}
 
@@ -384,6 +386,9 @@
                     </li>
                   {% endif %}
                 </ul>
+                <small class="copyright-text desktop_end" style="margin-top:20%;">
+              {{ 'layout.footer.copyright' | t }} &copy; {{ 'now' | date: "%Y" }} <a href="{{ routes.root_url }}">{{ shop.name }}</a>
+            </small>
               </div>
             {%- endif -%}
           </div>
@@ -424,7 +429,7 @@
 
         <hr class="page-footer__hr">
 
-        <div class="page-footer__end">
+        <div class="page-footer__end mobile_end">
           <div>
             {%- assign small_linklist = section.settings.small_linklist -%}
             {%- if linklists[small_linklist].links.size > 0 -%}
