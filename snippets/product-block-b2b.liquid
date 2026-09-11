@@ -124,90 +124,78 @@
     </div>
   </div>
 
-  {%- if product.available -%}
-    {%- liquid
-      assign qa_current_variant = product.selected_or_first_available_variant
-      assign qa_form_id = 'ProductBlockQuickAdd-' | append: section.id | append: '-' | append: product.id
-    -%}
-    <div class="product-block__quick-add">
-      {%- form 'product', product, id: qa_form_id, class: 'ajax-product-form product-block__quick-add-form' -%}
-        <input type="hidden" name="quantity" value="1">
+  {%- liquid
+    assign qa_current_variant = product.selected_or_first_available_variant
+    assign qa_form_id = 'ProductBlockQuickAdd-' | append: section.id | append: '-' | append: product.id
+  -%}
+  <div class="product-block__quick-add">
+    {%- form 'product', product, id: qa_form_id, class: 'ajax-product-form product-block__quick-add-form' -%}
+      <input type="hidden" name="quantity" value="1">
 
-        <div class="product-block__quick-add-row">
-          {%- unless product.has_only_default_variant -%}
-            {%- liquid
-              assign qa_display_option_count = 0
-              for option in product.options_with_values
-                assign qa_opt_name = option.name | downcase
-                if qa_opt_name contains 'size' or qa_opt_name contains 'width'
-                  assign qa_display_option_count = qa_display_option_count | plus: 1
-                endif
-              endfor
-            -%}
-            {%- if qa_display_option_count > 0 -%}
-              <div class="product-block__quick-add-options" data-shop-the-look-options>
-                {%- for option in product.options_with_values -%}
-                  {%- assign qa_opt_index = forloop.index0 -%}
-                  {%- assign qa_opt_name = option.name | downcase -%}
-                  {%- unless qa_opt_name contains 'size' or qa_opt_name contains 'width' -%}{% continue %}{%- endunless -%}
-                  <div class="product-block__quick-add-option">
-                    <select id="{{ qa_form_id }}-option-{{ qa_opt_index }}"
-                            class="product-block__quick-add-select"
-                            data-option-index="{{ qa_opt_index }}"
-                            aria-label="{{ option.name }}">
-                      {%- if qa_opt_name contains 'size' -%}
-                        <option value="" selected disabled>Select size</option>
-                      {%- else -%}
-                        <option value="" selected disabled>Select width</option>
-                      {%- endif -%}
-                      {%- for value in option.values -%}
-                        {%- assign qa_available = false -%}
-                        {%- for v in product.variants -%}
-                          {%- if v.options[qa_opt_index] == value and v.available -%}
-                            {%- assign qa_available = true -%}
-                            {%- break -%}
-                          {%- endif -%}
-                        {%- endfor -%}
-                        <option value="{{ value | escape }}"{% unless qa_available %} disabled{% endunless %}>{{ value }}{% unless qa_available %} - {{ 'products.product.sold_out' | t }}{% endunless %}</option>
+      <div class="product-block__quick-add-row">
+        {%- unless product.has_only_default_variant -%}
+          {%- liquid
+            assign qa_display_option_count = 0
+            for option in product.options_with_values
+              assign qa_opt_name = option.name | downcase
+              if qa_opt_name contains 'size' or qa_opt_name contains 'width'
+                assign qa_display_option_count = qa_display_option_count | plus: 1
+              endif
+            endfor
+          -%}
+          {%- if qa_display_option_count > 0 -%}
+            <div class="product-block__quick-add-options" data-shop-the-look-options>
+              {%- for option in product.options_with_values -%}
+                {%- assign qa_opt_index = forloop.index0 -%}
+                {%- assign qa_opt_name = option.name | downcase -%}
+                {%- unless qa_opt_name contains 'size' or qa_opt_name contains 'width' -%}{% continue %}{%- endunless -%}
+                <div class="product-block__quick-add-option">
+                  <select id="{{ qa_form_id }}-option-{{ qa_opt_index }}"
+                          class="product-block__quick-add-select"
+                          data-option-index="{{ qa_opt_index }}"
+                          data-bulk-required-select
+                          required
+                          aria-label="{{ option.name }}">
+                    {%- if qa_opt_name contains 'size' -%}
+                      <option value="" selected disabled>Select size</option>
+                    {%- else -%}
+                      <option value="" selected disabled>Select width</option>
+                    {%- endif -%}
+                    {%- for value in option.values -%}
+                      {%- assign qa_available = false -%}
+                      {%- for v in product.variants -%}
+                        {%- if v.options[qa_opt_index] == value and v.available -%}
+                          {%- assign qa_available = true -%}
+                          {%- break -%}
+                        {%- endif -%}
                       {%- endfor -%}
-                    </select>
-                  </div>
-                {%- endfor -%}
-              </div>
-            {%- endif -%}
-          {%- endunless -%}
+                      <option value="{{ value | escape }}"{% unless qa_available %} disabled{% endunless %}>{{ value }}{% unless qa_available %} - {{ 'products.product.sold_out' | t }}{% endunless %}</option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        {%- endunless -%}
 
-          <select name="id" class="product-block__quick-add-variant-select no-js" data-shop-the-look-variant-select aria-label="{{ 'products.product.selector_label' | t | escape }}">
-            {%- for variant in product.variants -%}
-              <option value="{{ variant.id }}"
-                      {% if variant == qa_current_variant %}selected{% endif %}
-                      {% unless variant.available %}disabled{% endunless %}
-                      data-option-0="{{ variant.option1 | escape }}"
-                      data-option-1="{{ variant.option2 | escape }}"
-                      data-option-2="{{ variant.option3 | escape }}"
-                      data-price="{{ variant.price }}"
-                      data-available="{{ variant.available }}">
-                {{ variant.title }}
-              </option>
-            {%- endfor -%}
-          </select>
+        <select name="id" class="product-block__quick-add-variant-select no-js" data-shop-the-look-variant-select aria-label="{{ 'products.product.selector_label' | t | escape }}">
+          {%- for variant in product.variants -%}
+            <option value="{{ variant.id }}"
+                    {% if variant == qa_current_variant %}selected{% endif %}
+                    {% unless variant.available %}disabled{% endunless %}
+                    data-option-0="{{ variant.option1 | escape }}"
+                    data-option-1="{{ variant.option2 | escape }}"
+                    data-option-2="{{ variant.option3 | escape }}"
+                    data-price="{{ variant.price }}"
+                    data-available="{{ variant.available }}">
+              {{ variant.title }}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+    {%- endform -%}
+  </div>
 
-          <div class="product-block__quick-add-btn-wrap" data-add-to-cart-tooltip>
-            <button
-              class="product-block__quick-add-btn product-block__quick-add-btn--icon"
-              type="submit"
-              name="add"
-              data-add-to-cart
-              aria-label="{{ 'products.product.add_to_cart' | t }}"
-              {% unless qa_current_variant.available %}disabled{% endunless %}>
-                {% render 'feather-bag' %}
-                <span class="visually-hidden" data-add-to-cart-text>{{ 'products.product.add_to_cart' | t }}</span>
-            </button>
-          </div>
-        </div>
-      {%- endform -%}
-    </div>
-  {%- endif -%}
 
   {%- if settings.swatch_enabled_grid -%}
     {%- comment -%}Pass show_swatches:false from sections to hide grid dots (e.g. PDP recs, promo modules). Omitted = show.{%- endcomment -%}

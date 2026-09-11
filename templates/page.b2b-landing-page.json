@@ -8,186 +8,194 @@
  * ------------------------------------------------------------
  */
  {
-    "sections": {
-      "class_selector": {
-        "type": "class-selector",
-        "settings": {
-          "heading": "Sarasota Ballet Classes",
-          "label": "Choose your class",
-          "all_label": "All classes"
-        }
-      },
-      "featured_collection_1": {
-        "type": "featured-collection-tagged",
-        "settings": {
-          "class_tag": " Pre-Primary A/B & Primary A/B/C",
-          "title": " Pre-Primary A/B & Primary A/B/C",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "pre-primary-a-b-primary-a-b-c",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 2,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
-      },
-      "featured_collection_2": {
-        "type": "featured-collection-tagged",
-        "settings": {
-          "class_tag": "Level 1A/1B",
-          "title": "Level 1A/1B",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "level-1a-1b",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 2,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
-      },
-      "featured_collection_3": {
-        "type": "featured-collection-tagged",
-        "settings": {
-          "class_tag": "Level 2A/2B/2C",
-          "title": "Level 2A/2B/2C",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "level-2a-2b-2c",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 2,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
-      },
-      "featured_collection_tagged_gEcWU3": {
-        "type": "featured-collection-tagged",
-        "name": "Featured collection (Class tag)",
-        "settings": {
-          "class_tag": "Level 3A/3B",
-          "title": "Level 3A/3B",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "level-3a-3b",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 1,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
-      },
-      "featured_collection_tagged_8xFpxM": {
-        "type": "featured-collection-tagged",
-        "name": "Featured collection (Class tag)",
-        "settings": {
-          "class_tag": "Level 4A/4B",
-          "title": "Level 4A/4B",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "level-4a-4b",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 1,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
-      },
-      "featured_collection_tagged_qgCgfq": {
-        "type": "featured-collection-tagged",
-        "name": "Featured collection (Class tag)",
-        "settings": {
-          "class_tag": "MCB (Conservatory)",
-          "title": "MCB (Conservatory)",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "mcb-conservatory",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 1,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
-      },
-      "featured_collection_tagged_EqnT7q": {
-        "type": "featured-collection-tagged",
-        "name": "Featured collection (Class tag)",
-        "settings": {
-          "class_tag": "  Trainee A&B",
-          "title": "  Trainee A&B",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "trainee-a-b",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 1,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
-      },
-      "featured_collection_tagged_B4cAji": {
-        "type": "featured-collection-tagged",
-        "name": "Featured collection (Class tag)",
-        "settings": {
-          "class_tag": "Boys- Sarasota Ballet School",
-          "title": "Boys- Sarasota Ballet School",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "boys-sarasota-ballet-school",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 1,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
-      },
-      "featured_collection_tagged_NV4xmR": {
-        "type": "featured-collection-tagged",
-        "name": "Featured collection (Class tag)",
-        "settings": {
-          "class_tag": "Boys- Conservatory and Trainee",
-          "title": "Boys- Conservatory and Trainee",
-          "enlarge_title": false,
-          "link_text": "View All",
-          "collection": "boys-conservatory-and-trainee",
-          "show_vendor": false,
-          "enable_carousel": true,
-          "grid": 5,
-          "row_count": 1,
-          "grid_mobile": "2",
-          "padding-top": 0,
-          "padding-bottom": 0
-        }
+  "sections": {
+    "class_selector": {
+      "type": "class-selector",
+      "settings": {
+        "heading": "Sarasota Ballet Classes",
+        "label": "Choose your class",
+        "all_label": "All classes"
       }
     },
-    "order": [
-      "class_selector",
-      "featured_collection_1",
-      "featured_collection_2",
-      "featured_collection_3",
-      "featured_collection_tagged_gEcWU3",
-      "featured_collection_tagged_8xFpxM",
-      "featured_collection_tagged_qgCgfq",
-      "featured_collection_tagged_EqnT7q",
-      "featured_collection_tagged_B4cAji",
-      "featured_collection_tagged_NV4xmR"
-    ]
-  }
-  
+    "featured_collection_1": {
+      "type": "featured-collection-tagged",
+      "settings": {
+        "class_tag": " Pre-Primary A/B & Primary A/B/C",
+        "title": " Pre-Primary A/B & Primary A/B/C",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for Sarasota Ballet students in Pre-Primary A/B & Primary A/BC include:</p><ul><li>Prisha Short Sleeve Skirted Leotard in Candy Pink <strong>OR</strong> Pastel Blue</li><li>Performa Stretch Canvas Ballet Shoes in Theatrical Pink <strong>OR</strong> Skin Tone. </li></ul>",
+        "link_text": "",
+        "collection": "pre-primary-a-b-primary-a-b-c",
+        "show_vendor": false,
+        "enable_carousel": false,
+        "grid": 5,
+        "row_count": 2,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    },
+    "featured_collection_2": {
+      "type": "featured-collection-tagged",
+      "settings": {
+        "class_tag": "Level 1A/1B",
+        "title": "Level 1A/1B",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for Sarasota Ballet students in Level 1A/1B include:</p><ul><li>Ari Camisole Leotard in Lavender</li><li>Viola Mesh Skirt in Lavender</li><li>Performa Stretch Canvas Ballet Shoe in Theatrical Pink <strong>OR</strong> Skin Tone</li><li>Contoursoft Convertible Tights in Ballet Pink <strong>OR</strong> Skin Tone</li></ul><p>Jazz, Character requirements:</p><ul><li>Super Jazz Slip On Jazz Shoes in Tan <strong>OR</strong> Black</li><li>Broadway Lo Character Shoes in Black</li><li>Mirella Circle Skirt in Black</li></ul>",
+        "link_text": "",
+        "collection": "level-1a-1b",
+        "show_vendor": false,
+        "enable_carousel": false,
+        "grid": 5,
+        "row_count": 2,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    },
+    "featured_collection_3": {
+      "type": "featured-collection-tagged",
+      "settings": {
+        "class_tag": "Level 2A/2B/2C",
+        "title": "Level 2A/2B/2C",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for Sarasota Ballet students in Level 2A/2B/2C include:</p><ul><li>Ari <strong>OR</strong> Arianne Camisole Leotard in Aubergine</li><li>Viola <strong>OR</strong> Jaye Mesh Skirt in Aubergine</li><li>Performa Stretch Canvas Ballet Shoe in Theatrical Pink <strong>OR</strong> Skin Tone</li><li>Contoursoft Convertible Tights in Ballet Pink <strong>OR</strong> Skin Tone</li></ul><p>Jazz, Character requirements:</p><ul><li>Super Jazz Slip On Jazz Shoes in Tan <strong>OR</strong> Black</li><li>Broadway Lo Character Shoes in Black</li><li>Mirella Circle Skirt in Black</li></ul>",
+        "link_text": "",
+        "collection": "level-2a-2b-2c",
+        "show_vendor": false,
+        "enable_carousel": false,
+        "grid": 5,
+        "row_count": 2,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    },
+    "featured_collection_tagged_gEcWU3": {
+      "type": "featured-collection-tagged",
+      "name": "Featured collection (Class tag)",
+      "settings": {
+        "class_tag": "Level 3A/3B",
+        "title": "Level 3A/3B",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for Sarasota Ballet students in Level 3A/3B include:</p><ul><li>Ari <strong>OR</strong> Arianne Camisole Leotard in Grey</li><li>Viola <strong>OR</strong> Jaye Mesh Skirt in Grey</li><li>Performa Stretch Canvas Ballet Shoe in Theatrical Pink <strong>OR</strong> Skin Tone</li><li>Contoursoft Convertible Tights in Ballet Pink <strong>OR</strong> Skin Tone</li></ul><p>Jazz, Character requirements:</p><ul><li>Super Jazz Slip On Jazz Shoes in Tan <strong>OR</strong> Black</li><li>Broadway Lo Character Shoes in Black</li><li>Mirella Circle Skirt in Black</li></ul>",
+        "link_text": "",
+        "collection": "level-3a-3b",
+        "show_vendor": false,
+        "enable_carousel": true,
+        "grid": 5,
+        "row_count": 1,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    },
+    "featured_collection_tagged_8xFpxM": {
+      "type": "featured-collection-tagged",
+      "name": "Featured collection (Class tag)",
+      "settings": {
+        "class_tag": "Level 4A/4B",
+        "title": "Level 4A/4B",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for Sarasota Ballet students in Level 4A/4B include:</p><ul><li>Ari <strong>OR</strong> Arianne Camisole Leotard in Evergreen</li><li>Viola <strong>OR</strong> Jaye Mesh Skirt in Evergreen</li><li>Performa Stretch Canvas Ballet Shoe in Theatrical Pink <strong>OR</strong> Skin Tone</li><li>Contoursoft Convertible Tights in Ballet Pink <strong>OR</strong> Skin Tone</li></ul><p>Jazz, Character requirements:</p><ul><li>Super Jazz Slip On Jazz Shoes in Tan <strong>OR</strong> Black</li><li>Broadway Lo Character Shoes in Black</li><li>Mirella Circle Skirt in Black</li></ul>",
+        "link_text": "",
+        "collection": "level-4a-4b",
+        "show_vendor": false,
+        "enable_carousel": false,
+        "grid": 5,
+        "row_count": 1,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    },
+    "featured_collection_tagged_qgCgfq": {
+      "type": "featured-collection-tagged",
+      "name": "Featured collection (Class tag)",
+      "settings": {
+        "class_tag": "MCB (Conservatory)",
+        "title": "MCB (Conservatory)",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for Sarasota Ballet students in MCB (Conservatory) include:</p><ul><li>Ruby Scoop Back Leotard in Burgundy <strong>AND</strong> White</li><li>Jaye Mesh Skirt in Burgundy <strong>AND</strong> White</li><li>Performa Stretch Canvas Ballet Shoe in Theatrical Pink <strong>OR</strong> Skin Tone</li><li>Contoursoft Convertible Tights in Ballet Pink <strong>OR</strong> Skin Tone</li><li>Broadway Lo Character Shoes in Black</li></ul>",
+        "link_text": "",
+        "collection": "mcb-conservatory",
+        "show_vendor": false,
+        "enable_carousel": false,
+        "grid": 5,
+        "row_count": 1,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    },
+    "featured_collection_tagged_EqnT7q": {
+      "type": "featured-collection-tagged",
+      "name": "Featured collection (Class tag)",
+      "settings": {
+        "class_tag": "  Trainee A&B",
+        "title": "  Trainee A&B",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for Sarasota Ballet students in Trainee A&B include:</p><ul><li>Ruby Scoop Back Leotard in Black <strong>AND</strong> White</li><li>Jaye Mesh Skirt in Black <strong>AND</strong> White</li><li>Performa Stretch Canvas Ballet Shoe in Theatrical Pink <strong>OR</strong> Skin Tone</li><li>Contoursoft Convertible Tights in Ballet Pink <strong>OR</strong> Skin Tone</li><li>Broadway Lo Character Shoes in Black<br/></li><li>Belle Tutu in White</li></ul>",
+        "link_text": "",
+        "collection": "trainee-a-b",
+        "show_vendor": false,
+        "enable_carousel": false,
+        "grid": 5,
+        "row_count": 1,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    },
+    "featured_collection_tagged_B4cAji": {
+      "type": "featured-collection-tagged",
+      "name": "Featured collection (Class tag)",
+      "settings": {
+        "class_tag": "Boys- Sarasota Ballet School",
+        "title": "Boys- Sarasota Ballet School",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for students in Boys - Sarasota Ballet School include:</p><ul><li>Fitted T-Shirt in White</li><li>Full Length Tights in Black</li><li>Fitted Short in Black</li><li>Dancebelt in Black <strong>OR</strong> Tan</li><li>Performa Stretch Canvas Ballet Shoe in White</li><li>Super Jazz Slip On Jazz Shoes in Black</li></ul>",
+        "link_text": "",
+        "collection": "boys-sarasota-ballet-school",
+        "show_vendor": false,
+        "enable_carousel": false,
+        "grid": 5,
+        "row_count": 1,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    },
+    "featured_collection_tagged_NV4xmR": {
+      "type": "featured-collection-tagged",
+      "name": "Featured collection (Class tag)",
+      "settings": {
+        "class_tag": "Boys- Conservatory and Trainee",
+        "title": "Boys- Conservatory and Trainee",
+        "enlarge_title": false,
+        "description": "<p>Uniform requirements for students in Boys - Sarasota Ballet School include:</p><ul><li>Fitted T-Shirt in White</li><li>Footed Tights in Grey</li><li>Dancebelt in Tan</li><li>Performa Stretch Canvas Ballet Shoe in White</li><li>Super Jazz Slip On Jazz Shoes in Black</li></ul>",
+        "link_text": "",
+        "collection": "boys-conservatory-and-trainee",
+        "show_vendor": false,
+        "enable_carousel": false,
+        "grid": 5,
+        "row_count": 1,
+        "grid_mobile": "2",
+        "padding-top": 0,
+        "padding-bottom": 0
+      }
+    }
+  },
+  "order": [
+    "class_selector",
+    "featured_collection_1",
+    "featured_collection_2",
+    "featured_collection_3",
+    "featured_collection_tagged_gEcWU3",
+    "featured_collection_tagged_8xFpxM",
+    "featured_collection_tagged_qgCgfq",
+    "featured_collection_tagged_EqnT7q",
+    "featured_collection_tagged_B4cAji",
+    "featured_collection_tagged_NV4xmR"
+  ]
+}

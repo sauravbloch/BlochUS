@@ -1,0 +1,381 @@
+{%- liquid
+  assign collection = collections[section.settings.collection]
+
+  if section.settings.enable_carousel == true
+    assign product_count = 12
+    assign show_carousel_nav = true
+
+    if collection.products_count <= section.settings.grid and collection != blank
+      assign show_carousel_nav = false
+    endif
+  else
+    assign product_count = section.settings.row_count | times: section.settings.grid
+    assign show_carousel_nav = false 
+  endif
+-%}
+
+<div
+  class="relative container featured-collection class-filter-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="featured-collection"
+  data-class-tag="{{ section.settings.class_tag | escape }}"
+  
+>
+  <div class="page-width" style="padding-top: {{ section.settings.padding-top }}px; padding-bottom: {{ section.settings.padding-bottom }}px;">
+    {%- if section.settings.title != blank or section.settings.link_text != blank or section.settings.enable_carousel == true -%}
+      <div class="large-row " style="margin-top:0; padding:0;">
+
+        <div class="featured-collection__header-row">
+          <div class="featured-collection__header-title-group">
+            {% if section.settings.title != blank %}
+              <h2 class="featured-collection--title {% if section.settings.enlarge_title %}giant-title{% else %}large-title{% endif%}">{{ section.settings.title | escape }}</h2>
+            {% endif %}
+            <button type="button" class="btn btn--subtle-hover featured-collection__header-bulk-add" data-bulk-add-button data-bulk-add-scope="{{ section.id }}" disabled>
+              {% render 'feather-bag' %}
+              <span>Add selected to cart</span>
+              <span class="featured-collection__header-bulk-add-count" data-bulk-add-count></span>
+            </button>
+          </div>
+          {% if section.settings.link_text != blank %}
+            <a class="standard-link" href="{{ collection.url }}">{{ section.settings.link_text | escape }}</a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {%- if section.settings.description != blank -%}
+      <div class="featured-collection__description rte">
+        {{ section.settings.description }}
+      </div>
+    {%- endif -%}
+
+    <div class="product-carousel-peek">
+      {%- if show_carousel_nav -%}
+        <div class="featured-collection-controls featured-collection-controls--prev">
+          <button class="btn--plain prev icon feather-icon" aria-label="{{ 'general.accessibility_labels.previous' | t | escape }} {{ section.settings.title }}">{% render 'feather-arrow-left' %}</button>
+        </div>
+      {%- endif -%}
+
+      <div class="grid-flex" {%- if section.settings.enable_carousel == true -%}data-carousel-enabled data-slides-per-row="{{ section.settings.grid }}"{%- endif -%}>
+        {%- assign grid_class = 'one-quarter' -%}
+        {%- if section.settings.grid == 2 -%}
+          {%- assign grid_class = 'one-half' -%}
+        {%- elsif section.settings.grid == 3 -%}
+          {%- assign grid_class = 'one-third' -%}
+        {%- elsif section.settings.grid == 5 -%}
+          {%- assign grid_class = 'one-fifth' -%}
+        {%- endif -%}
+
+        {%- if section.settings.grid_mobile == "2" -%}
+          {%- assign mobile_grid_class = 'small-down--one-half' -%}
+        {%- else -%}
+          {%- assign mobile_grid_class = 'small-down--one-whole' -%}
+        {%- endif -%}
+        {% capture grid_class_list %}
+          {{ grid_class }} {{ mobile_grid_class }} grid-flex__item{% endcapture %}
+
+        {% for product in collection.products limit: product_count %}
+          {% assign quickbuy_toggle = settings.quickbuy_buttons_toggle %}
+          {% render 'product-block-b2b', product: product, grid_class: grid_class_list, show_vendor: section.settings.show_vendor, show_swatches: false, bulk_select: true , quickbuy: quickbuy_toggle %}
+        {%- else -%}
+          {%- if section.settings.enable_carousel == true -%}
+            {%- assign product_count = 8 -%}{%- endif -%}
+          {% for i in (1..product_count) %}
+            <div class="featured-collection--product product-block relative grid-flex__item {{ grid_class_list }}">
+              <div class="product-block__image-container">
+                {% capture current %}
+                  {% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                <div class="global-border-radius image-one">
+                  {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg placeholder-svg--small' }}
+                </div>
+              </div>
+              <div class="product-block__title">
+                {{ 'homepage.onboarding.product_title' | t }}
+              </div>
+              <div class="product-price">
+                <span class="theme-money">
+                  {%- if settings.product_currency_code_enabled -%}
+                    {{- 2000 | money_with_currency -}}
+                  {%- else -%}
+                    {{- 2000 | money -}}
+                  {%- endif -%}
+                </span>
+              </div>
+            </div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+
+      {%- if show_carousel_nav -%}
+        <div class="featured-collection-controls featured-collection-controls--next">
+          <button class="btn--plain next icon feather-icon" aria-label="{{ 'general.accessibility_labels.next' | t | escape }} {{ section.settings.title }}">{% render 'feather-arrow-right' %}</button>
+        </div>
+        {% render 'peek-carousel-advice' %}
+      {%- endif -%}
+    </div>
+
+    <div class="featured-collection__footer-bulk-add-row">
+      <button type="button" class="btn btn--subtle-hover featured-collection__header-bulk-add" data-bulk-add-button data-bulk-add-scope="{{ section.id }}" disabled>
+        {% render 'feather-bag' %}
+        <span>Add selected to cart</span>
+        <span class="featured-collection__header-bulk-add-count" data-bulk-add-count></span>
+      </button>
+    </div>
+
+  </div>
+</div>
+{% style %}
+.class-filter-section.is-hidden-by-class-filter {
+  display: none !important;
+}
+
+.class-selector-section {
+  padding: 30px 0;
+  text-align: center;
+}
+
+.class-selector__heading {
+  margin-bottom: 20px;
+}
+
+.class-selector__control {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.class-selector__label {
+  font-size: 12px;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+}
+
+.class-filter-select {
+  min-width: 260px;
+  padding: 12px 40px 12px 16px;
+  border: 1px solid #0e0e0e;
+  background: #ffffff;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.featured-collection__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  text-align: left;
+}
+
+.featured-collection__header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.featured-collection__header-bulk-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  padding: 12px 20px;
+  background-color: #0e0e0e;
+  color: #ffffff;
+  border: 1px solid #0e0e0e;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.featured-collection__header-bulk-add .icon {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.featured-collection__header-bulk-add:hover:not(:disabled) {
+  background-color: #2b2b2b;
+}
+
+.featured-collection__header-bulk-add-count:not(:empty) {
+  background-color: #ffffff;
+  color: #0e0e0e;
+  border-radius: 999px;
+  font-size: 11px;
+  min-width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+.featured-collection__header-bulk-add:disabled {
+  background-color: #f1f1f1;
+  color: #a8a8a8;
+  border-color: #e2e2e2;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.featured-collection__header-bulk-add:disabled .featured-collection__header-bulk-add-count {
+  background-color: #e2e2e2;
+  color: #a8a8a8;
+}
+.shopify-section.section-featured-collection-tagged .page-width {
+  border-bottom:1px solid #ccc;
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+
+.featured-collection__description {
+  margin-bottom: 24px;
+  font-size: 0.95em;
+  line-height: 1.6;
+}
+
+.featured-collection__description ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.featured-collection__description li {
+  margin-bottom: 4px;
+}
+
+.featured-collection__footer-bulk-add-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.section-featured-collection-tagged .standard-link {
+  display: none;
+}
+{% endstyle %}
+
+{% schema %}
+  {
+    "name": "Featured collection",
+    "tag": "section",
+    "class": "section-featured-collection-tagged",
+    "settings": [
+      {
+        "type": "text",
+        "id": "class_tag",
+        "label": "Class tag",
+        "info": "This links the section to the \"Choose Classes\" selector. Example: Level 1A/1B. Separate multiple tags with a comma if this collection should show for more than one class, e.g. Level 1A, Level 1B.",
+        "default": "Level 1A/1B"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Featured collection"
+      },
+      {
+        "type": "checkbox",
+        "id": "enlarge_title",
+        "label": "Enlarge heading",
+        "default": false
+      },
+      {
+        "type": "richtext",
+        "id": "description",
+        "label": "Description",
+        "info": "Shown below the heading, above the product grid. Supports bullet lists and bold text."
+      },
+      {
+        "type": "text",
+        "id": "link_text",
+        "label": "Link text",
+        "default": "Shop now"
+      },
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection"
+      }, {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show vendor",
+        "default": false
+      }, {
+        "type": "checkbox",
+        "id": "enable_carousel",
+        "label": "Enable carousel",
+        "default": false
+      }, {
+        "type": "range",
+        "id": "grid",
+        "label": "Desktop products per row",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "default": 4
+      }, {
+        "type": "range",
+        "id": "row_count",
+        "label": "Rows (desktop)",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 1,
+        "info": "Does not apply to carousel layout"
+      }, {
+        "type": "select",
+        "id": "grid_mobile",
+        "label": "Mobile products per row",
+        "options": [
+          {
+            "value": "1",
+            "label": "1"
+          }, {
+            "value": "2",
+            "label": "2"
+          }
+        ],
+        "default": "2"
+      }, {
+        "type": "range",
+        "id": "padding-top",
+        "label": "Padding Top",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "default": 0
+      }, {
+        "type": "range",
+        "id": "padding-bottom",
+        "label": "Padding Bottom",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "default": 0
+      }
+    ],
+    "templates": [
+      "404", 
+      "article",
+      "blog",
+      "cart",
+      "collection",
+      "index",
+      "list-collections",
+      "page",
+      "product",
+      "search"
+    ],
+    "presets": [
+      {
+        "name": "Featured collection (Class tag)"
+      }
+    ]
+  }
+{% endschema %}
