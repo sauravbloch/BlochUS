@@ -249,6 +249,7 @@
     margin-top:0
 }
 
-.page-footer__brand-col {
-    padding-right:5%;
+.featured-collection__description.rte > p:last-of-type{
+  margin-top:3%;
+  font-style: italic;
 }
