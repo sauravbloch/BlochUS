@@ -50,6 +50,16 @@
     height: 100%;
   }
 
+  #shopify-section-{{ section.id }} .shop-the-color__image-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1;
+  }
+
   #shopify-section-{{ section.id }} .shop-the-color__text {
     position: absolute;
     left: 7px;
@@ -89,6 +99,8 @@
     font-size: 0.8em;
     text-decoration: underline;
     display: inline-block;
+    position: relative;
+    z-index: 3;
   }
 
    #shopify-section-{{ section.id }} .shop-the-color__section-heading {
@@ -105,6 +117,40 @@
   #shopify-section-{{ section.id }} .shop-the-color__cta {
     color: inherit;
   }
+
+  /* Mobile slider: 2-column swipeable showcase */
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .shop-the-color__grid {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      gap: 10px;
+      margin: 0;
+      padding: 0 15px;
+    }
+
+    #shopify-section-{{ section.id }} .shop-the-color__grid::-webkit-scrollbar {
+      display: none;
+      height: 0;
+      width: 0;
+    }
+
+    #shopify-section-{{ section.id }} .shop-the-color__item.grid__item {
+      flex: 0 0 calc(50% - 5px) !important;
+      max-width: calc(50% - 5px) !important;
+      width: calc(50% - 5px) !important;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      padding-left: 0 !important;
+      margin-bottom: 0 !important;
+    }
+  }
 {% endstyle %}
 
 <div class="container shop-the-color" data-section-id="{{ section.id }}" data-section-type="shop-the-color">
@@ -115,12 +161,24 @@
     {%- endif -%}
 
     {%- if section.blocks.size > 0 -%}
-      <div class="grid shop-the-color__grid">
+      <div class="grid shop-the-color__grid" role="list" aria-label="{{ section.settings.heading | escape }}">
         {%- for block in section.blocks -%}
           {%- liquid
             assign auto_text_color = '#0e0e0e'
-            if block.settings.text_bg_color != blank
-              assign bg_hex = block.settings.text_bg_color | remove_first: '#' | downcase
+            assign bg_color = block.settings.text_bg_color
+            if bg_color == blank
+              assign bg_color = '#f4f4f4'
+            endif
+            assign has_bg = true
+
+            assign first_char = bg_color | slice: 0
+            assign is_hex = false
+            if first_char == '#'
+              assign is_hex = true
+            endif
+
+            if is_hex
+              assign bg_hex = bg_color | remove_first: '#' | downcase
               assign hex_chars = '0123456789abcdef' | split: ''
 
               assign r_hi = hex_chars | index_of: bg_hex[0]
@@ -150,10 +208,24 @@
             if block.settings.text_color != blank
               assign final_text_color = block.settings.text_color
             endif
+
+            assign bg_opacity = block.settings.text_bg_opacity
+            if bg_opacity == blank
+              assign bg_opacity = 100
+            endif
+
+            assign cta_url = blank
+            if block.settings.collection != blank
+              assign cta_url = collections[block.settings.collection].url
+            endif
           -%}
-          <div class="shop-the-color__item grid__item small-down--one-whole {{ col_class }}" {{ block.shopify_attributes }}>
+          <div class="shop-the-color__item grid__item small-down--one-whole {{ col_class }}" role="listitem" {{ block.shopify_attributes }}>
 
             <div class="shop-the-color__image-wrap global-border-radius">
+              {%- if cta_url != blank -%}
+                <a href="{{ cta_url }}" class="shop-the-color__image-link" aria-label="{{ block.settings.heading | escape }}"></a>
+              {%- endif -%}
+
               {%- if block.settings.image != blank -%}
                 <img
                   src="{{ block.settings.image | image_url: width: 800 }}"
@@ -167,7 +239,7 @@
                 {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
               {%- endif -%}
 
-              <div class="shop-the-color__text" style="background-color: {{ block.settings.text_bg_color }}; color: {{ final_text_color }};">
+              <div class="shop-the-color__text" style="background-color: color-mix(in srgb, {{ bg_color }} {{ bg_opacity }}%, transparent); color: {{ final_text_color }};">
                 {%- if block.settings.heading != blank -%}
                   <h3 class="shop-the-color__heading">{{ block.settings.heading | escape }}</h3>
                 {%- endif -%}
@@ -179,12 +251,8 @@
                 {%- endif -%}
 
                 {%- if block.settings.cta_text != blank -%}
-                  {%- if block.settings.collection != blank -%}
-                    {%- assign cta_url = collections[block.settings.collection].url -%}
-                  {%- else -%}
-                    {%- assign cta_url = '#' -%}
-                  {%- endif -%}
-                  <a href="{{ cta_url }}" class="shop-the-color__cta">
+                  {%- assign cta_href = cta_url | default: '#' -%}
+                  <a href="{{ cta_href }}" class="shop-the-color__cta">
                     {{- block.settings.cta_text | escape -}}
                   </a>
                 {%- endif -%}
@@ -243,13 +311,24 @@
         {
           "type": "collection",
           "id": "collection",
-          "label": "CTA link (collection)"
+          "label": "CTA link (collection)",
+          "info": "This link also applies to the image."
         },
         {
           "type": "color",
           "id": "text_bg_color",
           "label": "Text background color",
           "default": "#f4f4f4"
+        },
+        {
+          "type": "range",
+          "id": "text_bg_opacity",
+          "label": "Text background opacity",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 100
         },
         {
           "type": "color",
