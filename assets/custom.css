@@ -1410,6 +1410,11 @@ a.video-container__play {border-bottom:none;}
 .image-with-text .image-with-text__title {margin-top:0px;}
 
 .rich-text-section {padding-top: 30px !important; padding-bottom:30px !important;}
+.template-index .rich-text-section {padding-left: 0 !important; padding-right:0 !important;}
+.template-index .reading-width { max-width:100%; padding-left:0; padding-right:0;}
+@media (max-width: 767.98px) {
+  .template-index .rich-text-section {padding-left: 30px !important; padding-right:30px !important;}
+  }
 .rich-text-section h2 {margin-top:0;}
 
 .multicolumn h2 {
