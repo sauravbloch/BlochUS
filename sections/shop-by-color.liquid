@@ -214,10 +214,7 @@
               assign bg_opacity = 100
             endif
 
-            assign cta_url = blank
-            if block.settings.collection != blank
-              assign cta_url = collections[block.settings.collection].url
-            endif
+            assign cta_url = block.settings.cta_link
           -%}
           <div class="shop-the-color__item grid__item small-down--one-whole {{ col_class }}" role="listitem" {{ block.shopify_attributes }}>
 
@@ -309,10 +306,10 @@
           "default": "Shop now"
         },
         {
-          "type": "collection",
-          "id": "collection",
-          "label": "CTA link (collection)",
-          "info": "This link also applies to the image."
+          "type": "url",
+          "id": "cta_link",
+          "label": "CTA link",
+          "info": "This link also applies to the image. Choose a product, collection, or any other link."
         },
         {
           "type": "color",
