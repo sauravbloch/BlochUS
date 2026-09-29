@@ -295,7 +295,7 @@
                 >
                   <div class="input-wrapper">
                     <label class="visually-hidden" for="footer_mailinglist_email">Email address</label>
-                    <input type="email" required class="subscribe-form__email required" value="" id="footer_mailinglist_email" name="email" placeholder="Sign up for email & get 10% Off">
+                    <input type="email" required class="subscribe-form__email required" value="" id="footer_mailinglist_email" name="email" placeholder="{{ section.settings.subscribe_label | escape }}">
                   </div>
                   <button class="subscribe-form__submit" type="submit" aria-label="Sign up">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true" focusable="false">
