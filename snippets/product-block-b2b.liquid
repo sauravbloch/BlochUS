@@ -126,7 +126,8 @@
 
   {%- liquid
     assign qa_current_variant = product.selected_or_first_available_variant
-    assign qa_form_id = 'ProductBlockQuickAdd-' | append: section.id | append: '-' | append: product.id
+    assign qa_scope = scope_id | default: section.id
+    assign qa_form_id = 'ProductBlockQuickAdd-' | append: qa_scope | append: '-' | append: product.id
   -%}
   <div class="product-block__quick-add">
     {%- form 'product', product, id: qa_form_id, class: 'ajax-product-form product-block__quick-add-form' -%}

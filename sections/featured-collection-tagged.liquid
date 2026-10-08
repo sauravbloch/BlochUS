@@ -9,8 +9,8 @@
       assign show_carousel_nav = false
     endif
   else
-    assign product_count = section.settings.row_count | times: section.settings.grid
-    assign show_carousel_nav = false 
+    assign product_count = section.settings.products_to_show
+    assign show_carousel_nav = false
   endif
 -%}
 
@@ -323,13 +323,13 @@
         "default": 4
       }, {
         "type": "range",
-        "id": "row_count",
-        "label": "Rows (desktop)",
+        "id": "products_to_show",
+        "label": "Products to show",
         "min": 1,
-        "max": 5,
+        "max": 30,
         "step": 1,
-        "default": 1,
-        "info": "Does not apply to carousel layout"
+        "default": 30,
+        "info": "Maximum number of products shown. Rows are added automatically. Does not apply to carousel layout."
       }, {
         "type": "select",
         "id": "grid_mobile",

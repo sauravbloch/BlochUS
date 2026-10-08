@@ -1,0 +1,148 @@
+<div class="class-selector-section page-width" data-section-id="{{ section.id }}" data-section-type="class-selector">
+  {%- if section.settings.heading != blank -%}
+    <h2 class="class-selector__heading large-title">{{ section.settings.heading | escape }}</h2>
+  {%- endif -%}
+
+  {%- if section.settings.subheading != blank -%}
+    <p class="class-selector__subheading">{{ section.settings.subheading | escape }}</p>
+  {%- endif -%}
+
+  {%- if section.settings.description != blank -%}
+    <div class="class-selector__description rte">
+      {{ section.settings.description }}
+    </div>
+  {%- endif -%}
+
+  
+
+  <div class="class-selector__control">
+    <label class="class-selector__label" for="ClassFilterSelect-{{ section.id }}">
+      {{ section.settings.label | default: 'Choose your class' | escape }}
+    </label>
+
+    <div class="custom-select">
+      <select
+        id="ClassFilterSelect-{{ section.id }}"
+        class="class-filter-select"
+        data-class-filter-select
+      >
+        <option value="all">{{ section.settings.all_label | default: 'All classes' | escape }}</option>
+      </select>
+    </div>
+  </div>
+  {%- if section.settings.cta_label != blank and section.settings.cta_link != blank -%}
+    <div class="class-selector__cta">
+      <a
+        class="class-selector__cta-link standard-link"
+        href="{{ section.settings.cta_link }}"
+        {% if section.settings.cta_new_tab %}target="_blank" rel="noopener"{% endif %}
+      >
+        {{- section.settings.cta_label | escape -}}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .class-selector__subheading {
+    margin: -8px 0 16px;
+    font-size: 18px;
+    letter-spacing: 0.25px;
+    opacity: 0.8;
+  }
+  .template-suffix-nutcracker-b2b-landing .class-selector__subheading {
+    font-weight: bold;
+    color: #000;
+    text-transform: uppercase;
+    opacity:1;
+  }
+  .class-selector__description {
+    max-width: 65ch;
+    margin: 4% auto 4%;
+  }
+
+  .class-selector__cta {
+    margin-bottom: 2%;
+    margin-top:2%;
+  }
+
+  .class-selector__cta-link {
+    font-weight: 200;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
+
+{{ 'class-filter.js' | asset_url | script_tag }}
+
+{% schema %}
+  {
+    "name": "Choose Classes",
+    "tag": "section",
+    "class": "section-class-selector",
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Find your class"
+      },
+      {
+        "type": "text",
+        "id": "subheading",
+        "label": "Subheading"
+      },
+      {
+        "type": "richtext",
+        "id": "description",
+        "label": "Description",
+        "default": "<p>Select a class from the dropdown below to see available options.</p>"
+      },
+      {
+        "type": "header",
+        "content": "Link"
+      },
+      {
+        "type": "text",
+        "id": "cta_label",
+        "label": "Link label"
+      },
+      {
+        "type": "url",
+        "id": "cta_link",
+        "label": "Link"
+      },
+      {
+        "type": "checkbox",
+        "id": "cta_new_tab",
+        "label": "Open link in new tab",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Dropdown"
+      },
+      {
+        "type": "text",
+        "id": "label",
+        "label": "Dropdown label",
+        "default": "Choose your class"
+      },
+      {
+        "type": "text",
+        "id": "all_label",
+        "label": "\"Show all\" option label",
+        "default": "All classes"
+      }
+    ],
+    "templates": [
+      "index",
+      "page"
+    ],
+    "presets": [
+      {
+        "name": "Choose Classes"
+      }
+    ]
+  }
+{% endschema %}

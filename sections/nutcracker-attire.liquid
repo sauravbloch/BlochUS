@@ -1,0 +1,522 @@
+{%- liquid
+  assign grid_class = 'one-quarter'
+  if section.settings.grid == 2
+    assign grid_class = 'one-half'
+  elsif section.settings.grid == 3
+    assign grid_class = 'one-third'
+  elsif section.settings.grid == 5
+    assign grid_class = 'one-fifth'
+  endif
+
+  if section.settings.grid_mobile == '2'
+    assign mobile_grid_class = 'small-down--one-half'
+  else
+    assign mobile_grid_class = 'small-down--one-whole'
+  endif
+
+  assign grid_class_list = grid_class | append: ' ' | append: mobile_grid_class | append: ' grid-flex__item'
+  assign quickbuy_toggle = settings.quickbuy_buttons_toggle
+-%}
+
+<div class="nutcracker-attire" data-nutcracker-attire data-attire-section-id="{{ section.id }}">
+
+  {%- comment -%} Top: heading, text and the "Choose your role" dropdown {%- endcomment -%}
+  <div class="class-selector-section page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="class-selector__heading large-title">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="class-selector__subheading">{{ section.settings.subheading | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <div class="class-selector__description rte">
+        {{ section.settings.description }}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="class-selector__control">
+        <label class="class-selector__label" for="RoleSelect-{{ section.id }}">
+          {{ section.settings.label | default: 'Choose your role' | escape }}
+        </label>
+        <div class="custom-select">
+          <select id="RoleSelect-{{ section.id }}" class="class-filter-select" data-role-select>
+            <option value="all">{{ section.settings.all_label | default: 'All roles' | escape }}</option>
+          </select>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank and section.settings.cta_link != blank -%}
+      <div class="class-selector__cta">
+        <a
+          class="class-selector__cta-link standard-link"
+          href="{{ section.settings.cta_link }}"
+          {% if section.settings.cta_new_tab %}target="_blank" rel="noopener"{% endif %}
+        >
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} One role per block {%- endcomment -%}
+  {%- for block in section.blocks -%}
+    {%- assign collection = collections[block.settings.collection] -%}
+    <div
+      class="relative container featured-collection nutcracker-role"
+      data-section-id="{{ block.id }}"
+      data-section-type="featured-collection"
+      data-role-block
+      data-role-id="{{ block.id }}"
+      data-role-name="{{ block.settings.title | escape }}"
+      data-role-scene="{{ block.settings.scene | strip | escape }}"
+      {{ block.shopify_attributes }}
+    >
+      <div class="page-width">
+        <div class="large-row" style="margin-top:0; padding:0;">
+          <div class="featured-collection__header-row">
+            <div class="featured-collection__header-title-group">
+              {%- if block.settings.title != blank -%}
+                <h2 class="featured-collection--title large-title">{{ block.settings.title | escape }}</h2>
+              {%- endif -%}
+              <button type="button" class="btn btn--subtle-hover featured-collection__header-bulk-add" data-bulk-add-button data-bulk-add-scope="{{ block.id }}" disabled>
+                {% render 'feather-bag' %}
+                <span>Add selected to cart</span>
+                <span class="featured-collection__header-bulk-add-count" data-bulk-add-count></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {%- if block.settings.description != blank -%}
+          <div class="featured-collection__description rte">
+            {{ block.settings.description }}
+          </div>
+        {%- endif -%}
+
+        <div class="product-carousel-peek">
+          <div class="grid-flex">
+            {%- for product in collection.products limit: block.settings.products_to_show -%}
+              {% render 'product-block-b2b',
+                product: product,
+                grid_class: grid_class_list,
+                show_vendor: section.settings.show_vendor,
+                show_swatches: false,
+                bulk_select: true,
+                quickbuy: quickbuy_toggle,
+                scope_id: block.id
+              %}
+            {%- else -%}
+              {%- if request.design_mode -%}
+                <p class="nutcracker-role__empty">Choose a collection for this role in the block settings.</p>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <div class="featured-collection__footer-bulk-add-row">
+          <button type="button" class="btn btn--subtle-hover featured-collection__header-bulk-add" data-bulk-add-button data-bulk-add-scope="{{ block.id }}" disabled>
+            {% render 'feather-bag' %}
+            <span>Add selected to cart</span>
+            <span class="featured-collection__header-bulk-add-count" data-bulk-add-count></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  {%- endfor -%}
+</div>
+
+<style>
+  .nutcracker-role.is-hidden-by-role-filter {
+    display: none !important;
+  }
+
+  .nutcracker-role .page-width {
+    border-bottom: 1px solid #ccc;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .nutcracker-role__empty {
+    padding: 0 10px;
+    font-style: italic;
+    opacity: 0.7;
+  }
+
+  .nutcracker-attire .class-selector-section {
+    padding: 30px 0;
+    text-align: center;
+  }
+
+  .nutcracker-attire .class-selector__heading {
+    margin-bottom: 20px;
+  }
+
+  .nutcracker-attire .class-selector__subheading {
+    margin: -8px 0 16px;
+    font-size: 18px;
+    letter-spacing: 0.25px;
+    opacity: 0.8;
+  }
+
+  .template-suffix-nutcracker-b2b-landing .nutcracker-attire .class-selector__subheading {
+    font-weight: bold;
+    color: #000;
+    text-transform: uppercase;
+    font-size: 20px;
+    opacity: 1;
+  }
+
+  .nutcracker-attire .class-selector__description {
+    max-width: 65ch;
+    margin: 4% auto 4%;
+  }
+
+  .nutcracker-attire .class-selector__control {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .nutcracker-attire .class-selector__label {
+    font-size: 17px;
+    letter-spacing: 0.25px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .nutcracker-attire .class-filter-select {
+    min-width: 260px;
+    padding: 12px 40px 12px 16px;
+    border: 1px solid #0e0e0e;
+    background: #ffffff;
+    font-size: 14px;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .nutcracker-attire .class-filter-select optgroup {
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  .nutcracker-attire .class-selector__cta {
+    margin-top: 2%;
+    margin-bottom: 2%;
+  }
+
+  .nutcracker-attire .class-selector__cta-link {
+    font-weight: 200;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .nutcracker-attire .featured-collection__header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    text-align: left;
+  }
+
+  .nutcracker-attire .featured-collection__header-title-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .nutcracker-attire .featured-collection__header-bulk-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    padding: 12px 20px;
+    background-color: #0e0e0e;
+    color: #ffffff;
+    border: 1px solid #0e0e0e;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .nutcracker-attire .featured-collection__header-bulk-add .icon {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  .nutcracker-attire .featured-collection__header-bulk-add:hover:not(:disabled) {
+    background-color: #2b2b2b;
+  }
+
+  .nutcracker-attire .featured-collection__header-bulk-add-count:not(:empty) {
+    background-color: #ffffff;
+    color: #0e0e0e;
+    border-radius: 999px;
+    font-size: 11px;
+    min-width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+  }
+
+  .nutcracker-attire .featured-collection__header-bulk-add:disabled {
+    background-color: #f1f1f1;
+    color: #a8a8a8;
+    border-color: #e2e2e2;
+    opacity: 1;
+    cursor: not-allowed;
+  }
+
+  .nutcracker-attire .featured-collection__header-bulk-add:disabled .featured-collection__header-bulk-add-count {
+    background-color: #e2e2e2;
+    color: #a8a8a8;
+  }
+
+  .nutcracker-attire .featured-collection__description {
+    margin-bottom: 24px;
+    font-size: 0.95em;
+    line-height: 1.6;
+  }
+
+  .nutcracker-attire .featured-collection__description ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+  }
+
+  .nutcracker-attire .featured-collection__description li {
+    margin-bottom: 4px;
+  }
+
+  .nutcracker-attire .featured-collection__footer-bulk-add-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+  }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+
+    if (!window.NutcrackerAttire) {
+      window.NutcrackerAttire = {
+        init: function (root) {
+          var select = root.querySelector('[data-role-select]');
+          var roles = root.querySelectorAll('[data-role-block]');
+          if (!select) return;
+
+          // Reset: keep only the "All roles" option
+          select.querySelectorAll('optgroup').forEach(function (g) { g.remove(); });
+          while (select.options.length > 1) select.remove(1);
+
+          // Build options, grouped by scene in the order the blocks appear
+          var groups = {};
+          roles.forEach(function (role) {
+            var scene = role.getAttribute('data-role-scene') || '';
+            var opt = document.createElement('option');
+            opt.value = role.getAttribute('data-role-id');
+            opt.textContent = role.getAttribute('data-role-name') || 'Role';
+
+            if (scene) {
+              if (!groups[scene]) {
+                groups[scene] = document.createElement('optgroup');
+                groups[scene].label = scene;
+                select.appendChild(groups[scene]);
+              }
+              groups[scene].appendChild(opt);
+            } else {
+              select.appendChild(opt);
+            }
+          });
+
+          function show(value) {
+            roles.forEach(function (role) {
+              var hide = value !== 'all' && role.getAttribute('data-role-id') !== value;
+              role.classList.toggle('is-hidden-by-role-filter', hide);
+            });
+          }
+
+          select.onchange = function () { show(select.value); };
+          select.value = 'all';
+          show('all');
+        },
+
+        initAll: function () {
+          document.querySelectorAll('[data-nutcracker-attire]').forEach(window.NutcrackerAttire.init);
+        }
+      };
+
+      // Theme editor: re-run after the section reloads
+      document.addEventListener('shopify:section:load', window.NutcrackerAttire.initAll);
+
+      // Theme editor: clicking a role block shows that role
+      document.addEventListener('shopify:block:select', function (event) {
+        var role = document.querySelector('[data-role-id="' + event.detail.blockId + '"]');
+        if (!role) return;
+        var root = role.closest('[data-nutcracker-attire]');
+        var select = root && root.querySelector('[data-role-select]');
+        if (!select) return;
+        select.value = event.detail.blockId;
+        select.onchange();
+      });
+    }
+
+    window.NutcrackerAttire.initAll();
+  })();
+</script>
+
+{% schema %}
+  {
+    "name": "Nutcracker attire",
+    "tag": "section",
+    "class": "section-nutcracker-attire",
+    "max_blocks": 50,
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "The Nutcracker attire"
+      },
+      {
+        "type": "text",
+        "id": "subheading",
+        "label": "Subheading"
+      },
+      {
+        "type": "richtext",
+        "id": "description",
+        "label": "Description"
+      },
+      {
+        "type": "header",
+        "content": "Link"
+      },
+      {
+        "type": "text",
+        "id": "cta_label",
+        "label": "Link label"
+      },
+      {
+        "type": "url",
+        "id": "cta_link",
+        "label": "Link"
+      },
+      {
+        "type": "checkbox",
+        "id": "cta_new_tab",
+        "label": "Open link in new tab",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Dropdown"
+      },
+      {
+        "type": "text",
+        "id": "label",
+        "label": "Dropdown label",
+        "default": "Choose your role"
+      },
+      {
+        "type": "text",
+        "id": "all_label",
+        "label": "\"Show all\" option label",
+        "default": "All roles"
+      },
+      {
+        "type": "header",
+        "content": "Product grid"
+      },
+      {
+        "type": "range",
+        "id": "grid",
+        "label": "Desktop products per row",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "default": 5
+      },
+      {
+        "type": "select",
+        "id": "grid_mobile",
+        "label": "Mobile products per row",
+        "options": [
+          { "value": "1", "label": "1" },
+          { "value": "2", "label": "2" }
+        ],
+        "default": "2"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show vendor",
+        "default": false
+      }
+    ],
+    "blocks": [
+      {
+        "type": "role",
+        "name": "Role",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Role name",
+            "default": "Clara"
+          },
+          {
+            "type": "text",
+            "id": "scene",
+            "label": "Scene",
+            "info": "Groups this role in the dropdown. Type the scene exactly the same for every role in it, e.g. Act I – Party Scene.",
+            "default": "Act I – Party Scene"
+          },
+          {
+            "type": "richtext",
+            "id": "description",
+            "label": "Description",
+            "info": "Shown below the role name. Supports bullet lists and bold text."
+          },
+          {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection"
+          },
+          {
+            "type": "range",
+            "id": "products_to_show",
+            "label": "Products to show",
+            "min": 1,
+            "max": 30,
+            "step": 1,
+            "default": 30
+          }
+        ]
+      }
+    ],
+    "templates": [
+      "index",
+      "page"
+    ],
+    "presets": [
+      {
+        "name": "Nutcracker attire",
+        "blocks": [
+          { "type": "role" }
+        ]
+      }
+    ]
+  }
+{% endschema %}
