@@ -17,6 +17,14 @@
   object-fit: cover;
   display: block;
 }
+.section-{{ section.id }} .split-image.split-image--desktop-only {
+  display: none;
+}
+.section-{{ section.id }} .split-image.split-image--mobile-only {
+  height: auto;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 .section-{{ section.id }} .grid .overlay .overlay__content {
   text-align: left;
 }
@@ -42,6 +50,12 @@
       .section-{{ section.id }} .split-image,
       .section-{{ section.id }} .rimage-outer-wrapper {
         height: {{ section.settings.height_desktop }}px;
+      }
+      .section-{{ section.id }} .split-image.split-image--desktop-only {
+        display: block;
+      }
+      .section-{{ section.id }} .split-image.split-image--mobile-only {
+        display: none;
       }
   {% if section.settings.layout == "large_left" %}
       .section-{{ section.id }} .grid .block-1 {width:66.666%; max-width:100%;}
@@ -120,7 +134,8 @@
                   {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
                 </div>
               {% else %}
-                <div class="split-image split-image-{{ current }} rimage-background fade-in lazyload"
+                {% comment %} Desktop image (also used on mobile when no mobile image is set) {% endcomment %}
+                <div class="split-image split-image-{{ current }} rimage-background fade-in lazyload{% if block.settings.image_mobile != blank %} split-image--desktop-only{% endif %}"
                     data-bgset="{% render 'bgset', image: block.settings.image %}"
                     data-sizes="auto"
                     data-parent-fit="cover"
@@ -131,6 +146,21 @@
                     </noscript>
                   </div>
                 </div>
+
+                {% comment %} Mobile image (only shown on mobile, only if uploaded) {% endcomment %}
+                {% if block.settings.image_mobile != blank %}
+                  <div class="split-image split-image-{{ current }} rimage-background fade-in lazyload split-image--mobile-only"
+                      data-bgset="{% render 'bgset', image: block.settings.image_mobile %}"
+                      data-sizes="auto"
+                      data-parent-fit="cover"
+                      style="background-position: {{ block.settings.image_position }}">
+                    <div class="rimage-wrapper" style="padding-top:{{ 1 | divided_by: block.settings.image_mobile.aspect_ratio | times: 100 }}%">
+                      <noscript>
+                        <img src="{{ block.settings.image_mobile | img_url: '1024x1024' }}" alt="{{ block.settings.image_mobile.alt | escape }}" class="rimage__image">
+                      </noscript>
+                    </div>
+                  </div>
+                {% endif %}
               {% endif %}
               {% if block.settings.image_link != blank %}</a>{% endif %}
 
@@ -218,8 +248,14 @@
           {
             "type": "image_picker",
             "id": "image",
-            "label": "Image",
+            "label": "Desktop image",
             "info": "Also used as the poster/background image if a video is uploaded below."
+          },
+          {
+            "type": "image_picker",
+            "id": "image_mobile",
+            "label": "Mobile image",
+            "info": "Optional. If left blank, the desktop image is shown on mobile."
           },
           {
             "type": "video",
