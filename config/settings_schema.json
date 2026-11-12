@@ -1228,6 +1228,46 @@
       }
     ]
   },
+    {
+    "name": "Cart free gift",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shows a free-gift picker in the cart drawer once the order reaches the threshold. Use $0 gift products (one per option below). Gifts are removed automatically if the order drops below the threshold."
+      },
+      {
+        "type": "checkbox",
+        "id": "gift_enabled",
+        "label": "Enable free gift",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "gift_threshold",
+        "label": "Spend needed to unlock the gift",
+        "info": "In store currency, e.g. 70",
+        "default": 70
+      },
+      {
+        "type": "text",
+        "id": "gift_heading",
+        "label": "Panel heading",
+        "default": "Choose your free gift"
+      },
+      { "type": "header", "content": "Gift option 1" },
+      { "type": "text", "id": "gift_1_label", "label": "Label", "default": "Tights" },
+      { "type": "collection", "id": "gift_1_collection", "label": "Gift collection (recommended for tights)", "info": "Every product in this collection becomes a gift choice (first 50). Several styles (e.g. Convertible, Footed) add a Style step: Style → Colour → Size. Overrides the options below." },
+      { "type": "image_picker", "id": "gift_1_image", "label": "Tile image", "info": "Optional. Defaults to the product image." },
+      { "type": "header", "content": "Gift option 2" },
+      { "type": "text", "id": "gift_2_label", "label": "Label", "default": "Towel" },
+      { "type": "product", "id": "gift_2_product", "label": "Gift product" },
+      { "type": "image_picker", "id": "gift_2_image", "label": "Tile image", "info": "Optional. Defaults to the product image." },
+      { "type": "header", "content": "Gift option 3" },
+      { "type": "text", "id": "gift_3_label", "label": "Label", "default": "Band" },
+      { "type": "product", "id": "gift_3_product", "label": "Gift product" },
+      { "type": "image_picker", "id": "gift_3_image", "label": "Tile image", "info": "Optional. Defaults to the product image." }
+    ]
+  },
   {
     "name": "Search",
     "settings": [

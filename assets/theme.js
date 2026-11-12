@@ -104,6 +104,7 @@
           var html = [];
           for (var i = 0; i < cart.items.length; i++) {
             var item = cart.items[i];
+            if (theme.CartGift && theme.CartGift.isGiftLine(item)) continue;
             var lineKey = escapeHtml(String(item.key || ''));
             var img = item.image ? escapeHtml(item.image) : '';
             var title = escapeHtml(item.product_title);
@@ -147,6 +148,10 @@
           } else {
             $shippingMessage.hide();
           }
+        }
+        // Free gift with purchase: progress bar, gift picker, and gift rules
+        if (theme.CartGift) {
+          try { theme.CartGift.update(cart); } catch (e) { if (window.console) console.error(e); }
         }
         if (window.loyaltylion) {
           if (window.loyaltylion.ui && typeof window.loyaltylion.ui.refresh === 'function') {

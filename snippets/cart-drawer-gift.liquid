@@ -1,0 +1,120 @@
+{%- comment -%}
+  Free gift with purchase for the cart drawer.
+  Rendered twice from snippets/cart-drawer.liquid:
+    part: 'progress' -> progress bar under the drawer header
+    part: 'panel'    -> "Choose your free gift" panel above the line items (+ config, CSS, JS)
+  Everything inside the containers is rendered by assets/cart-gift.js.
+
+  Gift lines are marked with the hidden line item property `_gift_with_purchase`
+  (underscore = not shown at checkout). Settings: Theme settings > Cart free gift.
+{%- endcomment -%}
+{%- liquid
+  assign gift_enabled = settings.gift_enabled
+  assign gift_has_products = false
+  for i in (1..3)
+    assign gift_pkey = 'gift_' | append: i | append: '_product'
+    assign gift_lkey = 'gift_' | append: i | append: '_products'
+    assign gift_ckey = 'gift_' | append: i | append: '_collection'
+    if settings[gift_pkey] != blank or settings[gift_lkey].size > 0 or settings[gift_ckey].products_count > 0
+      assign gift_has_products = true
+    endif
+  endfor
+-%}
+{%- if gift_enabled and gift_has_products -%}
+  {%- if part == 'progress' -%}
+    <div class="cart-gift-progress" data-cart-gift-progress aria-live="polite" hidden></div>
+  {%- else -%}
+    {%- liquid
+      assign gift_threshold_cents = settings.gift_threshold | default: 70 | times: 100
+      assign gift_ids = ','
+      for i in (1..3)
+        assign gift_pkey = 'gift_' | append: i | append: '_product'
+        assign gift_p = settings[gift_pkey]
+        if gift_p != blank
+          assign gift_ids = gift_ids | append: gift_p.id | append: ','
+        endif
+        assign gift_lkey = 'gift_' | append: i | append: '_products'
+        for gift_lp in settings[gift_lkey]
+          assign gift_ids = gift_ids | append: gift_lp.id | append: ','
+        endfor
+        assign gift_ckey = 'gift_' | append: i | append: '_collection'
+        if settings[gift_ckey] != blank
+          for gift_lp in settings[gift_ckey].products
+            assign gift_ids = gift_ids | append: gift_lp.id | append: ','
+          endfor
+        endif
+      endfor
+      assign cart_has_gift = false
+      for item in cart.items
+        if item.properties['_gift_with_purchase'] != blank
+          assign cart_has_gift = true
+        endif
+        assign gift_needle = ',' | append: item.product_id | append: ','
+        if gift_ids contains gift_needle and item.final_price == 0
+          assign cart_has_gift = true
+        endif
+      endfor
+    -%}
+    {{ 'cart-gift.css' | asset_url | stylesheet_tag }}
+    <div class="cart-gift" data-cart-gift hidden></div>
+    <script type="application/json" data-cart-gift-config>
+      {
+        "enabled": true,
+        "threshold": {{ gift_threshold_cents | json }},
+        "heading": {{ settings.gift_heading | default: 'Choose your free gift' | json }},
+        "cartHasGift": {{ cart_has_gift | json }},
+        "template": {{ template.name | default: '' | json }},
+        "categories": [
+          {%- assign gift_first = true -%}
+          {%- for i in (1..3) -%}
+            {%- liquid
+              assign gift_pkey = 'gift_' | append: i | append: '_product'
+              assign gift_lskey = 'gift_' | append: i | append: '_products'
+              assign gift_lkey = 'gift_' | append: i | append: '_label'
+              assign gift_ikey = 'gift_' | append: i | append: '_image'
+              assign gift_p = settings[gift_pkey]
+              assign gift_list = settings[gift_lskey]
+              assign gift_label = settings[gift_lkey]
+              assign gift_img = settings[gift_ikey]
+              assign gift_ckey = 'gift_' | append: i | append: '_collection'
+              assign gift_coll = settings[gift_ckey]
+              assign gift_use_list = false
+              if gift_coll != blank and gift_coll.products_count > 0
+                comment
+                  A collection wins over the product list. Liquid returns the first 50 products.
+                endcomment
+                assign gift_list = gift_coll.products
+              endif
+              if gift_list.size > 0
+                assign gift_use_list = true
+                assign gift_p = gift_list.first
+              endif
+            -%}
+            {%- if gift_p != blank -%}
+              {%- unless gift_first -%},{%- endunless -%}
+              {%- assign gift_first = false -%}
+              {
+                "label": {{ gift_label | default: gift_p.title | json }},
+                "image": {% if gift_img != blank %}{{ gift_img | image_url: width: 400 | json }}{% elsif gift_p.featured_image %}{{ gift_p.featured_image | image_url: width: 400 | json }}{% else %}null{% endif %},
+                "products": [
+                  {%- if gift_use_list -%}
+                    {%- for gift_lp in gift_list -%}
+                      {%- render 'cart-drawer-gift-product', product: gift_lp -%}{%- unless forloop.last -%},{%- endunless -%}
+                    {%- endfor -%}
+                  {%- else -%}
+                    {%- render 'cart-drawer-gift-product', product: gift_p -%}
+                  {%- endif -%}
+                ]
+              }
+            {%- endif -%}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+    <script src="{{ 'cart-gift.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+{%- elsif request.design_mode and part != 'progress' -%}
+  <p style="margin:0 0 12px;padding:12px;background:#fff4e5;border:1px dashed #e0a100;font-size:13px;">
+    Free gift is not showing: go to <strong>Theme settings → Cart free gift</strong>, tick “Enable free gift” and choose at least one gift product.
+  </p>
+{%- endif -%}

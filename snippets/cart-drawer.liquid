@@ -38,9 +38,11 @@
   </header>
   {%- comment -%} Free shipping threshold message: content and visibility set by JS in theme.CartDrawer.renderCart() from cart.total_price. Updates whenever the drawer re-renders (open, add, change qty, remove). {%- endcomment -%}
   <div class="cart-drawer__shipping-message" data-cart-drawer-shipping-message aria-live="polite" style="display: none;"></div>
+  {% render 'cart-drawer-gift', part: 'progress' %}
   <div class="cart-drawer__body-wrapper">
     <div class="cart-drawer__body" data-cart-drawer-body>
       {%- comment -%} Line items rendered by JS from /cart.js {%- endcomment -%}
+       {% render 'cart-drawer-gift', part: 'panel' %}
       <div data-cart-drawer-items></div>
       {%- if rec_collection != blank and rec_collection.products_count > 0 -%}
         {% render 'cart-drawer-recommendations', collection: rec_collection, heading: rec_heading, limit: rec_limit %}
