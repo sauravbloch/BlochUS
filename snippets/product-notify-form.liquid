@@ -1,0 +1,226 @@
+{%- comment -%}
+  Product notify form (Klaviyo)
+  Rendered by the "Notify form" block in sections/main-product.liquid.
+  Replaces the quantity selector and Add to cart button on the "notify" product template.
+
+  Accepts:
+  - block: the notify_form block
+  - product: the product
+  - current_variant: the selected variant
+{%- endcomment -%}
+
+{%- liquid
+  assign form_id = 'ProductNotify-' | append: block.id
+  assign company_id = block.settings.klaviyo_company_id | strip | default: 'Tb3MxU'
+  assign list_id = block.settings.klaviyo_list_id | strip | default: 'Y7xjmy'
+-%}
+
+<div class="product-notify row" id="{{ form_id }}" {{ block.shopify_attributes }}>
+  {%- if block.settings.heading != blank -%}
+    <p class="product-notify__heading">{{ block.settings.heading }}</p>
+  {%- endif -%}
+
+  {%- if block.settings.text != blank -%}
+    <div class="product-notify__text rte">{{ block.settings.text }}</div>
+  {%- endif -%}
+
+  <form
+    class="product-notify__form"
+    data-product-notify-form
+    data-klaviyo-company="{{ company_id | escape }}"
+    data-klaviyo-list="{{ list_id | escape }}"
+    novalidate
+  >
+    <label class="visually-hidden" for="{{ form_id }}-email">Email address</label>
+    <input
+      type="email"
+      id="{{ form_id }}-email"
+      name="email"
+      class="product-notify__email"
+      autocomplete="email"
+      inputmode="email"
+      placeholder="{{ block.settings.placeholder | escape }}"
+      required
+    >
+    <input type="text" name="company" class="product-notify__hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <div class="payment-buttons">
+      <button type="submit" class="btn btn--subtle-hover" data-product-notify-submit>
+        {{ block.settings.button_label | escape }}
+      </button>
+    </div>
+
+    <p class="product-notify__message" data-product-notify-message role="status" aria-live="polite" hidden></p>
+  </form>
+
+  <script type="application/json" data-product-notify-config>
+    {
+      "productId": {{ product.id | json }},
+      "productTitle": {{ product.title | json }},
+      "productUrl": {{ shop.url | append: product.url | json }},
+      "productImage": {% if product.featured_image %}{{ product.featured_image | image_url: width: 800 | prepend: 'https:' | json }}{% else %}null{% endif %},
+      "currentVariantId": {{ current_variant.id | json }},
+      "variants": {{ product.variants | map: 'id' | json }},
+      "variantTitles": [{%- for v in product.variants -%}{{ v.title | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%}],
+      "variantSkus": [{%- for v in product.variants -%}{{ v.sku | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%}],
+      "successMessage": {{ block.settings.success_message | json }},
+      "invalidMessage": {{ block.settings.invalid_message | json }},
+      "errorMessage": {{ block.settings.error_message | json }}
+    }
+  </script>
+</div>
+
+<style>
+  .product-notify { margin-top: 20px; }
+  .product-notify__heading { margin: 0 0 6px; font-weight: 600; }
+  .product-notify__text { margin-bottom: 12px; }
+  .product-notify__text p { margin: 0; }
+  .product-notify__email {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    margin: 0 0 10px;
+    padding: 12px 14px;
+    line-height: 1.2;
+  }
+  .product-notify__email[aria-invalid="true"] { border-color: #c0392b; }
+  .product-notify__hp {
+    position: absolute !important;
+    left: -9999px !important;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+  .product-notify [data-product-notify-submit][disabled] { opacity: .6; cursor: progress; }
+  .product-notify__message { margin: 10px 0 0; }
+  .product-notify__message--error { color: #c0392b; }
+  .product-notify__message--success { color: #000; }
+  .product-notify.is-done .product-notify__text,
+  .product-notify.is-done .product-notify__email,
+  .product-notify.is-done .payment-buttons { display: none; }
+  .product-notify.is-done .product-notify__message { margin-top: 0; }
+</style>
+
+<script>
+  (function () {
+    var wrap = document.getElementById('{{ form_id }}');
+    if (!wrap || wrap.dataset.notifyReady) return;
+    wrap.dataset.notifyReady = 'true';
+
+    var form = wrap.querySelector('[data-product-notify-form]');
+    var emailInput = form.querySelector('input[name="email"]');
+    var honeypot = form.querySelector('input[name="company"]');
+    var submitBtn = form.querySelector('[data-product-notify-submit]');
+    var messageEl = form.querySelector('[data-product-notify-message]');
+    var cfg = JSON.parse(wrap.querySelector('[data-product-notify-config]').textContent);
+    var selectedVariantId = cfg.currentVariantId;
+
+    // Track the variant the shopper picks. The theme's variant picker fires a
+    // jQuery "variantChange" event on the product section container.
+    var section = wrap.closest('[data-section-type="product"]');
+    if (section && window.jQuery) {
+      window.jQuery(section).on('variantChange.productNotify', function (evt) {
+        if (evt.variant && evt.variant.id) selectedVariantId = evt.variant.id;
+      });
+    }
+
+    function getVariant() {
+      var urlId = new URLSearchParams(window.location.search).get('variant');
+      var id = Number(selectedVariantId || urlId || cfg.currentVariantId);
+      var index = cfg.variants.indexOf(id);
+      if (index === -1) index = 0;
+      return { id: cfg.variants[index], title: cfg.variantTitles[index], sku: cfg.variantSkus[index] };
+    }
+
+    function showMessage(text, type) {
+      messageEl.textContent = text || '';
+      messageEl.hidden = !text;
+      messageEl.classList.remove('product-notify__message--error', 'product-notify__message--success');
+      if (type) messageEl.classList.add('product-notify__message--' + type);
+    }
+
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+
+      if (honeypot.value) {
+        wrap.classList.add('is-done');
+        showMessage(cfg.successMessage, 'success');
+        return;
+      }
+
+      var email = emailInput.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        emailInput.setAttribute('aria-invalid', 'true');
+        showMessage(cfg.invalidMessage, 'error');
+        emailInput.focus();
+        return;
+      }
+      emailInput.removeAttribute('aria-invalid');
+
+      var companyId = form.getAttribute('data-klaviyo-company');
+      var listId = form.getAttribute('data-klaviyo-list');
+      var variant = getVariant();
+
+      var payload = {
+        data: {
+          type: 'subscription',
+          attributes: {
+            custom_source: 'Notify PDP - ' + cfg.productTitle,
+            profile: {
+              data: {
+                type: 'profile',
+                attributes: {
+                  email: email,
+                  properties: {
+                    notify_product_title: cfg.productTitle,
+                    notify_product_id: String(cfg.productId),
+                    notify_product_url: cfg.productUrl,
+                    notify_product_image: cfg.productImage,
+                    notify_variant_id: String(variant.id || ''),
+                    notify_variant_title: variant.title || '',
+                    notify_variant_sku: variant.sku || ''
+                  }
+                }
+              }
+            }
+          },
+          relationships: {
+            list: { data: { type: 'list', id: listId } }
+          }
+        }
+      };
+
+      submitBtn.disabled = true;
+      showMessage('');
+
+      fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + encodeURIComponent(companyId), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.api+json',
+          'Accept': 'application/vnd.api+json',
+          'revision': '2024-10-15'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          if (res.status === 202 || res.ok) {
+            wrap.classList.add('is-done');
+            form.reset();
+            showMessage(cfg.successMessage, 'success');
+          } else {
+            return res.text().then(function (body) {
+              console.error('[Product notify] Klaviyo error', res.status, body);
+              showMessage(cfg.errorMessage, 'error');
+            });
+          }
+        })
+        .catch(function (err) {
+          console.error('[Product notify] Network error', err);
+          showMessage(cfg.errorMessage, 'error');
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+        });
+    });
+  })();
+</script>

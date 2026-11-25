@@ -485,6 +485,9 @@
                     {% endif %}
                   {%- endform -%}
 
+                   {%- when 'notify_form' -%}
+                  {% render 'product-notify-form', block: block, product: product, current_variant: current_variant %}
+
                 {%- when 'description' -%}
                   {%- capture product_description -%}
                     <div class="large-row large-row-under {% if block.settings.full_width == false %} product-description__no-expand{% endif %}">
@@ -820,6 +823,27 @@
             ],
             "default": "low"
           }
+        ]
+      },
+      {
+        "type": "notify_form",
+        "name": "Notify form (Klaviyo)",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "Email signup that replaces the quantity and Add to cart. Use it on the notify template instead of Buy buttons."
+          },
+          { "type": "text", "id": "heading", "label": "Heading", "default": "Get notified when it's available" },
+          { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Leave your email and we'll let you know as soon as you can order.</p>" },
+          { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Email address" },
+          { "type": "text", "id": "button_label", "label": "Button label", "default": "Notify me" },
+          { "type": "text", "id": "success_message", "label": "Success message", "default": "You're on the list. We'll email you when it's available." },
+          { "type": "text", "id": "invalid_message", "label": "Invalid email message", "default": "Enter a valid email address, like name@example.com." },
+          { "type": "text", "id": "error_message", "label": "Error message", "default": "We couldn't sign you up. Check your connection and try again." },
+          { "type": "header", "content": "Klaviyo" },
+          { "type": "text", "id": "klaviyo_company_id", "label": "Klaviyo public API key (Site ID)", "default": "Tb3MxU", "info": "Same public key the footer signup uses." },
+          { "type": "text", "id": "klaviyo_list_id", "label": "Klaviyo list ID", "default": "Y7xjmy" }
         ]
       },
       {
